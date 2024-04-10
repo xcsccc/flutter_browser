@@ -1,0 +1,8 @@
+img, video, iframe, canvas, svg,amp-social-share,
+embed[type='application/x-shockwave-flash'],
+object[type='application/x-shockwave-flash'],
+*[style*='url('] {
+    -webkit-filter : opacity(100%);
+    -ms-filter     : opacity(100%);
+    filter         : opacity(100%);
+}
