@@ -559,6 +559,16 @@ class S {
       args: [],
     );
   }
+
+  String get imageModes {
+    return Intl.message(
+      'Display Image,Do not display images,Display images only on WiFi',
+      name: 'imageModes',
+      desc: '',
+      args: [],
+    );
+  }
+
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

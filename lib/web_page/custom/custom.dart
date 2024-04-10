@@ -90,7 +90,7 @@ const String hideKey = "hideKey";
 const String browserFlagKey = "browserFlagKey";
 const String fullKey = "fullKey";
 const String searchEnginKey = "searchEnginKey";
-// const String imageModeKey = "imageModeKey";
+const String imageModeKey = "imageModeKey";
 
 
 extension LongExt on int{
@@ -162,4 +162,12 @@ enum SearchEnginType{
   final String enginName;
   final String enginUrl;
   const SearchEnginType(this.enginUrl,this.enginName);
+}
+
+enum ImageModeType{
+  display("Display Image"),
+  noDisplay("Do not display images"),
+  displayOnWifi("Display images only on WiFi");
+  final String modeDesc;
+  const ImageModeType(this.modeDesc);
 }
