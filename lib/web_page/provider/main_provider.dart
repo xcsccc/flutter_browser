@@ -1,4 +1,5 @@
 import 'package:browser01/web_page/custom/custom.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -20,6 +21,7 @@ class GlobalProvider with ChangeNotifier{
   FuncBottomType nowClickType = FuncBottomType.night;
   late String? userAgent = Hive.box(boolKey).get(desktopKey,defaultValue: false) ? UserAgentType.windowChrome.userAgent:UserAgentType.androidAgent.userAgent;
   UserAgentType? nowType;
+  ImageModeType? modeType;
   late SearchEnginType selectEngin = SearchEnginType.values[Hive.box(intKey).get(searchEnginKey,defaultValue: 0)];
   late InAppWebViewSettings settings = updateSettings();
 
@@ -44,7 +46,8 @@ class GlobalProvider with ChangeNotifier{
         verticalScrollBarEnabled: false,
         horizontalScrollBarEnabled: false,
         javaScriptCanOpenWindowsAutomatically: true,
-        supportMultipleWindows: true
+        supportMultipleWindows: true,
+        blockNetworkImage:false
     );
   }
 
@@ -63,6 +66,24 @@ class GlobalProvider with ChangeNotifier{
     nowType = type;
     userAgent = type.userAgent;
     settings = updateSettings();
+    changeAllSetting();
+    for (var element in browserKey) {
+      element.currentState?.control?.reload();
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateImageMode(ImageModeType type) async {
+    modeType = type;
+    settings = updateSettings();
+    if(modeType == ImageModeType.display){
+      settings.blockNetworkImage = false;
+    } else if(modeType == ImageModeType.noDisplay){
+      settings.blockNetworkImage = true;
+    } else {
+      var connectivityResult = await Connectivity().checkConnectivity();
+      settings.blockNetworkImage = connectivityResult != ConnectivityResult.wifi;
+    }
     changeAllSetting();
     for (var element in browserKey) {
       element.currentState?.control?.reload();

@@ -9,6 +9,7 @@ import 'package:browser01/web_page/bar/top_search_bar.dart';
 import 'package:browser01/web_page/bar/top_title_bar.dart';
 import 'package:browser01/web_page/custom/func_bottom_info.dart';
 import 'package:browser01/web_page/dialog/func_dialog.dart';
+import 'package:browser01/web_page/dialog/image_mode_dialog.dart';
 import 'package:browser01/web_page/dialog/user_agent_dialog.dart';
 import 'package:browser01/web_page/main_view/view.dart';
 import 'package:browser01/web_page/page/scanner_page.dart';
@@ -634,6 +635,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   FuncBottomType.full);
                               break;
                             case FuncBottomType.imageMode:
+                              Navigator.of(context).pop();
+                              isShowChild = true;
+                              showImageModeDialog(context);
                               break;
                             case FuncBottomType.browserFlag:
                               Navigator.of(context).pop();
