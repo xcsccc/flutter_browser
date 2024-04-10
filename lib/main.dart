@@ -10,6 +10,7 @@ import 'package:browser01/web_page/bar/top_title_bar.dart';
 import 'package:browser01/web_page/custom/func_bottom_info.dart';
 import 'package:browser01/web_page/dialog/func_dialog.dart';
 import 'package:browser01/web_page/dialog/user_agent_dialog.dart';
+import 'package:browser01/web_page/main_view/progress_bar.dart';
 import 'package:browser01/web_page/main_view/view.dart';
 import 'package:browser01/web_page/page/scanner_page.dart';
 import 'package:browser01/web_page/provider/main_provider.dart';
@@ -474,12 +475,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           color: ThemeColors.alphaColorDark,
                         ),
                       ),
-                    if (progress != 100)
-                      LinearProgressIndicator(
-                        value: progress / 100.0,
-                        color: ThemeColors.progressStartColor,
-                        backgroundColor: Colors.transparent,
-                      ),
+                    // if (progress != 100)
+                      ProgressBarAnimate(end: progress.toDouble()),
                     if (isShowSSLCookie)
                       SSLCookieView(
                         url: getPageNowState()!.webUrl,

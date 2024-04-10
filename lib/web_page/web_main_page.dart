@@ -180,8 +180,13 @@ class BrowserState extends State<BrowserView>
               },
               onProgressChanged: (control, progress) {
                 widget.browserInfo.onProgress(progress);
-                if (!_isSelect) {
-                  widget.browserInfo.onProgress(100);
+                if(progress == 100){
+                  if (!_isSelect) {
+                    widget.browserInfo.onProgress(100);
+                  }
+                  setState(() {
+                    isWebShow = true;
+                  });
                 }
               },
               onCloseWindow: (control) {},

@@ -12,4 +12,5 @@ class ThemeColors{
   static var indicatorLightGrayUnSelectColorBlack = const Color(0xe2c5c5c5);
   static var indicatorLightGraySelectColorBlack = const Color(0xe2464646);
   static var progressStartColor = const Color(0xff1fbcff);
+  static var progressEndColor = const Color(0xff684bff);
 }
