@@ -48,6 +48,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "history": MessageLookupByLibrary.simpleMessage("历史"),
         "homeTitle": MessageLookupByLibrary.simpleMessage("主页"),
         "imageMode": MessageLookupByLibrary.simpleMessage("有图模式"),
+        "imageModes": MessageLookupByLibrary.simpleMessage(
+            "Display Image,Do not display images,Display images only on WiFi"),
         "linkUrl": MessageLookupByLibrary.simpleMessage("选中链接:"),
         "network": MessageLookupByLibrary.simpleMessage("网络日志"),
         "night": MessageLookupByLibrary.simpleMessage("夜间模式"),

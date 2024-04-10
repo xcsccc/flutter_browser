@@ -560,6 +560,7 @@ class S {
     );
   }
 
+  /// `Display Image,Do not display images,Display images only on WiFi`
   String get imageModes {
     return Intl.message(
       'Display Image,Do not display images,Display images only on WiFi',
@@ -568,7 +569,6 @@ class S {
       args: [],
     );
   }
-
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -52,5 +52,6 @@
   "@AppStr": {
     "description": "AppStr"
   },
-  "userAgents": "Android(Phone),Android(Tablet),Windows(Chrome),Windows(IE 11),macOS,iPhone,iPad,Symbian"
+  "userAgents": "Android(Phone),Android(Tablet),Windows(Chrome),Windows(IE 11),macOS,iPhone,iPad,Symbian",
+  "imageModes": "Display Image,Do not display images,Display images only on WiFi"
 }

@@ -50,6 +50,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "history": MessageLookupByLibrary.simpleMessage("History"),
         "homeTitle": MessageLookupByLibrary.simpleMessage("Homepage"),
         "imageMode": MessageLookupByLibrary.simpleMessage("Show images"),
+        "imageModes": MessageLookupByLibrary.simpleMessage(
+            "Display Image,Do not display images,Display images only on WiFi"),
         "linkUrl": MessageLookupByLibrary.simpleMessage("Link URL:"),
         "network": MessageLookupByLibrary.simpleMessage("Network log"),
         "night": MessageLookupByLibrary.simpleMessage("Night mode"),
