@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:browser01/web_page/custom/custom.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -114,12 +117,17 @@ class GlobalProvider with ChangeNotifier{
     notifyListeners();
   }
 
-  void toggleTheme() {
+  void toggleTheme() async {
     currentTheme = currentTheme == ThemeData.light() ? ThemeData.dark() : ThemeData.light();
     settings = updateSettings();
     changeAllSetting();
-    for (var element in browserKey) {
-      element.currentState?.control?.reload();
+    if(Platform.isAndroid){
+      var androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.version.sdkInt > 32) {
+        for (var element in browserKey) {
+          element.currentState?.control?.reload();
+        }
+      }
     }
     notifyListeners();
   }
@@ -158,5 +166,4 @@ class GlobalProvider with ChangeNotifier{
     onFinish();
     notifyListeners();
   }
-
 }

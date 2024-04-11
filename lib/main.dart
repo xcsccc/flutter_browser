@@ -477,7 +477,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         ),
                       ),
                     // if (progress != 100)
-                      ProgressBarAnimate(end: progress.toDouble()),
                     if (isShowSSLCookie)
                       SSLCookieView(
                         url: getPageNowState()!.webUrl,

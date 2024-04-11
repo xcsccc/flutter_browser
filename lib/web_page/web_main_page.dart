@@ -13,9 +13,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../generated/l10n.dart';
 import 'custom/custom.dart';
 import 'dialog/long_click_dialog.dart';
+import 'main_view/progress_bar.dart';
 
 class BrowserInfo {
   final String loadUrl;
@@ -59,6 +61,7 @@ class BrowserState extends State<BrowserView>
   LongPressDownDetails? details = null;
   List<String> imgUrls = [];
   bool isWebShow = true;
+  int progress = 0;
   GlobalKey<SearchAllState> searchState = GlobalKey();
 
   set isSelect(bool value) {
@@ -90,7 +93,9 @@ class BrowserState extends State<BrowserView>
   }
 
   void loadDark() async {
-    if (Platform.isAndroid && provider.currentTheme == ThemeData.dark() && !url.toString().endsWith(homeUrl)) {
+    if (Platform.isAndroid &&
+        provider.currentTheme == ThemeData.dark() &&
+        !url.toString().endsWith(homeUrl)) {
       control?.evaluateJavascript(source: """
               (function() {
                 var parent = document.getElementsByTagName('head').item(0);
@@ -100,7 +105,7 @@ class BrowserState extends State<BrowserView>
                 parent.appendChild(style);
               })();
             """);
-  }
+    }
   }
 
   @override
@@ -111,130 +116,128 @@ class BrowserState extends State<BrowserView>
         GestureDetector(onLongPressDown: (details) {
           this.details = details;
         }, child: Consumer<GlobalProvider>(builder: (context, notifier, child) {
-          return Visibility(visible: isWebShow,maintainState: true,child: InAppWebView(
-              keepAlive: InAppWebViewKeepAlive(),
-              initialUrlRequest: widget.browserInfo.loadUrl.endsWith(homeUrl) ||
-                  (!widget.browserInfo.loadUrl.isUrl() &&
-                      !widget.browserInfo.loadUrl.isBase64() &&
-                      !widget.browserInfo.loadUrl
-                          .startsWith("view-source:"))
-                  ? null
-                  : URLRequest(
-                  url: WebUri(widget.browserInfo.loadUrl.isBase64()
+          return Visibility(
+              visible: isWebShow,
+              maintainState: true,
+              child: InAppWebView(
+                  keepAlive: InAppWebViewKeepAlive(),
+                  initialUrlRequest: widget.browserInfo.loadUrl
+                              .endsWith(homeUrl) ||
+                          (!widget.browserInfo.loadUrl.isUrl() &&
+                              !widget.browserInfo.loadUrl.isBase64() &&
+                              !widget.browserInfo.loadUrl
+                                  .startsWith("view-source:"))
+                      ? null
+                      : URLRequest(
+                          url: WebUri(widget.browserInfo.loadUrl.isBase64()
+                              ? widget.browserInfo.loadUrl
+                              : widget.browserInfo.loadUrl
+                                      .startsWith("view-source:")
+                                  ? widget.browserInfo.loadUrl
+                                  : widget.browserInfo.loadUrl.completeUrl())),
+                  initialData: !widget.browserInfo.loadUrl.endsWith(homeUrl) &&
+                          !widget.browserInfo.loadUrl.isUrl() &&
+                          !widget.browserInfo.loadUrl.isBase64() &&
+                          !widget.browserInfo.loadUrl.startsWith("view-source:")
+                      ? InAppWebViewInitialData(
+                          data: widget.browserInfo.loadUrl)
+                      : null,
+                  initialFile: widget.browserInfo.loadUrl.endsWith(homeUrl)
                       ? widget.browserInfo.loadUrl
-                      : widget.browserInfo.loadUrl
-                      .startsWith("view-source:")
-                      ? widget.browserInfo.loadUrl
-                      : widget.browserInfo.loadUrl.completeUrl())),
-              initialData: !widget.browserInfo.loadUrl.endsWith(homeUrl) &&
-                  !widget.browserInfo.loadUrl.isUrl() &&
-                  !widget.browserInfo.loadUrl.isBase64() &&
-                  !widget.browserInfo.loadUrl.startsWith("view-source:")
-                  ? InAppWebViewInitialData(data: widget.browserInfo.loadUrl)
-                  : null,
-              initialFile: widget.browserInfo.loadUrl.endsWith(homeUrl)
-                  ? widget.browserInfo.loadUrl
-                  : null,
-              findInteractionController: findController,
-              initialSettings: getSetting(),
-              onDownloadStartRequest: (control, request) {
-                print("onDownloadStartRequest");
-              },
-              shouldOverrideUrlLoading: (control, navigation) async {
-                imgUrls.clear();
-                if (navigation.request.url.toString().startsWith("http://") ||
-                    navigation.request.url.toString().startsWith("https://")) {
-                  return NavigationActionPolicy.ALLOW;
-                } else {
-                  return NavigationActionPolicy.CANCEL;
-                }
-              },
-              onLongPressHitTestResult: (control, hit) async {
-                var info = await control.requestFocusNodeHref();
-                if (info != null) {
-                  if (info.url != null || info.src != null) {
-                    provider.showFunDialog();
-                    // ignore: use_build_context_synchronously
-                    showCustomMenu(
-                        context,
-                        details?.globalPosition.dx ?? 0,
-                        details?.globalPosition.dy ?? 0,
-                        info,
-                        widget.browserInfo,
-                        title,
-                        webUrl,
-                        imgUrls);
-                  }
-                }
-              },
+                      : null,
+                  findInteractionController: findController,
+                  initialSettings: getSetting(),
+                  onDownloadStartRequest: (control, request) {
+                    print("onDownloadStartRequest");
+                  },
+                  onLongPressHitTestResult: (control, hit) async {
+                    var info = await control.requestFocusNodeHref();
+                    if (info != null) {
+                      if (info.url != null || info.src != null) {
+                        provider.showFunDialog();
+                        // ignore: use_build_context_synchronously
+                        showCustomMenu(
+                            context,
+                            details?.globalPosition.dx ?? 0,
+                            details?.globalPosition.dy ?? 0,
+                            info,
+                            widget.browserInfo,
+                            title,
+                            webUrl,
+                            imgUrls);
+                      }
+                    }
+                  },
 
-              //长按text中的菜单
-              contextMenu: ContextMenu(menuItems: [
-                ContextMenuItem(title: "title 1", id: 1),
-                ContextMenuItem(title: "title 2", id: 2),
-                ContextMenuItem(title: "title 3", id: 3),
-                ContextMenuItem(title: "title 4", id: 4),
-              ]),
-              onWebViewCreated: (control) {
-                this.control = control;
-              },
-              onProgressChanged: (control, progress) {
-                widget.browserInfo.onProgress(progress);
-                if(progress == 100){
-                  if (!_isSelect) {
-                    widget.browserInfo.onProgress(100);
-                  }
-                  setState(() {
-                    isWebShow = true;
-                  });
-                }
-              },
-              onCloseWindow: (control) {},
-              onCreateWindow: (control, window) async {
-                widget.browserInfo
-                    .onNewWindow(window.request.url.toString(), true);
-                return true;
-              },
-              onLoadResource: (control, res) {
-                if (res.initiatorType == "img" &&
-                    !imgUrls.contains(res.url.toString())) {
-                  imgUrls.add(res.url.toString());
-                }
-              },
-              onLoadStart: (control, url) async {
-                setState(() {
-                  isWebShow = false;
-                });
-                loadDark();
-                imgUrls.clear();
-                webUrl = url.toString();
-                checkHomeUrl();
-                this.url = url.toString().startsWith('file:///')
-                    ? ""
-                    : url.toString().extractSearchKeyword();
-                widget.browserInfo.onSearchChange(this.url);
-              },
-              onLoadStop: (control, url) async {
-                loadDark();
-                setState(() {
-                  isWebShow = true;
-                });
-                if (url.toString().endsWith(homeUrl)) {
-                  title = S.of(context).homeTitle;
-                } else {
-                  var title = await control.getTitle();
-                  this.title = title ?? "";
-                }
-                if (_isSelect) {
-                  widget.browserInfo.onTitleChange(title);
-                }
-              },
-              gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                Factory<OneSequenceGestureRecognizer>(
+                  //长按text中的菜单
+                  contextMenu: ContextMenu(menuItems: [
+                    ContextMenuItem(title: "title 1", id: 1),
+                    ContextMenuItem(title: "title 2", id: 2),
+                    ContextMenuItem(title: "title 3", id: 3),
+                    ContextMenuItem(title: "title 4", id: 4),
+                  ]),
+                  onWebViewCreated: (control) {
+                    this.control = control;
+                  },
+                  onProgressChanged: (control, progress) {
+                    // widget.browserInfo.onProgress(progress);
+                    setState(() {
+                      this.progress = progress;
+                    });
+                    if (progress == 100) {
+                      setState(() {
+                        isWebShow = true;
+                      });
+                    }
+                  },
+                  onCloseWindow: (control) {},
+                  onCreateWindow: (control, window) async {
+                    widget.browserInfo
+                        .onNewWindow(window.request.url.toString(), true);
+                    return true;
+                  },
+                  onLoadResource: (control, res) {
+                    if (res.initiatorType == "img" &&
+                        !imgUrls.contains(res.url.toString())) {
+                      imgUrls.add(res.url.toString());
+                    }
+                  },
+                  onLoadStart: (control, url) async {
+                    setState(() {
+                      isWebShow = false;
+                    });
+                    loadDark();
+                    imgUrls.clear();
+                    webUrl = url.toString();
+                    checkHomeUrl();
+                    this.url = url.toString().startsWith('file:///')
+                        ? ""
+                        : url.toString().extractSearchKeyword();
+                    widget.browserInfo.onSearchChange(this.url);
+                  },
+                  onLoadStop: (control, url) async {
+                    loadDark();
+                    setState(() {
+                      isWebShow = true;
+                      progress = 100;
+                    });
+                    if (url.toString().endsWith(homeUrl)) {
+                      title = S.of(context).homeTitle;
+                    } else {
+                      var title = await control.getTitle();
+                      this.title = title ?? "";
+                    }
+                    if (_isSelect) {
+                      widget.browserInfo.onTitleChange(title);
+                    }
+                  },
+                  gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                    Factory<OneSequenceGestureRecognizer>(
                       () => EagerGestureRecognizer(),
-                ),
-              }));
+                    ),
+                  }));
         })),
+        ProgressBarAnimate(end: progress.toDouble()),
         if (isHomeUrl)
           SearchAllWidget(
             key: searchState,
@@ -337,7 +340,9 @@ class SearchAllState extends State<SearchAllWidget>
             width: double.infinity,
             height: double.infinity,
             child: Container(
-              color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.white
+                  : Colors.black,
             ),
           ),
           onTap: () {
