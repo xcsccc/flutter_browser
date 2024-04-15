@@ -39,4 +39,5 @@ class AppImages {
   static const String tool = "assets/icon/ic_tool.png";
   static const String translate = "assets/icon/ic_translate.png";
   static const String powerOff = "assets/icon/ic_power_off.png";
+  static const String qr = "assets/icon/ic_qr.png";
 }

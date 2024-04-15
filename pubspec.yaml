@@ -53,7 +53,7 @@ dependencies:
   ai_barcode_scanner: ^3.4.3
   image_picker: ^1.0.7
   expandable_page_view: ^1.0.17
-  marquee: ^2.0.0
+  marquee: ^2.2.3
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -123,6 +123,7 @@ flutter:
     - assets/icon/ic_flush.png
     - assets/icon/ic_power_off.png
     - assets/icon/ic_scanner_bg.png
+    - assets/icon/ic_qr.png
     - assets/css/night.css
     - assets/css/night10.css
 

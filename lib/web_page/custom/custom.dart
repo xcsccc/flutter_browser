@@ -28,6 +28,17 @@ extension StringExtension on String {
     return this;
   }
 
+  List<String> splitToRich(){
+    if(isEmpty || !isUrl()){
+      return [this];
+    }else{
+      Uri uri = Uri.parse(this);
+      String protocol = uri.scheme;
+      String domain = uri.host;
+      return [protocol,"://",domain,substring(protocol.length  + 3 + domain.length,length)];
+    }
+  }
+
   bool isImageUrl() {
     return toLowerCase().endsWith(".png") ||
         toLowerCase().endsWith(".jpg") ||

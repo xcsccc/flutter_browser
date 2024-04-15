@@ -168,7 +168,6 @@ class BrowserState extends State<BrowserView>
                       }
                     }
                   },
-
                   //长按text中的菜单
                   contextMenu: ContextMenu(menuItems: [
                     ContextMenuItem(title: "title 1", id: 1),
@@ -462,7 +461,6 @@ class WebViewPagerState extends State<WebViewPager> {
   PageController controller = PageController(initialPage: 0);
 
   void changePage() {
-    print("ChangePage:${controller.page} ${widget.select}");
     controller.jumpToPage(widget.select);
     change();
   }

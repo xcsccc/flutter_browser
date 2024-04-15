@@ -3,10 +3,7 @@ import 'package:browser01/web_page/custom/custom.dart';
 import 'package:browser01/web_page/custom/image_path.dart';
 import 'package:browser01/web_page/now_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:marquee/marquee.dart';
-
 import '../../generated/l10n.dart';
 
 class BrowserPagerInfo {
@@ -108,7 +105,9 @@ class BrowserPagerListState extends State<BrowserPagerList>
                 alignment: Alignment.bottomCenter,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.light
+                      color: Theme
+                          .of(context)
+                          .brightness == Brightness.light
                           ? ThemeColors.alphaColorWhite
                           : ThemeColors.alphaColorBlack,
                       borderRadius: const BorderRadius.only(
@@ -140,7 +139,8 @@ class BrowserPagerListState extends State<BrowserPagerList>
                           return Material(
                               color: Colors.transparent,
                               child: Dismissible(
-                                key: Key(DateTime.now()
+                                key: Key(DateTime
+                                    .now()
                                     .millisecondsSinceEpoch
                                     .toString()),
                                 child: InkWell(
@@ -161,30 +161,31 @@ class BrowserPagerListState extends State<BrowserPagerList>
                                             child: DecoratedBox(
                                                 decoration: const BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                5))),
+                                                    BorderRadius.all(
+                                                        Radius.circular(
+                                                            5))),
                                                 child: item.url
-                                                            .extractDomainWithProtocol() ==
-                                                        null
+                                                    .extractDomainWithProtocol() ==
+                                                    null
                                                     ? Image.asset(
+                                                    AppImages.icon,
+                                                    width: 20,
+                                                    height: 20,
+                                                    fit: BoxFit.cover)
+                                                    : CachedNetworkImage(
+                                                  imageUrl:
+                                                  "${item.url
+                                                      .extractDomainWithProtocol()!}/favicon.ico",
+                                                  errorWidget: (context,
+                                                      url, error) {
+                                                    return Image.asset(
                                                         AppImages.icon,
                                                         width: 20,
                                                         height: 20,
-                                                        fit: BoxFit.cover)
-                                                    : CachedNetworkImage(
-                                                        imageUrl:
-                                                            "${item.url.extractDomainWithProtocol()!}/favicon.ico",
-                                                        errorWidget: (context,
-                                                            url, error) {
-                                                          return Image.asset(
-                                                              AppImages.icon,
-                                                              width: 20,
-                                                              height: 20,
-                                                              fit:
-                                                                  BoxFit.cover);
-                                                        },
-                                                      )),
+                                                        fit:
+                                                        BoxFit.cover);
+                                                  },
+                                                )),
                                           ),
                                         ),
                                         Expanded(
@@ -192,12 +193,12 @@ class BrowserPagerListState extends State<BrowserPagerList>
                                                 style: TextStyle(
                                                     fontSize: 15,
                                                     color: widget.select ==
-                                                            index
+                                                        index
                                                         ? ThemeColors
-                                                            .progressStartColor
+                                                        .progressStartColor
                                                         : null),
                                                 overflow:
-                                                    TextOverflow.ellipsis)),
+                                                TextOverflow.ellipsis)),
                                         IconImageButton(
                                           res: AppImages.close,
                                           onClick: () {
@@ -229,17 +230,22 @@ class SSLInfo {
   final String ouName;
   final String tName;
   final String tOName;
+
+  @override
+  String toString() {
+    return 'SSLInfo{name: $name, oName: $oName, ouName: $ouName, tName: $tName, tOName: $tOName, start: $start, end: $end}';
+  }
+
   final String start;
   final String end;
 
-  const SSLInfo(
-      {required this.name,
-      required this.end,
-      required this.oName,
-      required this.ouName,
-      required this.start,
-      required this.tName,
-      required this.tOName});
+  const SSLInfo({required this.name,
+    required this.end,
+    required this.oName,
+    required this.ouName,
+    required this.start,
+    required this.tName,
+    required this.tOName});
 }
 
 class SSLCookieView extends StatefulWidget {
@@ -249,19 +255,18 @@ class SSLCookieView extends StatefulWidget {
   final SSLInfo? sslInfo;
   final Function onAnimationOut;
 
-  const SSLCookieView(
-      {super.key,
-      required this.url,
-      required this.title,
-      this.cookies,
-      this.sslInfo,
-      required this.onAnimationOut});
+  const SSLCookieView({super.key,
+    required this.url,
+    required this.title,
+    this.cookies,
+    this.sslInfo,
+    required this.onAnimationOut});
 
   @override
-  State<StatefulWidget> createState() => _SSLCookieState();
+  State<StatefulWidget> createState() => SSLCookieState();
 }
 
-class _SSLCookieState extends State<SSLCookieView>
+class SSLCookieState extends State<SSLCookieView>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _animation;
@@ -275,9 +280,13 @@ class _SSLCookieState extends State<SSLCookieView>
     );
 
     _animation = Tween<Offset>(
-      begin: const Offset(0, 0),
-      end: const Offset(0, 0.2),
-    ).animate(_controller);
+      begin: const Offset(0, -1),
+      end: const Offset(0, 0),
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+
     _controller.addListener(animationOutFinish);
     super.initState();
   }
@@ -286,11 +295,19 @@ class _SSLCookieState extends State<SSLCookieView>
     setState(() {
       isShow = true;
     });
+    _controller.reset();
+    _animation = Tween<Offset>(
+      begin: const Offset(0, -1),
+      end: const Offset(0, 0),
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
     _controller.forward();
   }
 
   void animationOutFinish() {
-    if (_controller.isCompleted && _animation.value.dy <= 0.0) {
+    if (_animation.isCompleted && !isShow) {
       widget.onAnimationOut();
     }
   }
@@ -299,91 +316,152 @@ class _SSLCookieState extends State<SSLCookieView>
     setState(() {
       isShow = false;
     });
-    _controller.reverse();
+    _controller.reset();
+    _animation = Tween<Offset>(
+      begin: const Offset(0, 0),
+      end: const Offset(0, -1),
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+    _controller.forward();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedOpacity(
-        opacity: isShow ? 1 : 0,
-        duration: const Duration(milliseconds: 200),
-        child: SlideTransition(
-            position: _animation,
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? ThemeColors.alphaColorWhite
-                          : ThemeColors.alphaColorBlack,
-                      borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(20),
-                          bottomRight: Radius.circular(20))),
-                  child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Expanded(
-                                  child: Column(
-                                children: [
-                                  // Marquee(
-                                  //   text: widget.url,
-                                  //   style: const TextStyle(fontSize: 13),
-                                  //   scrollAxis: Axis.horizontal,
-                                  // ),
-                                  // Marquee(
-                                  //   text: widget.title,
-                                  //   style: const TextStyle(fontSize: 13),
-                                  //   scrollAxis: Axis.horizontal,
-                                  // )
-                                ],
-                              )),
-                              IconImageButton(
-                                res: AppImages.history,
-                                onClick: () {},
-                              ),
-                              IconImageButton(
-                                res: AppImages.code,
-                                onClick: () {},
-                              )
-                            ],
-                          ),
-                          if (widget.cookies != null)
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: GestureDetector(
-                                  onTap: () {},
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("Cookies",
-                                        style: TextStyle(
-                                            color: ThemeColors
-                                                .progressStartColor)),
-                                  )),
-                            ),
-                          if (widget.sslInfo != null)
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: GestureDetector(
-                                onTap: () {},
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(S.of(context).certificate,
-                                      style: TextStyle(
-                                          color:
-                                              ThemeColors.progressStartColor)),
+    var richStrList = widget.url.splitToRich();
+    return AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return AnimatedOpacity(
+              opacity: isShow ? 1 : 0,
+              duration: const Duration(milliseconds: 200),
+              child: SlideTransition(
+                position: _animation,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          color:
+                          Theme
+                              .of(context)
+                              .brightness == Brightness.light
+                              ? ThemeColors.alphaColorWhite
+                              : ThemeColors.alphaColorBlack,
+                          borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20))),
+                      child: Material(
+                        color: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        surfaceTintColor: Colors.transparent,
+                        child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              widget.title,
+                                              style: const TextStyle(
+                                                  fontSize: 16),
+                                              textAlign: TextAlign.start,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 5),
+                                            RichText(
+                                              text: TextSpan(
+                                                  text: richStrList.first,
+                                                  style: TextStyle(
+                                                      color: ThemeColors
+                                                          .fixColor,
+                                                      fontSize: 15),
+                                                  children: [
+                                                    if (richStrList.length > 1)
+                                                      TextSpan(
+                                                          text: richStrList[1],
+                                                          style: TextStyle(
+                                                              color: ThemeColors
+                                                                  .indicatorLightGrayUnSelectColorBlack,
+                                                              fontSize: 15)),
+                                                    if(richStrList.length > 2)
+                                                      TextSpan(
+                                                          text: richStrList[2],
+                                                          style: TextStyle(
+                                                              color:  Theme.of(context).brightness ==
+                                                                  Brightness
+                                                                      .light ? Colors.black : Colors.white,
+                                                              fontSize: 15)),
+                                                    if(richStrList.length > 3)
+                                                      TextSpan(
+                                                          text: richStrList[3],
+                                                          style: TextStyle(
+                                                              color: ThemeColors
+                                                                  .indicatorLightGrayUnSelectColorBlack,
+                                                              fontSize: 15))
+                                                  ]),
+                                            ),
+                                          ],
+                                        )),
+                                    IconImageButton(
+                                      res: AppImages.history,
+                                      onClick: () {
+
+                                      },
+                                    ),
+                                    IconImageButton(
+                                      res: AppImages.qr,
+                                      onClick: () {
+
+                                      },
+                                    )
+                                  ],
                                 ),
-                              ),
-                            )
-                        ],
-                      )),
+                                if (widget.cookies != null)
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 50,
+                                    child: GestureDetector(
+                                        onTap: () {},
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text("Cookies",
+                                              style: TextStyle(
+                                                  color: ThemeColors
+                                                      .progressStartColor)),
+                                        )),
+                                  ),
+                                if (widget.sslInfo != null)
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 50,
+                                    child: GestureDetector(
+                                      onTap: () {},
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(S
+                                            .of(context)
+                                            .certificate,
+                                            style: TextStyle(
+                                                color: ThemeColors
+                                                    .progressStartColor)),
+                                      ),
+                                    ),
+                                  )
+                              ],
+                            )),
+                      ),
+                    )
+                  ],
                 ),
-              ],
-            )));
+              ));
+        });
   }
 }

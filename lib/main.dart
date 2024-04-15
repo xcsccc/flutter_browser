@@ -101,6 +101,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   late BrowserInfo initInfo;
   GlobalKey<WebViewPagerState> pagerStateKey = GlobalKey();
   GlobalKey<BottomToolState> bottomToolKey = GlobalKey();
+  GlobalKey<SSLCookieState> sslCookieKey = GlobalKey();
   GlobalKey<BrowserPagerListState> browserPagerListState = GlobalKey();
   String initLoadUrl = homeUrl;
   bool isShowPagerAllList = false;
@@ -112,13 +113,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   void changeSearchShow(bool isShow) {
     setState(() {
-      if (!isShow && isShowPagerAllList) {
+      if (!isShow && (isShowPagerAllList || isShowSSLCookie)) {
         isBlackAlphaShow = true;
       } else {
         isBlackAlphaShow = isShow;
       }
       topSearchShow = isShow;
       changePagerAllHide();
+      sslCookieAllHide();
     });
   }
 
@@ -140,6 +142,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       });
     }
     browserPagerListState.currentState!.animationOut();
+  }
+
+  void sslCookieAllHide() {
+    if (isShowSSLCookie && !topSearchShow) {
+      setState(() {
+        isBlackAlphaShow = false;
+      });
+    }
+    sslCookieKey.currentState!.animationOut();
   }
 
   String checkUrlType(String url) {
@@ -308,29 +319,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     FocusScope.of(context).unfocus();
     changeSearchShow(false);
     getPageNowState()?.searchState.currentState?.animationRestart();
-    changePagerAllHide();
-  }
-
-  SSLInfo? getSSLInfo() {
-    var control = getNowControl();
-    var sslInfo = control?.getCertificate();
-    if (sslInfo != null) {
-      sslInfo.then((sslInfo) {
-        if (sslInfo != null) {
-          return SSLInfo(
-            name: sslInfo.issuedBy?.CName ?? "-",
-            end: sslInfo.validNotAfterDate?.timeZoneName ?? "-",
-            oName: sslInfo.issuedBy?.OName ?? "-",
-            ouName: sslInfo.issuedBy?.UName ?? "-",
-            start: sslInfo.validNotBeforeDate?.timeZoneName ?? "-",
-            tName: sslInfo.issuedTo?.CName ?? "-",
-            tOName: sslInfo.issuedTo?.OName ?? "-",
-          );
-        }
-      });
-    }else{
-      return null;
-    }
+    // changePagerAllHide();
+    // sslCookieAllHide();
   }
 
   List<BrowserPagerInfo> getPagerInfos() {
@@ -418,12 +408,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               ?.animationStart();
                         },
                         onInfoClick: () {
-                          setState(() {
-                            isShowSSLCookie = true;
-                          });
                           changePagerAllHide();
+                          if (isShowSSLCookie) {
+                            sslCookieAllHide();
+                          } else {
+                            setState(() {
+                              isShowSSLCookie = true;
+                            });
+                            blackAlphaShow();
+                            sslCookieKey.currentState?.animationIn();
+                          }
                         },
                         onRefreshClick: () {
+                          sslCookieAllHide();
                           changePagerAllHide();
                           var control = getNowControl();
                           if (control != null) {
@@ -436,6 +433,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       )
                     : TopSearchBar(
                         onSearch: (search) {
+                          sslCookieAllHide();
                           changePagerAllHide();
                           searchString = search;
                           getNowControl()?.loadUrl(
@@ -462,6 +460,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         browserPages: browsers,
                         select: selectPosition,
                         positionChange: () {
+                          sslCookieAllHide();
                           changePage();
                         },
                         browserKeys: provider.browserKey,
@@ -477,16 +476,33 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         ),
                       ),
                     // if (progress != 100)
-                    if (isShowSSLCookie)
-                      SSLCookieView(
-                        url: getPageNowState()!.webUrl,
-                        title: title,
-                        sslInfo: getSSLInfo(), onAnimationOut: (){
-                        setState(() {
-                          isShowSSLCookie = false;
-                        });
-                      },
-                      ),
+                    Visibility(
+                        visible: isShowSSLCookie,
+                        maintainState: true,
+                        child: FutureBuilder(
+                          future: getNowControl()?.getCertificate(),
+                          builder: (context, sp) {
+                              return SSLCookieView(
+                              key: sslCookieKey,
+                              url: getPageNowState()?.webUrl ?? "",
+                              title: title,
+                              sslInfo: sp.connectionState == ConnectionState.done ? SSLInfo(
+                                name: sp.data?.issuedBy?.CName ?? "-",
+                                end: sp.data?.validNotAfterDate?.timeZoneName ?? "-",
+                                oName: sp.data?.issuedBy?.OName ?? "-",
+                                ouName: sp.data?.issuedBy?.UName ?? "-",
+                                start: sp.data?.validNotBeforeDate?.timeZoneName ?? "-",
+                                tName: sp.data?.issuedTo?.CName ?? "-",
+                                tOName: sp.data?.issuedTo?.OName ?? "-",
+                              ) : const SSLInfo(name: "-", end: "-", oName: "-", ouName: "-", start: "-", tName: "-", tOName: "-") ,
+                              onAnimationOut: () {
+                                setState(() {
+                                  isShowSSLCookie = false;
+                                });
+                              },
+                            );
+                          },
+                        )),
                     Visibility(
                       visible: isShowPagerAllList,
                       maintainState: true, // 这里设置为 true，保留状态
@@ -524,14 +540,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               key: bottomToolKey,
               pageSize: browsers.length,
               onPageLongClick: () {
+                sslCookieAllHide();
                 changePagerAllHide();
                 copyInit(homeUrl, true);
               },
               onBackClick: () {
+                sslCookieAllHide();
                 changePagerAllHide();
                 changeBack();
               },
               onForwardClick: () async {
+                sslCookieAllHide();
                 changePagerAllHide();
                 var control = getNowControl();
                 if (control != null) {
@@ -542,6 +561,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 }
               },
               onHomeClick: () {
+                sslCookieAllHide();
                 changePagerAllHide();
                 getNowControl()?.loadFile(assetFilePath: homeUrl);
               },
@@ -549,6 +569,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 setState(() {
                   topSearchShow = false;
                 });
+                sslCookieAllHide();
                 if (isShowPagerAllList) {
                   changePagerAllHide();
                 } else {
@@ -560,6 +581,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 }
               },
               onMenuClick: () {
+                sslCookieAllHide();
                 changePagerAllHide();
                 showDialog(
                     context: context,
