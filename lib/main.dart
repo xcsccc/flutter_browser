@@ -13,6 +13,7 @@ import 'package:browser01/web_page/dialog/image_mode_dialog.dart';
 import 'package:browser01/web_page/dialog/user_agent_dialog.dart';
 import 'package:browser01/web_page/main_view/progress_bar.dart';
 import 'package:browser01/web_page/main_view/view.dart';
+import 'package:browser01/web_page/page/bookmark_history_save_page.dart';
 import 'package:browser01/web_page/page/scanner_page.dart';
 import 'package:browser01/web_page/provider/main_provider.dart';
 import 'package:browser01/web_page/web_main_page.dart';
@@ -57,6 +58,7 @@ class MyAppState extends State<MyApp> {
       routes: {
         RouteSetting.mainPage: (context) => const MyHomePage(),
         RouteSetting.scannerPage: (context) => const ScannerPage(),
+        RouteSetting.bookmarkHistorySavePage: (context) => BookmarkAndHistoryAndSavePage(),
       },
       title: 'Flutter Demo',
       theme: provider.currentTheme,
@@ -600,8 +602,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   FuncBottomType.night);
                               break;
                             case FuncBottomType.bookmark:
+                              Navigator.of(context).pop();
+                              isShowChild = true;
+                              Navigator.of(context).pushNamed(RouteSetting.bookmarkHistorySavePage,arguments: 0);
                               break;
                             case FuncBottomType.history:
+                              Navigator.of(context).pop();
+                              isShowChild = true;
+                              Navigator.of(context).pushNamed(RouteSetting.bookmarkHistorySavePage,arguments: 1);
                               break;
                             case FuncBottomType.download:
                               break;

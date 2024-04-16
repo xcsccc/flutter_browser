@@ -134,6 +134,7 @@ extension DataTimeExt on DateTime{
 class RouteSetting {
   static const String mainPage = '/';
   static const String scannerPage = '/scanner';
+  static const String bookmarkHistorySavePage = '/bookmark_history_save';
 }
 
 

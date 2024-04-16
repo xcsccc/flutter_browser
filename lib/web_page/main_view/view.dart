@@ -430,15 +430,16 @@ class SSLCookieState extends State<SSLCookieView>
                                 ),
                                 FutureBuilder(future: widget.cookies, builder: (context,sp){
                                   if (sp.connectionState == ConnectionState.done && sp.data != null && sp.data!.isNotEmpty) {
-                                    return SizedBox(
+                                    return GestureDetector(
+                                      onTap: () {
+                                        widget.onClick();
+                                        showCookiesDialog(sp.data ?? [], widget.url, context);
+                                      },
+                                      child: Container(
                                     width: double.infinity,
                                     height: 50,
-                                    child: GestureDetector(
-                                        onTap: () {
-                                          widget.onClick();
-                                          showCookiesDialog(sp.data ?? [], widget.url, context);
-                                        },
-                                        child: Align(
+                                    color: Colors.transparent,
+                                    child: Align(
                                           alignment: Alignment.centerLeft,
                                           child: Text("Cookies",
                                               style: TextStyle(
@@ -451,15 +452,16 @@ class SSLCookieState extends State<SSLCookieView>
                                   }
                                 }),
                                 if (widget.sslInfo != null)
-                                  SizedBox(
+                                  GestureDetector(
+                                    onTap: () {
+                                      widget.onClick();
+                                      showSSLDialog(widget.sslInfo!, context);
+                                    },
+                                    child: Container(
                                     width: double.infinity,
                                     height: 50,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        widget.onClick();
-                                        showSSLDialog(widget.sslInfo!, context);
-                                      },
-                                      child: Align(
+                                      color: Colors.transparent,
+                                    child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(S
                                             .of(context)

@@ -181,6 +181,7 @@ class BrowserState extends State<BrowserView>
                   onProgressChanged: (control, progress) {
                     // widget.browserInfo.onProgress(progress);
                     setState(() {
+                      print("progress:$progress");
                       this.progress = progress;
                     });
                     if (progress == 100) {
