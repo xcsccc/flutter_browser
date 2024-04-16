@@ -202,7 +202,7 @@ void showCustomMenu(
                                                   Navigator.of(context).pop();
                                                 },
                                                 onCopy: (url) {
-                                                  _copyToClipboard(
+                                                  copyToClipboard(
                                                       url, context);
                                                 },
                                                 size: size,
@@ -256,7 +256,7 @@ void showCustomMenu(
                                           context);
                                       break;
                                     case FunDialogType.copyLinkText:
-                                      _copyToClipboard(
+                                      copyToClipboard(
                                           result.title ?? "", context);
                                       break;
                                     case FunDialogType.scanQR:
@@ -288,7 +288,7 @@ void showCustomMenu(
                                       }
                                       break;
                                     case FunDialogType.copyLink:
-                                      _copyToClipboard(
+                                      copyToClipboard(
                                           result.url.toString(), context);
                                       break;
                                     case FunDialogType.share:
@@ -369,7 +369,7 @@ void loadPicMode(BuildContext context, List<String> imgUrls, BrowserInfo info) {
 }
 
 ///复制文字
-Future<void> _copyToClipboard(String text, BuildContext context) async {
+Future<void> copyToClipboard(String text, BuildContext context) async {
   Clipboard.setData(ClipboardData(text: text));
   toastMsg(S.of(context).copiedSuccessfully);
 }

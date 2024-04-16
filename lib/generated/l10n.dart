@@ -550,6 +550,127 @@ class S {
     );
   }
 
+  /// `Certificate Info`
+  String get certificateInfo {
+    return Intl.message(
+      'Certificate Info',
+      name: 'certificateInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Issued To`
+  String get issuedTo {
+    return Intl.message(
+      'Issued To',
+      name: 'issuedTo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Common Name(CN)`
+  String get commonName {
+    return Intl.message(
+      'Common Name(CN)',
+      name: 'commonName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `organization(O)`
+  String get organization {
+    return Intl.message(
+      'organization(O)',
+      name: 'organization',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Organization Unit(OU)`
+  String get organizationUnit {
+    return Intl.message(
+      'Organization Unit(OU)',
+      name: 'organizationUnit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Issued By`
+  String get issuedBy {
+    return Intl.message(
+      'Issued By',
+      name: 'issuedBy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `VALIDITY PERIOD`
+  String get validityPeriod {
+    return Intl.message(
+      'VALIDITY PERIOD',
+      name: 'validityPeriod',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Issued On`
+  String get issuedOn {
+    return Intl.message(
+      'Issued On',
+      name: 'issuedOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expires On`
+  String get expiresOn {
+    return Intl.message(
+      'Expires On',
+      name: 'expiresOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cookies for {url}`
+  String cookieTitle(Object url) {
+    return Intl.message(
+      'Cookies for $url',
+      name: 'cookieTitle',
+      desc: '',
+      args: [url],
+    );
+  }
+
+  /// `Copy text`
+  String get copyText {
+    return Intl.message(
+      'Copy text',
+      name: 'copyText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{month} {day},{year} {hour}:{minute}`
+  String timeFormat(
+      Object month, Object day, Object year, Object hour, Object minute) {
+    return Intl.message(
+      '$month $day,$year $hour:$minute',
+      name: 'timeFormat',
+      desc: '',
+      args: [month, day, year, hour, minute],
+    );
+  }
+
   /// `Android(Phone),Android(Tablet),Windows(Chrome),Windows(IE 11),macOS,iPhone,iPad,Symbian`
   String get userAgents {
     return Intl.message(

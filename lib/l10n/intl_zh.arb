@@ -49,6 +49,18 @@
   "tool":"工具箱",
   "translate":"翻译",
   "certificate":"查看证书",
+  "certificateInfo":"证书信息",
+  "issuedTo": "颁发对象",
+  "commonName": "公用名（CN）",
+  "organization":"组织（O）",
+  "organizationUnit": "组织单位（OU）",
+  "issuedBy": "颁发者",
+  "validityPeriod": "有效期",
+  "issuedOn": "颁发日期",
+  "expiresOn": "截止日期",
+  "copyText": "复制文本",
+  "cookieTitle": "{url} 的 Cookies",
+  "timeFormat": "{year}年{month}月{day}日 {hour}:{minute}",
   "userAgents": "Android(手机),Android(平板),Windows(Chrome),Windows(IE 11),macOS,iPhone,iPad,塞班(Symbian)",
   "imageModes": "Display Image,Do not display images,Display images only on WiFi"
 }

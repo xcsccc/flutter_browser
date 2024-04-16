@@ -1,3 +1,7 @@
+import 'package:flutter/cupertino.dart';
+
+import '../../generated/l10n.dart';
+
 const String homeUrl = "assets/home.html";
 
 ///拓展函数写法
@@ -37,6 +41,10 @@ extension StringExtension on String {
       String domain = uri.host;
       return [protocol,"://",domain,substring(protocol.length  + 3 + domain.length,length)];
     }
+  }
+
+  String isEmptyToStr(){
+    return isEmpty ? "-" : this;
   }
 
   bool isImageUrl() {
@@ -117,6 +125,11 @@ extension LongExt on int{
   }
 }
 
+extension DataTimeExt on DateTime{
+  String formatTime(BuildContext context){
+    return S.of(context).timeFormat(month, day, year, hour, minute);
+  }
+}
 
 class RouteSetting {
   static const String mainPage = '/';

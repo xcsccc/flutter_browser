@@ -52,6 +52,18 @@
   "@AppStr": {
     "description": "AppStr"
   },
+  "certificateInfo":"Certificate Info",
+  "issuedTo": "Issued To",
+  "commonName": "Common Name(CN)",
+  "organization":"organization(O)",
+  "organizationUnit": "Organization Unit(OU)",
+  "issuedBy": "Issued By",
+  "validityPeriod": "VALIDITY PERIOD",
+  "issuedOn": "Issued On",
+  "expiresOn": "Expires On",
+  "cookieTitle": "Cookies for {url}",
+  "copyText": "Copy text",
+  "timeFormat": "{month} {day},{year} {hour}:{minute}",
   "userAgents": "Android(Phone),Android(Tablet),Windows(Chrome),Windows(IE 11),macOS,iPhone,iPad,Symbian",
   "imageModes": "Display Image,Do not display images,Display images only on WiFi"
 }

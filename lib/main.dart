@@ -257,7 +257,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    debugPrint("selectLocale:${provider.selectLocale}");
     //监听android端的传值
     channel.setMethodCallHandler((call) async {
       if (call.method == invokeMethod) {
@@ -344,8 +343,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     var state = getPageNowState();
     setState(() {
       if (state != null) {
-        debugPrint("positionChange,url:${state.url}");
-        debugPrint("positionChange,title:${state.title}");
         title = state.title;
         searchString = state.url;
       }
@@ -487,18 +484,21 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               url: getPageNowState()?.webUrl ?? "",
                               title: title,
                               sslInfo: sp.connectionState == ConnectionState.done ? SSLInfo(
-                                name: sp.data?.issuedBy?.CName ?? "-",
-                                end: sp.data?.validNotAfterDate?.timeZoneName ?? "-",
-                                oName: sp.data?.issuedBy?.OName ?? "-",
-                                ouName: sp.data?.issuedBy?.UName ?? "-",
-                                start: sp.data?.validNotBeforeDate?.timeZoneName ?? "-",
-                                tName: sp.data?.issuedTo?.CName ?? "-",
-                                tOName: sp.data?.issuedTo?.OName ?? "-",
+                                name: sp.data?.issuedTo?.CName ?? "-",
+                                end: sp.data?.validNotAfterDate?.formatTime(context) ?? "-",
+                                oName: sp.data?.issuedTo?.OName ?? "-",
+                                ouName: sp.data?.issuedTo?.UName ?? "-",
+                                start: sp.data?.validNotBeforeDate?.formatTime(context) ?? "-",
+                                tName: sp.data?.issuedBy?.CName ?? "-",
+                                tOName: sp.data?.issuedBy?.OName ?? "-",
                               ) : const SSLInfo(name: "-", end: "-", oName: "-", ouName: "-", start: "-", tName: "-", tOName: "-") ,
                               onAnimationOut: () {
                                 setState(() {
                                   isShowSSLCookie = false;
                                 });
+
+                              }, cookies: CookieManager().getCookies(url: WebUri(getPageNowState()?.webUrl ?? "") ), onClick: (){
+                                sslCookieAllHide();
                               },
                             );
                           },

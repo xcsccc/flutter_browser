@@ -20,6 +20,11 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'zh';
 
+  static String m0(url) => "${url} 的 Cookies";
+
+  static String m1(month, day, year, hour, minute) =>
+      "${year}年${month}月${day}日 ${hour}:${minute}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "addBookmark": MessageLookupByLibrary.simpleMessage("添加书签"),
@@ -27,11 +32,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "browserFlag": MessageLookupByLibrary.simpleMessage("浏览器标识"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
         "certificate": MessageLookupByLibrary.simpleMessage("查看证书"),
+        "certificateInfo": MessageLookupByLibrary.simpleMessage("证书信息"),
         "clear": MessageLookupByLibrary.simpleMessage("清除数据"),
         "code": MessageLookupByLibrary.simpleMessage("源码"),
+        "commonName": MessageLookupByLibrary.simpleMessage("公用名（CN）"),
+        "cookieTitle": m0,
         "copiedSuccessfully": MessageLookupByLibrary.simpleMessage("复制成功！"),
         "copyLink": MessageLookupByLibrary.simpleMessage("复制链接"),
         "copyLinkText": MessageLookupByLibrary.simpleMessage("复制链接文本"),
+        "copyText": MessageLookupByLibrary.simpleMessage("复制文本"),
         "desktop": MessageLookupByLibrary.simpleMessage("电脑模式"),
         "dialogTitle": MessageLookupByLibrary.simpleMessage("标题:"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
@@ -40,6 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "downloadSize": MessageLookupByLibrary.simpleMessage("文件大小:"),
         "downloadSuccess": MessageLookupByLibrary.simpleMessage("下载成功！"),
         "error": MessageLookupByLibrary.simpleMessage("错误"),
+        "expiresOn": MessageLookupByLibrary.simpleMessage("截止日期"),
         "find": MessageLookupByLibrary.simpleMessage("页内查找"),
         "findRes": MessageLookupByLibrary.simpleMessage("资源嗅探"),
         "fontSize": MessageLookupByLibrary.simpleMessage("字体大小"),
@@ -50,6 +60,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "imageMode": MessageLookupByLibrary.simpleMessage("有图模式"),
         "imageModes": MessageLookupByLibrary.simpleMessage(
             "Display Image,Do not display images,Display images only on WiFi"),
+        "issuedBy": MessageLookupByLibrary.simpleMessage("颁发者"),
+        "issuedOn": MessageLookupByLibrary.simpleMessage("颁发日期"),
+        "issuedTo": MessageLookupByLibrary.simpleMessage("颁发对象"),
         "linkUrl": MessageLookupByLibrary.simpleMessage("选中链接:"),
         "network": MessageLookupByLibrary.simpleMessage("网络日志"),
         "night": MessageLookupByLibrary.simpleMessage("夜间模式"),
@@ -57,6 +70,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "ok": MessageLookupByLibrary.simpleMessage("确定"),
         "openBg": MessageLookupByLibrary.simpleMessage("后台打开"),
         "openNew": MessageLookupByLibrary.simpleMessage("新标签打开"),
+        "organization": MessageLookupByLibrary.simpleMessage("组织（O）"),
+        "organizationUnit": MessageLookupByLibrary.simpleMessage("组织单位（OU）"),
         "pageInfo": MessageLookupByLibrary.simpleMessage("页面信息"),
         "pageUrl": MessageLookupByLibrary.simpleMessage("页面链接:"),
         "pdf": MessageLookupByLibrary.simpleMessage("打印/PDF"),
@@ -72,10 +87,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "setting": MessageLookupByLibrary.simpleMessage("设置"),
         "share": MessageLookupByLibrary.simpleMessage("分享"),
         "shareImage": MessageLookupByLibrary.simpleMessage("分享图片"),
+        "timeFormat": m1,
         "tool": MessageLookupByLibrary.simpleMessage("工具箱"),
         "translate": MessageLookupByLibrary.simpleMessage("翻译"),
         "userAgents": MessageLookupByLibrary.simpleMessage(
             "Android(手机),Android(平板),Windows(Chrome),Windows(IE 11),macOS,iPhone,iPad,塞班(Symbian)"),
+        "validityPeriod": MessageLookupByLibrary.simpleMessage("有效期"),
         "viewImage": MessageLookupByLibrary.simpleMessage("查看图片")
       };
 }

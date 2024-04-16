@@ -1,9 +1,12 @@
 import 'package:browser01/web_page/color/colors.dart';
 import 'package:browser01/web_page/custom/custom.dart';
 import 'package:browser01/web_page/custom/image_path.dart';
+import 'package:browser01/web_page/dialog/cookie_dialog.dart';
+import 'package:browser01/web_page/dialog/ssl_dialog.dart';
 import 'package:browser01/web_page/now_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../../generated/l10n.dart';
 
 class BrowserPagerInfo {
@@ -251,16 +254,17 @@ class SSLInfo {
 class SSLCookieView extends StatefulWidget {
   final String url;
   final String title;
-  final String? cookies;
+  final Future<List<Cookie>> cookies;
   final SSLInfo? sslInfo;
   final Function onAnimationOut;
+  final Function onClick;
 
   const SSLCookieView({super.key,
     required this.url,
     required this.title,
-    this.cookies,
+    required this.cookies,
     this.sslInfo,
-    required this.onAnimationOut});
+    required this.onAnimationOut, required this.onClick});
 
   @override
   State<StatefulWidget> createState() => SSLCookieState();
@@ -297,7 +301,7 @@ class SSLCookieState extends State<SSLCookieView>
     });
     _controller.reset();
     _animation = Tween<Offset>(
-      begin: const Offset(0, -1),
+      begin: const Offset(0, -0.2),
       end: const Offset(0, 0),
     ).animate(CurvedAnimation(
       parent: _controller,
@@ -319,7 +323,7 @@ class SSLCookieState extends State<SSLCookieView>
     _controller.reset();
     _animation = Tween<Offset>(
       begin: const Offset(0, 0),
-      end: const Offset(0, -1),
+      end: const Offset(0, -0.2),
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
@@ -413,23 +417,27 @@ class SSLCookieState extends State<SSLCookieView>
                                     IconImageButton(
                                       res: AppImages.history,
                                       onClick: () {
-
+                                        widget.onClick();
                                       },
                                     ),
                                     IconImageButton(
                                       res: AppImages.qr,
                                       onClick: () {
-
+                                        widget.onClick();
                                       },
                                     )
                                   ],
                                 ),
-                                if (widget.cookies != null)
-                                  SizedBox(
+                                FutureBuilder(future: widget.cookies, builder: (context,sp){
+                                  if (sp.connectionState == ConnectionState.done && sp.data != null && sp.data!.isNotEmpty) {
+                                    return SizedBox(
                                     width: double.infinity,
                                     height: 50,
                                     child: GestureDetector(
-                                        onTap: () {},
+                                        onTap: () {
+                                          widget.onClick();
+                                          showCookiesDialog(sp.data ?? [], widget.url, context);
+                                        },
                                         child: Align(
                                           alignment: Alignment.centerLeft,
                                           child: Text("Cookies",
@@ -437,13 +445,20 @@ class SSLCookieState extends State<SSLCookieView>
                                                   color: ThemeColors
                                                       .progressStartColor)),
                                         )),
-                                  ),
+                                  );
+                                  } else {
+                                    return Container();
+                                  }
+                                }),
                                 if (widget.sslInfo != null)
                                   SizedBox(
                                     width: double.infinity,
                                     height: 50,
                                     child: GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        widget.onClick();
+                                        showSSLDialog(widget.sslInfo!, context);
+                                      },
                                       child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(S

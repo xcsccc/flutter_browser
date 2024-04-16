@@ -55,13 +55,14 @@ class ProgressBarState extends State<ProgressBarAnimate>
   @override
   void didUpdateWidget(covariant ProgressBarAnimate oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.end != oldWidget.end && widget.end - oldWidget.end >= 20) {
+    if (widget.end != oldWidget.end && widget.end - start >= 20 && animation.isCompleted) {
       if (widget.end != 100 && isShow == false) {
         setState(() {
           isShow = true;
         });
       }
       if (isFinish) {
+        nextAnimation = false;
         startAnimation();
       } else {
         nextAnimation = true;
