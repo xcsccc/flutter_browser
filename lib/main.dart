@@ -17,6 +17,7 @@ import 'package:browser01/web_page/model/HistoryInfo.g.dart';
 import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/page/bookmark_history_save_page.dart';
 import 'package:browser01/web_page/page/scanner_page.dart';
+import 'package:browser01/web_page/page/SettingPage.dart';
 import 'package:browser01/web_page/provider/main_provider.dart';
 import 'package:browser01/web_page/web_main_page.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +64,7 @@ class MyAppState extends State<MyApp> {
         RouteSetting.mainPage: (context) => const MyHomePage(),
         RouteSetting.scannerPage: (context) => const ScannerPage(),
         RouteSetting.bookmarkHistorySavePage: (context) => BookmarkAndHistoryAndSavePage(),
+        RouteSetting.settings: (context) => const SettingPage(),
       },
       title: 'Flutter Demo',
       theme: provider.currentTheme,
@@ -644,6 +646,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                             case FuncBottomType.tool:
                               break;
                             case FuncBottomType.setting:
+                              Navigator.of(context).pop();
+                              isShowChild = true;
+                              Navigator.of(context).pushNamed(RouteSetting.settings,arguments: 2);
                               break;
                             case FuncBottomType.find:
                               break;
