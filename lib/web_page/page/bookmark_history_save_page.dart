@@ -254,6 +254,9 @@ class _GroupInfoItemState extends State<GroupInfoItem> {
       onTapDown: (details) {
         this.details = details;
       },
+      onTap: (){
+        Navigator.of(context).pop(UrlOpenType(url: widget.info.url, isNowOpen: true));
+      },
       onLongPress: () {
         if (details != null) {
           showHistoryMenu(

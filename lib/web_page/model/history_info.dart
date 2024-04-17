@@ -10,12 +10,8 @@ class HistoryInfo{
   final String url;
   @HiveField(2)
   final int time;
-  @HiveField(3)
-  int id;
 
-  HistoryInfo({required this.title,required this.url,required this.time,this.id = 0}){
-    id = getAll().length;
-  }
+  HistoryInfo({required this.title,required this.url,required this.time});
 
   static Box<HistoryInfo> openBox() {
     return Hive.box<HistoryInfo>(historyInfoKey);
@@ -26,7 +22,7 @@ class HistoryInfo{
   }
   
   void delete(){
-    openBox().delete(getAll().where((element) => element == this).first.id);
+    openBox().deleteAt(getAll().indexWhere((element) => element == this,-1));
   }
 
   @override
