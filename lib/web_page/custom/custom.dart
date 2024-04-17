@@ -230,11 +230,6 @@ extension DataTimeExt on DateTime {
   }
 }
 
-DateTime nowDay() {
-  var data = DateTime.now();
-  return DateTime(data.year, data.month, data.day);
-}
-
 class RouteSetting {
   static const String mainPage = '/';
   static const String scannerPage = '/scanner';

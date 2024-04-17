@@ -45,6 +45,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "copyLink": MessageLookupByLibrary.simpleMessage("Copy link"),
         "copyLinkText": MessageLookupByLibrary.simpleMessage("Copy link text"),
         "copyText": MessageLookupByLibrary.simpleMessage("Copy text"),
+        "delete": MessageLookupByLibrary.simpleMessage("delete"),
         "desktop": MessageLookupByLibrary.simpleMessage("Desktop site"),
         "dialogTitle": MessageLookupByLibrary.simpleMessage("Title:"),
         "download": MessageLookupByLibrary.simpleMessage("Downloads"),

@@ -660,6 +660,16 @@ class S {
     );
   }
 
+  /// `delete`
+  String get delete {
+    return Intl.message(
+      'delete',
+      name: 'delete',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `{weekday},{month} {day}`
   String timeFormatInfo(Object weekday, Object month, Object day) {
     return Intl.message(

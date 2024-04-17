@@ -9,6 +9,7 @@ import 'package:android_intent_plus/flag.dart';
 import 'package:browser01/web_page/color/colors.dart';
 import 'package:browser01/web_page/custom/image_path.dart';
 import 'package:browser01/web_page/dialog/page_info_dialog.dart';
+import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/provider/main_provider.dart';
 import 'package:browser01/web_page/web_main_page.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -29,22 +30,6 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import '../../generated/l10n.dart';
 import '../custom/custom.dart';
-
-enum FunDialogType {
-  openBackground,
-  openNew,
-  viewImage,
-  saveImage,
-  shareImage,
-  pictureMode,
-  pageInfo,
-  copyLinkText,
-  scanQR,
-  copyLink,
-  share;
-
-  const FunDialogType();
-}
 
 List<String> _findName(List<FunDialogType> list, BuildContext context) {
   return list.map((element) {
@@ -71,8 +56,27 @@ List<String> _findName(List<FunDialogType> list, BuildContext context) {
         return S.of(context).copyLink;
       case FunDialogType.share:
         return S.of(context).share;
+      case FunDialogType.delete:
+        return S.of(context).delete;
     }
   }).toList();
+}
+
+enum FunDialogType {
+  openBackground,
+  openNew,
+  viewImage,
+  saveImage,
+  shareImage,
+  pictureMode,
+  pageInfo,
+  copyLinkText,
+  scanQR,
+  copyLink,
+  delete,
+  share;
+
+  const FunDialogType();
 }
 
 List<FunDialogType> _findDialogTypeList(RequestFocusNodeHrefResult result) {
@@ -85,28 +89,28 @@ List<FunDialogType> _findDialogTypeList(RequestFocusNodeHrefResult result) {
           element == FunDialogType.pageInfo ||
           element == FunDialogType.share;
     } else if (result.src != null && result.url == null) {
-      return element != FunDialogType.openBackground &&
-          element != FunDialogType.openNew &&
-          element != FunDialogType.copyLink &&
-          element != FunDialogType.copyLinkText;
+      return element == FunDialogType.viewImage &&
+          element == FunDialogType.saveImage &&
+          element == FunDialogType.shareImage &&
+          element == FunDialogType.pictureMode &&
+          element == FunDialogType.pageInfo &&
+          element == FunDialogType.scanQR &&
+          element == FunDialogType.share;
     } else {
       return true;
     }
   }).toList();
 }
 
-void showCustomMenu(
+void showCustom(
     BuildContext context,
     double x,
     double y,
-    RequestFocusNodeHrefResult result,
-    BrowserInfo info,
-    String title,
-    String url,
-    List<String> imgUrls) {
-  var provider = Provider.of<GlobalProvider>(context, listen: false);
-  var list = _findDialogTypeList(result);
-  var initList = _findName(list, context);
+    List<FunDialogType> list,
+    List<String> initList,
+    GlobalProvider provider,
+    Future<void> Function(FunDialogType, OverlayEntry?) onTop) {
+  provider.showFunDialog();
   OverlayEntry? overlayEntry;
   double screenWidth = MediaQuery.of(context).size.width;
   double screenHeight = MediaQuery.of(context).size.height;
@@ -159,143 +163,14 @@ void showCustomMenu(
                           shrinkWrap: true,
                           itemCount: list.length,
                           itemExtent: 50,
+                          physics: const BouncingScrollPhysics(),
                           itemBuilder: (mContext, index) {
                             var item = list[index];
                             return ListTile(
                                 title: Text(initList[index],
                                     style: const TextStyle(fontSize: 15)),
-                                onTap: () async {
-                                  provider.hideFunDialog();
-                                  switch (item) {
-                                    case FunDialogType.openBackground:
-                                      info.onNewWindow(
-                                          result.url.toString(), false);
-                                      break;
-                                    case FunDialogType.openNew:
-                                      info.onNewWindow(
-                                          result.url.toString(), true);
-                                      break;
-                                    case FunDialogType.viewImage:
-                                      info.onNewWindow(
-                                          result.src.toString(), true);
-                                      break;
-                                    case FunDialogType.saveImage:
-                                      {
-                                        provider.showDownloadDialog();
-                                        var name =
-                                            "${DateTime.now().millisecondsSinceEpoch}_img.png";
-                                        var size = 0;
-                                        if (result.src.toString().isUrl()) {
-                                          size = await getImageSize(
-                                              result.src.toString());
-                                        } else {
-                                          size = getBase64ImageSize(result.src
-                                              .toString()
-                                              .splitBase64());
-                                        }
-                                        showDownloadDialog(
-                                            DownloadInfo(
-                                                name: name,
-                                                url: result.src.toString(),
-                                                onCancel: () {
-                                                  provider.hideDownloadDialog();
-                                                  Navigator.of(context).pop();
-                                                },
-                                                onCopy: (url) {
-                                                  copyToClipboard(
-                                                      url, context);
-                                                },
-                                                size: size,
-                                                onOK: (nowName) async {
-                                                  provider.hideDownloadDialog();
-                                                  save() async {
-                                                    var isAndroidSdkMax34 =
-                                                        await onDownloadCheck();
-                                                    onG() async {
-                                                      await saveImageRefreshPhotoAlbum(
-                                                          result.src ?? "",
-                                                          nowName,
-                                                          context);
-                                                    }
-
-                                                    if (Platform.isIOS) {
-                                                      await onG();
-                                                    } else if (isAndroidSdkMax34) {
-                                                      await onG();
-                                                    } else {
-                                                      await requestStoragePermission(
-                                                          [Permission.storage],
-                                                          context,
-                                                          onG);
-                                                    }
-                                                  }
-
-                                                  await save();
-                                                  Navigator.of(context).pop();
-                                                }),
-                                            context,
-                                            provider);
-                                      }
-
-                                      break;
-                                    case FunDialogType.shareImage:
-                                      await _shareImage(
-                                          result.src ?? result.url.toString(),
-                                          context);
-                                      break;
-                                    case FunDialogType.pictureMode:
-                                      loadPicMode(context, imgUrls, info);
-                                      break;
-                                    case FunDialogType.pageInfo:
-                                      showPageInfoDialog(
-                                          title,
-                                          url,
-                                          result.url == null
-                                              ? result.src.toString()
-                                              : result.url.toString(),
-                                          context);
-                                      break;
-                                    case FunDialogType.copyLinkText:
-                                      copyToClipboard(
-                                          result.title ?? "", context);
-                                      break;
-                                    case FunDialogType.scanQR:
-                                      try {
-                                        var name =
-                                            "${DateTime.now().millisecondsSinceEpoch}_img.png";
-                                        var path = await saveImageInLocale(
-                                            await getApplicationDocumentsDirectory(),
-                                            result.src.toString(),
-                                            context,
-                                            name);
-                                        String? qrCodeResult;
-                                        if (path != null) {
-                                          qrCodeResult =
-                                              await FlutterQrReader.imgScan(
-                                                  path);
-                                          if (qrCodeResult.isEmpty) {
-                                            toastMsg(
-                                                S.of(context)
-                                                    .qRNotRecognized);
-                                          } else {
-                                            info.onNewWindow(
-                                                qrCodeResult, true);
-                                          }
-                                        }
-                                      } catch (e) {
-                                        toastMsg(S.of(context)
-                                            .qRNotRecognized);
-                                      }
-                                      break;
-                                    case FunDialogType.copyLink:
-                                      copyToClipboard(
-                                          result.url.toString(), context);
-                                      break;
-                                    case FunDialogType.share:
-                                      _shareText(result.url.toString());
-                                      break;
-                                  }
-                                  overlayEntry?.remove();
+                                onTap: () {
+                                  onTop(item, overlayEntry);
                                 });
                           },
                         )),
@@ -308,6 +183,171 @@ void showCustomMenu(
   );
 
   Overlay.of(context).insert(overlayEntry);
+}
+
+class UrlOpenType{
+  final bool isNowOpen;
+  final String url;
+  const UrlOpenType({required this.url,required this.isNowOpen});
+}
+
+void showHistoryMenu(BuildContext context, double x, double y, HistoryInfo historyInfo) {
+  var provider = Provider.of<GlobalProvider>(context, listen: false);
+  var list = [
+    FunDialogType.openBackground,
+    FunDialogType.openNew,
+    FunDialogType.delete,
+    FunDialogType.copyLink,
+    FunDialogType.share
+  ];
+  var initList = _findName(list, context);
+  showCustom(context, x, y, list, initList, provider, (item, over) async {
+    provider.hideFunDialog();
+    switch (item) {
+      case FunDialogType.openBackground:
+        Navigator.of(context).pop(UrlOpenType(url: historyInfo.url.toString(), isNowOpen: false));
+        break;
+      case FunDialogType.openNew:
+        Navigator.of(context).pop(UrlOpenType(url: historyInfo.url.toString(), isNowOpen: true));
+        break;
+      case FunDialogType.delete:
+        provider.historyDelete(historyInfo);
+        break;
+      case FunDialogType.copyLink:
+        copyToClipboard(historyInfo.url, context);
+        break;
+      case FunDialogType.share:
+        _shareText(historyInfo.url.toString());
+        break;
+      default:
+        break;
+    }
+    over?.remove();
+  });
+}
+
+void showCustomMenu(
+    BuildContext context,
+    double x,
+    double y,
+    BrowserInfo info,
+    RequestFocusNodeHrefResult result,
+    String title,
+    String url,
+    List<String> imgUrls) {
+  var provider = Provider.of<GlobalProvider>(context, listen: false);
+  var list = _findDialogTypeList(result);
+  var initList = _findName(list, context);
+  showCustom(context, x, y, list, initList, provider,
+      (item, overlayEntry) async {
+    provider.hideFunDialog();
+    switch (item) {
+      case FunDialogType.openBackground:
+        info.onNewWindow(result.url.toString(), false);
+        break;
+      case FunDialogType.openNew:
+        info.onNewWindow(result.url.toString(), true);
+        break;
+      case FunDialogType.viewImage:
+        info.onNewWindow(result.src.toString(), true);
+        break;
+      case FunDialogType.saveImage:
+        {
+          provider.showDownloadDialog();
+          var name = "${DateTime.now().millisecondsSinceEpoch}_img.png";
+          var size = 0;
+          if (result.src.toString().isUrl()) {
+            size = await getImageSize(result.src.toString());
+          } else {
+            size = getBase64ImageSize(result.src.toString().splitBase64());
+          }
+          showDownloadDialog(
+              DownloadInfo(
+                  name: name,
+                  url: result.src.toString(),
+                  onCancel: () {
+                    provider.hideDownloadDialog();
+                    Navigator.of(context).pop();
+                  },
+                  onCopy: (url) {
+                    copyToClipboard(url, context);
+                  },
+                  size: size,
+                  onOK: (nowName) async {
+                    provider.hideDownloadDialog();
+                    save() async {
+                      var isAndroidSdkMax34 = await onDownloadCheck();
+                      onG() async {
+                        await saveImageRefreshPhotoAlbum(
+                            result.src ?? "", nowName, context);
+                      }
+
+                      if (Platform.isIOS) {
+                        await onG();
+                      } else if (isAndroidSdkMax34) {
+                        await onG();
+                      } else {
+                        await requestStoragePermission(
+                            [Permission.storage], context, onG);
+                      }
+                    }
+
+                    await save();
+                    Navigator.of(context).pop();
+                  }),
+              context,
+              provider);
+        }
+
+        break;
+      case FunDialogType.shareImage:
+        await _shareImage(result.src ?? result.url.toString(), context);
+        break;
+      case FunDialogType.pictureMode:
+        loadPicMode(context, imgUrls, info);
+        break;
+      case FunDialogType.pageInfo:
+        showPageInfoDialog(
+            title,
+            url,
+            result.url == null ? result.src.toString() : result.url.toString(),
+            context);
+        break;
+      case FunDialogType.copyLinkText:
+        copyToClipboard(result.title ?? "", context);
+        break;
+      case FunDialogType.scanQR:
+        try {
+          var name = "${DateTime.now().millisecondsSinceEpoch}_img.png";
+          var path = await saveImageInLocale(
+              await getApplicationDocumentsDirectory(),
+              result.src.toString(),
+              context,
+              name);
+          String? qrCodeResult;
+          if (path != null) {
+            qrCodeResult = await FlutterQrReader.imgScan(path);
+            if (qrCodeResult.isEmpty) {
+              toastMsg(S.of(context).qRNotRecognized);
+            } else {
+              info.onNewWindow(qrCodeResult, true);
+            }
+          }
+        } catch (e) {
+          toastMsg(S.of(context).qRNotRecognized);
+        }
+        break;
+      case FunDialogType.copyLink:
+        copyToClipboard(result.url.toString(), context);
+        break;
+      case FunDialogType.share:
+        _shareText(result.url.toString());
+        break;
+      default:
+        break;
+    }
+    overlayEntry?.remove();
+  });
 }
 
 Future<int> getImageSize(String imageUrl) async {
@@ -400,11 +440,8 @@ Future<void> saveImageRefreshPhotoAlbum(
   if (imagePath != null) {
     await GallerySaver.saveImage(imagePath);
     onG() async {
-      await notificationShow(
-          "download01",
-          "dwonloadImg",
-          imagePath.split('/').last,
-          S.of(context).downloadSuccess, (d) async {
+      await notificationShow("download01", "dwonloadImg",
+          imagePath.split('/').last, S.of(context).downloadSuccess, (d) async {
         if (Platform.isAndroid) {
           var intent = AndroidIntent(
             action: 'action_view',
@@ -593,102 +630,102 @@ class DownloadDialogState extends State<DownloadDialog> {
                   child: Container(
                     color: Colors.black45,
                     child: CustomBaseDialog(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              S.of(context).downloadDialogTitle,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w500, fontSize: 15),
-                            ),
-                            TextField(
-                                controller: _controller,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  hintStyle: TextStyle(fontSize: 12),
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                onChanged: (value) {
-                                  setState(() {
-                                    nameStr = value;
-                                  });
-                                },
-                                style: const TextStyle(fontSize: 12)),
-                            const Divider(height: 5, color: Colors.transparent),
-                            Divider(
-                                height: 2,
-                                color: Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? ThemeColors.secondLightColor
-                                    : ThemeColors.secondDartColor),
-                            const Divider(height: 5, color: Colors.transparent),
-                            Row(
-                              children: [
-                                Text(
-                                  S.of(context).downloadSize,
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.light
-                                          ? ThemeColors.secondLightColor
-                                          : ThemeColors.secondDartColor),
-                                ),
-                                Text(
-                                  widget.info.size.toFileSize(),
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.light
-                                          ? ThemeColors.secondLightColor
-                                          : ThemeColors.secondDartColor),
-                                ),
-                              ],
-                            ),
-                            const Divider(
-                              height: 20,
-                              color: Colors.transparent,
-                            ),
-                            Row(children: [
-                              GestureDetector(
-                                  onTap: () {
-                                    widget.info.onCopy(widget.info.url);
-                                  },
-                                  child: Text(
-                                    S.of(context).copyLink,
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color: ThemeColors.progressStartColor),
-                                  )),
-                              Expanded(
-                                child: Container(),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            S.of(context).downloadDialogTitle,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 15),
+                          ),
+                          TextField(
+                              controller: _controller,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(fontSize: 12),
                               ),
-                              GestureDetector(
-                                  onTap: () {
-                                    widget.info.onCancel();
-                                  },
-                                  child: Text(
-                                    S.of(context).cancel,
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color: ThemeColors.progressStartColor),
-                                  )),
-                              const Padding(padding: EdgeInsets.only(left: 25)),
-                              GestureDetector(
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              onChanged: (value) {
+                                setState(() {
+                                  nameStr = value;
+                                });
+                              },
+                              style: const TextStyle(fontSize: 12)),
+                          const Divider(height: 5, color: Colors.transparent),
+                          Divider(
+                              height: 2,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? ThemeColors.secondLightColor
+                                  : ThemeColors.secondDartColor),
+                          const Divider(height: 5, color: Colors.transparent),
+                          Row(
+                            children: [
+                              Text(
+                                S.of(context).downloadSize,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? ThemeColors.secondLightColor
+                                        : ThemeColors.secondDartColor),
+                              ),
+                              Text(
+                                widget.info.size.toFileSize(),
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? ThemeColors.secondLightColor
+                                        : ThemeColors.secondDartColor),
+                              ),
+                            ],
+                          ),
+                          const Divider(
+                            height: 20,
+                            color: Colors.transparent,
+                          ),
+                          Row(children: [
+                            GestureDetector(
                                 onTap: () {
-                                  widget.info.onOK(nameStr);
+                                  widget.info.onCopy(widget.info.url);
                                 },
                                 child: Text(
-                                  S.of(context).ok,
+                                  S.of(context).copyLink,
                                   style: TextStyle(
                                       fontSize: 15,
                                       color: ThemeColors.progressStartColor),
-                                ),
+                                )),
+                            Expanded(
+                              child: Container(),
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  widget.info.onCancel();
+                                },
+                                child: Text(
+                                  S.of(context).cancel,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: ThemeColors.progressStartColor),
+                                )),
+                            const Padding(padding: EdgeInsets.only(left: 25)),
+                            GestureDetector(
+                              onTap: () {
+                                widget.info.onOK(nameStr);
+                              },
+                              child: Text(
+                                S.of(context).ok,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: ThemeColors.progressStartColor),
                               ),
-                            ])
-                          ],
-                        ),
+                            ),
+                          ])
+                        ],
                       ),
+                    ),
                   ),
                 ))));
   }
@@ -702,23 +739,23 @@ class CustomBaseDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            child: Container(
-                decoration: BoxDecoration(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        child: Container(
+            decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.white
+                    : ThemeColors.iconColorDark,
+                border: Border.all(
                     color: Theme.of(context).brightness == Brightness.light
-                        ? Colors.white
+                        ? ThemeColors.iconColorLight
                         : ThemeColors.iconColorDark,
-                    border: Border.all(
-                        color: Theme.of(context).brightness == Brightness.light
-                            ? ThemeColors.iconColorLight
-                            : ThemeColors.iconColorDark,
-                        width: 1),
-                    borderRadius: const BorderRadius.all(Radius.circular(20))),
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: child,
-                )));
+                    width: 1),
+                borderRadius: const BorderRadius.all(Radius.circular(20))),
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: child,
+            )));
   }
 }
 

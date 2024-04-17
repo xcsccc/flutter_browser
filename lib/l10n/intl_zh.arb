@@ -59,6 +59,7 @@
   "issuedOn": "颁发日期",
   "expiresOn": "截止日期",
   "copyText": "复制文本",
+  "delete": "删除",
   "cookieTitle": "{url} 的 Cookies",
   "timeFormatInfo": "{month}月{day}日 {weekday}",
   "timeFormat": "{year}年{month}月{day}日 {hour}:{minute}",

@@ -43,6 +43,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "copyLink": MessageLookupByLibrary.simpleMessage("复制链接"),
         "copyLinkText": MessageLookupByLibrary.simpleMessage("复制链接文本"),
         "copyText": MessageLookupByLibrary.simpleMessage("复制文本"),
+        "delete": MessageLookupByLibrary.simpleMessage("删除"),
         "desktop": MessageLookupByLibrary.simpleMessage("电脑模式"),
         "dialogTitle": MessageLookupByLibrary.simpleMessage("标题:"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),

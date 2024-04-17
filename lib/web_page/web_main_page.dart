@@ -155,14 +155,14 @@ class BrowserState extends State<BrowserView>
                     var info = await control.requestFocusNodeHref();
                     if (info != null) {
                       if (info.url != null || info.src != null) {
-                        provider.showFunDialog();
+
                         // ignore: use_build_context_synchronously
                         showCustomMenu(
                             context,
                             details?.globalPosition.dx ?? 0,
                             details?.globalPosition.dy ?? 0,
-                            info,
                             widget.browserInfo,
+                            info,
                             title,
                             webUrl,
                             imgUrls);
@@ -233,7 +233,7 @@ class BrowserState extends State<BrowserView>
                       HistoryInfo(
                           title: title,
                           url: url.toString(),
-                          time: nowDay().millisecondsSinceEpoch).save();
+                          time: DateTime.now().millisecondsSinceEpoch).save();
                     }
                     if (_isSelect) {
                       widget.browserInfo.onTitleChange(title);
