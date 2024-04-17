@@ -4,6 +4,7 @@ import 'package:browser01/web_page/now_icon.dart';
 import 'package:flutter/material.dart';
 
 import '../../generated/l10n.dart';
+import '../custom/custom.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -31,27 +32,34 @@ class SettingState extends State<SettingPage> {
         resizeToAvoidBottomInset: false,
         body: SafeArea(
             child: Column(children: [
-          Row(
-            children: [
-              IconImageButton(
-                res: AppImages.back,
-                onClick: () {
-                  Navigator.of(context).pop(null);
-                },
-                radius: 10,
-              ),
-              Text(S.of(context).setting,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16))
-            ],
-          ),
+          Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              child: Row(
+                children: [
+                  IconImageButton(
+                    res: AppImages.back,
+                    onClick: () {
+                      Navigator.of(context).pop(null);
+                    },
+                    radius: 10,
+                  ),
+                  Text(S.of(context).setting,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16))
+                ],
+              )),
           Divider(height: 1, thickness: 1.2, color: ThemeColors.divideColor),
           Expanded(
               child: ListView.builder(
                   itemCount: settingList.length,
                   itemBuilder: (context, index) {
                     return settingItem(settingList[index], () {
-                      Navigator.of(context).pop(null);
+                      if (index == settingList.length - 1) {
+                        Navigator.of(context)
+                            .pushNamed(RouteSetting.aboutPage, arguments: 3);
+                      } else {
+                        Navigator.of(context).pop(null);
+                      }
                     });
                   }))
         ])));

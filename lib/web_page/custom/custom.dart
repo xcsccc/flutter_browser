@@ -240,6 +240,7 @@ class RouteSetting {
   static const String scannerPage = '/scanner';
   static const String bookmarkHistorySavePage = '/bookmark_history_save';
   static const String settings = '/settings';
+  static const String aboutPage = '/aboutPage';
 }
 
 enum FuncBottomType {
