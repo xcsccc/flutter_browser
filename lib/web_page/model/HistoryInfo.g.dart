@@ -15,6 +15,7 @@ class HistoryInfoAdapter extends TypeAdapter<HistoryInfo> {
       title: fields[0] as String,
       url: fields[1] as String,
       time: fields[2] as int,
+      id: fields[3] as int,
     );
   }
 
@@ -28,6 +29,8 @@ class HistoryInfoAdapter extends TypeAdapter<HistoryInfo> {
       ..write(obj.url)
       ..writeByte(2)
       ..write(obj.time)
+      ..writeByte(3)
+      ..write(obj.id)
     ;
   }
 

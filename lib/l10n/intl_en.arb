@@ -63,6 +63,7 @@
   "expiresOn": "Expires On",
   "cookieTitle": "Cookies for {url}",
   "copyText": "Copy text",
+  "delete": "delete",
   "timeFormatInfo": "{weekday},{month} {day}",
   "timeFormat": "{month} {day},{year} {hour}:{minute}",
   "userAgents": "Android(Phone),Android(Tablet),Windows(Chrome),Windows(IE 11),macOS,iPhone,iPad,Symbian",

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:browser01/web_page/custom/custom.dart';
+import 'package:browser01/web_page/model/history_info.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,6 +29,8 @@ class GlobalProvider with ChangeNotifier{
   late SearchEnginType selectEngin = SearchEnginType.values[Hive.box(intKey).get(searchEnginKey,defaultValue: 0)];
   late InAppWebViewSettings settings = updateSettings();
 
+  List<HistoryInfo> get historyInfo  => HistoryInfo.getAll();
+
   List<FuncBottomInfo> getFuncBottomInfoList(List<FuncBottomInfo> init){
     var list = FuncBottomInfo.getAll();
     if(list.isEmpty){
@@ -35,6 +38,11 @@ class GlobalProvider with ChangeNotifier{
       list = init;
     }
     return list;
+  }
+
+  void historyDelete(HistoryInfo history){
+    history.delete();
+    notifyListeners();
   }
 
   InAppWebViewSettings updateSettings(){
