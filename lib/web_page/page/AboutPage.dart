@@ -4,6 +4,7 @@ import 'package:browser01/web_page/now_icon.dart';
 import 'package:flutter/material.dart';
 
 import '../../generated/l10n.dart';
+import '../custom/custom.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -84,7 +85,10 @@ class AboutState extends State<AboutPage> {
           SizedBox(
               width: double.infinity,
               child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(RouteSetting.openSource, arguments: 4);
+                  },
                   customBorder: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0), // 设置圆角半径为10.0
                   ),

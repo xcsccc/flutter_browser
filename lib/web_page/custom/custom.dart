@@ -78,10 +78,10 @@ extension StringExtension on String {
     return this;
   }
 
-  String? iconUrl(){
-    try{
-     return "${extractDomainWithProtocol()}/favicon.ico";
-    }catch(e){
+  String? iconUrl() {
+    try {
+      return "${extractDomainWithProtocol()}/favicon.ico";
+    } catch (e) {
       return null;
     }
   }
@@ -236,6 +236,7 @@ class RouteSetting {
   static const String bookmarkHistorySavePage = '/bookmark_history_save';
   static const String settings = '/settings';
   static const String aboutPage = '/aboutPage';
+  static const String openSource = '/openSource';
 }
 
 enum FuncBottomType {
@@ -310,3 +311,30 @@ enum ImageModeType {
 
   const ImageModeType(this.modeDesc);
 }
+
+List<String> sourceList = [
+  "flutter_inappwebview",
+  "cached_network_image",
+  "hive",
+  "provider",
+  "hive_flutter",
+  "intl",
+  "flutter_phoenix",
+  "permission_handler",
+  "share_plus",
+  "gallery_saver",
+  "path_provider",
+  "http",
+  "fluttertoast",
+  "flutter_local_notifications",
+  "android_intent_plus",
+  "url_launcher",
+  "device_info_plus",
+  "flutter_qr_reader",
+  "ai_barcode_scanner",
+  "image_picker",
+  "expandable_page_view",
+  "marquee",
+  "cupertino_icons",
+  "connectivity"
+];
