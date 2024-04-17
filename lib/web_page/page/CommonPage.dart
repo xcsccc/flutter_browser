@@ -7,19 +7,20 @@ class CommonPage extends StatefulWidget {
   final Widget bottomChild;
   final Widget centerChild;
   final Function(String) searchChange;
+  final String searchInit;
 
   const CommonPage(
       {super.key,
       required this.bottomChild,
       required this.centerChild,
-      required this.searchChange});
+      required this.searchChange,this.searchInit = ""});
 
   @override
   State<StatefulWidget> createState() => _CommonState();
 }
 
 class _CommonState extends State<CommonPage> {
-  TextEditingController controller = TextEditingController();
+  late TextEditingController controller = TextEditingController(text:widget.searchInit);
 
   @override
   Widget build(BuildContext context) {

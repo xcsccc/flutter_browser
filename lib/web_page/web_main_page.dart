@@ -151,6 +151,23 @@ class BrowserState extends State<BrowserView>
                   onDownloadStartRequest: (control, request) {
                     print("onDownloadStartRequest");
                   },
+                  onTitleChanged: (control,title) {
+                    if (webUrl.toString().endsWith(homeUrl)) {
+                      this.title = S.of(context).homeTitle;
+                    }else{
+                      this.title = title ?? "";
+                    }
+                    if(webUrl.toString().startsWith("https://") || webUrl.toString().startsWith("http://")){
+                      HistoryInfo(
+                          title: this.title,
+                          url: webUrl.toString(),
+                          time: DateTime.now().millisecondsSinceEpoch).save();
+                    }
+
+                    if (_isSelect) {
+                      widget.browserInfo.onTitleChange(title);
+                    }
+                  },
                   onLongPressHitTestResult: (control, hit) async {
                     var info = await control.requestFocusNodeHref();
                     if (info != null) {
@@ -182,7 +199,6 @@ class BrowserState extends State<BrowserView>
                   onProgressChanged: (control, progress) {
                     // widget.browserInfo.onProgress(progress);
                     setState(() {
-                      print("progress:$progress");
                       this.progress = progress;
                     });
                     if (progress == 100) {
@@ -222,22 +238,6 @@ class BrowserState extends State<BrowserView>
                       isWebShow = true;
                       progress = 100;
                     });
-                    if (url.toString().endsWith(homeUrl)) {
-                      title = S.of(context).homeTitle;
-                    } else {
-                      var title = await control.getTitle();
-                      this.title = title ?? "";
-                    }
-                    if(url.toString().startsWith("https://") || url.toString().startsWith("http://")){
-                      print("historyInfo add");
-                      HistoryInfo(
-                          title: title,
-                          url: url.toString(),
-                          time: DateTime.now().millisecondsSinceEpoch).save();
-                    }
-                    if (_isSelect) {
-                      widget.browserInfo.onTitleChange(title);
-                    }
                   },
                   gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
                     Factory<OneSequenceGestureRecognizer>(

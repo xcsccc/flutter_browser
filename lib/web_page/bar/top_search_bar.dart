@@ -97,14 +97,20 @@ class TopSearchState extends State<TopSearchBar> {
                                     overlayEntry?.remove();
                                   });
                                 },
-                                child: Row(
+                                child: Container(color: Colors.transparent,child: Row(
                                   children: [
                                     Radio(
                                       value: index,
                                       groupValue: selectValue,
-                                      onChanged: (value) {},
-                                      activeColor:
-                                          ThemeColors.progressStartColor,
+                                      onChanged: (value){
+                                        setState(() {
+                                          selectValue = index;
+                                          Hive.box(intKey).put(searchEnginKey, index);
+                                          provider.changeSearchEngin(item);
+                                          overlayEntry?.remove();
+                                        });
+                                      },
+                                      activeColor: ThemeColors.progressStartColor,
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 10),
@@ -115,14 +121,14 @@ class TopSearchState extends State<TopSearchBar> {
                                             color: index == selectValue
                                                 ? ThemeColors.progressStartColor
                                                 : Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.color),
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.color),
                                       ),
                                     )
                                   ],
                                 ),
-                              );
+                              ),);
                             })))
               ])));
     });

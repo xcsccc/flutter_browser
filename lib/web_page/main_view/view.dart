@@ -2,6 +2,7 @@ import 'package:browser01/web_page/color/colors.dart';
 import 'package:browser01/web_page/custom/custom.dart';
 import 'package:browser01/web_page/custom/image_path.dart';
 import 'package:browser01/web_page/dialog/cookie_dialog.dart';
+import 'package:browser01/web_page/dialog/long_click_dialog.dart';
 import 'package:browser01/web_page/dialog/ssl_dialog.dart';
 import 'package:browser01/web_page/now_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -256,14 +257,16 @@ class SSLCookieView extends StatefulWidget {
   final Future<List<Cookie>> cookies;
   final SSLInfo? sslInfo;
   final Function onAnimationOut;
+  final Function onQRClick;
   final Function onClick;
+  final Function onHistoryClick;
 
   const SSLCookieView({super.key,
     required this.url,
     required this.title,
     required this.cookies,
     this.sslInfo,
-    required this.onAnimationOut, required this.onClick});
+    required this.onAnimationOut,required this.onQRClick, required this.onHistoryClick, required this.onClick});
 
   @override
   State<StatefulWidget> createState() => SSLCookieState();
@@ -416,13 +419,13 @@ class SSLCookieState extends State<SSLCookieView>
                                     IconImageButton(
                                       res: AppImages.history,
                                       onClick: () {
-                                        widget.onClick();
+                                        widget.onHistoryClick();
                                       },
                                     ),
                                     IconImageButton(
                                       res: AppImages.qr,
                                       onClick: () {
-                                        widget.onClick();
+                                        widget.onQRClick();
                                       },
                                     )
                                   ],

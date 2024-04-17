@@ -1,6 +1,7 @@
 import 'package:browser01/web_page/custom/custom.dart';
 import 'package:browser01/web_page/custom/image_path.dart';
 import 'package:browser01/web_page/dialog/long_click_dialog.dart';
+import 'package:browser01/web_page/model/SearchInfo.dart';
 import 'package:browser01/web_page/now_icon.dart';
 import 'package:browser01/web_page/page/CommonPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -23,15 +24,15 @@ class BookmarkAndHistoryAndSaveState
     extends State<BookmarkAndHistoryAndSavePage> {
   @override
   Widget build(BuildContext context) {
-    final int data = ModalRoute
+    final SearchInfo data = ModalRoute
         .of(context)!
         .settings
-        .arguments as int;
+        .arguments as SearchInfo;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
           child: DefaultTabController(
-            initialIndex: data,
+            initialIndex: data.position,
             length: 3, // 标签数量
             child: Column(
               children: [
@@ -86,7 +87,7 @@ class BookmarkAndHistoryAndSaveState
                               color: Colors.amberAccent,
                             ),
                             searchChange: (search) {}), // 第一个标签对应的页面
-                        const HistoryPage(), // 第二个标签对应的页面
+                        HistoryPage(search: data.position == 1 ? data.search : ""), // 第二个标签对应的页面
                         CommonPage(
                             bottomChild: Container(
                               color: Colors.deepOrange,
@@ -108,7 +109,8 @@ class BookmarkAndHistoryAndSaveState
 
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({super.key});
+  final String search;
+  const HistoryPage({super.key, required this.search});
 
   @override
   State<StatefulWidget> createState() => _HistoryState();
@@ -117,7 +119,7 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryState extends State<HistoryPage> {
   late var provider = Provider.of<GlobalProvider>(context);
-  var search = "";
+  late var search = widget.search;
 
   List<HistoryInfo> getList(){
     if (search.isEmpty) {
@@ -135,6 +137,7 @@ class _HistoryState extends State<HistoryPage> {
         bottomChild: Container(
           color: Colors.blueAccent,
         ),
+        searchInit: widget.search,
         centerChild: GroupList(list: getList()),
         searchChange: (search) {
           setState(() {
