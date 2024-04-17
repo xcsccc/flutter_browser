@@ -17,6 +17,7 @@ import 'package:browser01/web_page/main_view/view.dart';
 import 'package:browser01/web_page/model/HistoryInfo.g.dart';
 import 'package:browser01/web_page/model/SearchInfo.dart';
 import 'package:browser01/web_page/model/history_info.dart';
+import 'package:browser01/web_page/page/AboutPage.dart';
 import 'package:browser01/web_page/page/bookmark_history_save_page.dart';
 import 'package:browser01/web_page/page/scanner_page.dart';
 import 'package:browser01/web_page/page/SettingPage.dart';
@@ -67,6 +68,7 @@ class MyAppState extends State<MyApp> {
         RouteSetting.scannerPage: (context) => const ScannerPage(),
         RouteSetting.bookmarkHistorySavePage: (context) => const BookmarkAndHistoryAndSavePage(),
         RouteSetting.settings: (context) => const SettingPage(),
+        RouteSetting.aboutPage: (context) => const AboutPage(),
       },
       title: 'Flutter Demo',
       theme: provider.currentTheme,
