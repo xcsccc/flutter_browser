@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:browser01/web_page/color/colors.dart';
 import 'package:browser01/web_page/custom/image_path.dart';
+import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/now_icon.dart';
 import 'package:browser01/web_page/provider/main_provider.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -226,6 +227,13 @@ class BrowserState extends State<BrowserView>
                     } else {
                       var title = await control.getTitle();
                       this.title = title ?? "";
+                    }
+                    if(url.toString().startsWith("https://") || url.toString().startsWith("http://")){
+                      print("historyInfo add");
+                      HistoryInfo(
+                          title: title,
+                          url: url.toString(),
+                          time: nowDay().millisecondsSinceEpoch).save();
                     }
                     if (_isSelect) {
                       widget.browserInfo.onTitleChange(title);

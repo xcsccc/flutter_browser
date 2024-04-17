@@ -15,10 +15,10 @@ class CommonPage extends StatefulWidget {
       required this.searchChange});
 
   @override
-  State<StatefulWidget> createState() => CommonState();
+  State<StatefulWidget> createState() => _CommonState();
 }
 
-class CommonState extends State<CommonPage> {
+class _CommonState extends State<CommonPage> {
   TextEditingController controller = TextEditingController();
 
   @override
@@ -27,41 +27,49 @@ class CommonState extends State<CommonPage> {
       children: [
         Expanded(
             child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 child: Column(
-          children: [
-            Padding(
-                padding: const EdgeInsets.all(15),
-                child: Container(
-                  height: 50,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(20)),
-                      color: Theme.of(context).brightness == Brightness.light ? ThemeColors.borderColor : ThemeColors.indicatorLightGraySelectColorBlack),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10,right: 10),
-                    child: TextField(
-                        controller: controller,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: S.of(context).search,
-                          fillColor: Colors.transparent,
-                          hintStyle: const TextStyle(fontSize: 15),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Container(
+                        height: 50,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? ThemeColors.borderColor
+                                    : ThemeColors
+                                        .indicatorLightGraySelectColorBlack),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: TextField(
+                            controller: controller,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: S.of(context).search,
+                              fillColor: Colors.transparent,
+                              hintStyle: const TextStyle(fontSize: 15),
+                            ),
+                            maxLines: 1,
+                            onChanged: (value) {
+                              setState(() {
+                                widget.searchChange(value);
+                              });
+                            },
+                            style: const TextStyle(fontSize: 15),
+                          ),
                         ),
-                        maxLines: 1,
-                        onChanged: (value) {
-                          setState(() {
-                            widget.searchChange(value);
-                          });
-                        },
-                        style: const TextStyle(fontSize: 15),
                       ),
                     ),
-                  ),
-                ),
-            widget.centerChild,
-          ],
-        ))),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15, right: 15),
+                      child: widget.centerChild,
+                    ),
+                  ],
+                ))),
         const Divider(height: 1),
         SizedBox(
           height: 50,

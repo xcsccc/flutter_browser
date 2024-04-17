@@ -176,9 +176,8 @@ class BrowserPagerListState extends State<BrowserPagerList>
                                                     height: 20,
                                                     fit: BoxFit.cover)
                                                     : CachedNetworkImage(
-                                                  imageUrl:
-                                                  "${item.url
-                                                      .extractDomainWithProtocol()!}/favicon.ico",
+                                                  imageUrl:item.url
+                                                      .iconUrl() ?? "",
                                                   errorWidget: (context,
                                                       url, error) {
                                                     return Image.asset(

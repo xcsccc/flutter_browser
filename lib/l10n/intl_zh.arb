@@ -60,6 +60,7 @@
   "expiresOn": "截止日期",
   "copyText": "复制文本",
   "cookieTitle": "{url} 的 Cookies",
+  "timeFormatInfo": "{month}月{day}日 {weekday}",
   "timeFormat": "{year}年{month}月{day}日 {hour}:{minute}",
   "userAgents": "Android(手机),Android(平板),Windows(Chrome),Windows(IE 11),macOS,iPhone,iPad,塞班(Symbian)",
   "imageModes": "Display Image,Do not display images,Display images only on WiFi"

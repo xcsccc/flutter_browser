@@ -13,6 +13,8 @@ import 'package:browser01/web_page/dialog/image_mode_dialog.dart';
 import 'package:browser01/web_page/dialog/user_agent_dialog.dart';
 import 'package:browser01/web_page/main_view/progress_bar.dart';
 import 'package:browser01/web_page/main_view/view.dart';
+import 'package:browser01/web_page/model/HistoryInfo.g.dart';
+import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/page/bookmark_history_save_page.dart';
 import 'package:browser01/web_page/page/scanner_page.dart';
 import 'package:browser01/web_page/provider/main_provider.dart';
@@ -30,7 +32,9 @@ import 'generated/l10n.dart';
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(FuncBottomInfoAdapter());
+  Hive.registerAdapter(HistoryInfoAdapter());
   await Hive.openBox<FuncBottomInfo>(funcBottomKey);
+  await Hive.openBox<HistoryInfo>(historyInfoKey);
   await Hive.openBox(intKey);
   await Hive.openBox(boolKey);
   runApp(ChangeNotifierProvider<GlobalProvider>(

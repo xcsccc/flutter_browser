@@ -660,6 +660,16 @@ class S {
     );
   }
 
+  /// `{weekday},{month} {day}`
+  String timeFormatInfo(Object weekday, Object month, Object day) {
+    return Intl.message(
+      '$weekday,$month $day',
+      name: 'timeFormatInfo',
+      desc: '',
+      args: [weekday, month, day],
+    );
+  }
+
   /// `{month} {day},{year} {hour}:{minute}`
   String timeFormat(
       Object month, Object day, Object year, Object hour, Object minute) {

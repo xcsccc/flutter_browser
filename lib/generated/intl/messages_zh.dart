@@ -25,6 +25,8 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m1(month, day, year, hour, minute) =>
       "${year}年${month}月${day}日 ${hour}:${minute}";
 
+  static String m2(weekday, month, day) => "${month}月${day}日 ${weekday}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "addBookmark": MessageLookupByLibrary.simpleMessage("添加书签"),
@@ -88,6 +90,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "share": MessageLookupByLibrary.simpleMessage("分享"),
         "shareImage": MessageLookupByLibrary.simpleMessage("分享图片"),
         "timeFormat": m1,
+        "timeFormatInfo": m2,
         "tool": MessageLookupByLibrary.simpleMessage("工具箱"),
         "translate": MessageLookupByLibrary.simpleMessage("翻译"),
         "userAgents": MessageLookupByLibrary.simpleMessage(

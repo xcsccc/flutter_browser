@@ -25,6 +25,8 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m1(month, day, year, hour, minute) =>
       "${month} ${day},${year} ${hour}:${minute}";
 
+  static String m2(weekday, month, day) => "${weekday},${month} ${day}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "addBookmark": MessageLookupByLibrary.simpleMessage("Add bookmark"),
@@ -94,6 +96,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "share": MessageLookupByLibrary.simpleMessage("Share"),
         "shareImage": MessageLookupByLibrary.simpleMessage("Share image"),
         "timeFormat": m1,
+        "timeFormatInfo": m2,
         "tool": MessageLookupByLibrary.simpleMessage("Tools"),
         "translate": MessageLookupByLibrary.simpleMessage("Translate"),
         "userAgents": MessageLookupByLibrary.simpleMessage(
