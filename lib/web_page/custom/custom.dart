@@ -139,7 +139,7 @@ extension LongExt on int {
   }
 
   String formatTime(BuildContext context) {
-    var provider = Provider.of<GlobalProvider>(context);
+    var provider = Provider.of<GlobalProvider>(context,listen: false);
     DateTime dateTimeMilliseconds = DateTime.fromMillisecondsSinceEpoch(this);
     var weekday = dateTimeMilliseconds.weekday;
     var month = dateTimeMilliseconds.month;

@@ -151,20 +151,36 @@ class BrowserState extends State<BrowserView>
                   onDownloadStartRequest: (control, request) {
                     print("onDownloadStartRequest");
                   },
-                  onTitleChanged: (control,title) {
+                  onTitleChanged: (control, title) {
                     if (webUrl.toString().endsWith(homeUrl)) {
                       this.title = S.of(context).homeTitle;
-                    }else{
+                    } else {
                       this.title = title ?? "";
                     }
-                    if(webUrl.toString().startsWith("https://") || webUrl.toString().startsWith("http://")){
+                    print("change control:$title");
+
+                    if (webUrl.toString().startsWith("https://") ||
+                        webUrl.toString().startsWith("http://")) {
+                      var time = DateTime.now().millisecondsSinceEpoch;
+                      var list = HistoryInfo.getAll()
+                              .where((element) =>
+                                  element.time.formatTime(context) == time.formatTime(context) &&
+                                  element.url == webUrl &&
+                                  element.title == title);
+                      if(list.isNotEmpty){
+                        for (var element in list) {
+                          provider.historyDelete(element);
+                        }
+                      }
                       HistoryInfo(
-                          title: this.title,
-                          url: webUrl.toString(),
-                          time: DateTime.now().millisecondsSinceEpoch).save();
+                              title: this.title,
+                              url: webUrl.toString(),
+                              time: time)
+                          .save();
                     }
 
                     if (_isSelect) {
+                      print("change:$title");
                       widget.browserInfo.onTitleChange(title);
                     }
                   },
@@ -172,7 +188,6 @@ class BrowserState extends State<BrowserView>
                     var info = await control.requestFocusNodeHref();
                     if (info != null) {
                       if (info.url != null || info.src != null) {
-
                         // ignore: use_build_context_synchronously
                         showCustomMenu(
                             context,
