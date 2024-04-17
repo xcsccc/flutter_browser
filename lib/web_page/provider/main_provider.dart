@@ -29,7 +29,7 @@ class GlobalProvider with ChangeNotifier{
   late SearchEnginType selectEngin = SearchEnginType.values[Hive.box(intKey).get(searchEnginKey,defaultValue: 0)];
   late InAppWebViewSettings settings = updateSettings();
 
-  List<HistoryInfo> get historyInfo  => HistoryInfo.getAll();
+  List<HistoryInfo> get historyInfo  => HistoryInfo.getAll().reversed.toList();
 
   List<FuncBottomInfo> getFuncBottomInfoList(List<FuncBottomInfo> init){
     var list = FuncBottomInfo.getAll();

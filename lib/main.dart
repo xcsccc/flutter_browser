@@ -15,6 +15,7 @@ import 'package:browser01/web_page/dialog/user_agent_dialog.dart';
 import 'package:browser01/web_page/main_view/progress_bar.dart';
 import 'package:browser01/web_page/main_view/view.dart';
 import 'package:browser01/web_page/model/HistoryInfo.g.dart';
+import 'package:browser01/web_page/model/SearchInfo.dart';
 import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/page/AboutPage.dart';
 import 'package:browser01/web_page/page/bookmark_history_save_page.dart';
@@ -360,6 +361,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
+  void openUrlForHistory([int position = 0,String searchString = ""]){
+    dynamic type = Navigator.of(context).pushNamed(RouteSetting.bookmarkHistorySavePage,arguments: SearchInfo(search:searchString,position: position));
+    if(type != null && type is UrlOpenType){
+      copyInit(type.url.toString(), type.isNowOpen);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -377,6 +385,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   if (control != null) {
                     var back = await control.canGoBack();
                     if (back) {
+                      if(isBlackAlphaShow){
+                        setState(() {
+                          isBlackAlphaShow = false;
+                        });
+                      }
                       control.goBack();
                       return false;
                     } else {
@@ -510,6 +523,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
                               }, cookies: CookieManager().getCookies(url: WebUri(getPageNowState()?.webUrl ?? "") ), onClick: (){
                                 sslCookieAllHide();
+                              }, onQRClick: (){
+
+                              }, onHistoryClick: (){
+                                openUrlForHistory(1,title);
                               },
                             );
                           },
@@ -613,18 +630,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                             case FuncBottomType.bookmark:
                               Navigator.of(context).pop();
                               isShowChild = true;
-                              dynamic type = await (Navigator.of(context).pushNamed(RouteSetting.bookmarkHistorySavePage,arguments: 0));
-                              if (type != null && type is UrlOpenType) {
-                                copyInit(type.url.toString(), type.isNowOpen);
-                              }
+                              openUrlForHistory(0);
                               break;
                             case FuncBottomType.history:
                               Navigator.of(context).pop();
                               isShowChild = true;
-                              dynamic type = await (Navigator.of(context).pushNamed(RouteSetting.bookmarkHistorySavePage,arguments: 1));
-                              if (type != null && type is UrlOpenType) {
-                                copyInit(type.url.toString(), type.isNowOpen);
-                              }
+                              openUrlForHistory(1);
                               break;
                             case FuncBottomType.download:
                               break;

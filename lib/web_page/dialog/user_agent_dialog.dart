@@ -70,15 +70,22 @@ class UserAgentState extends State<UserAgentDialog> {
                     Navigator.of(context).pop();
                   });
                 },
-                child: Row(
+                child: Container(color: Colors.transparent,child: Row(
                   children: [
                     Radio(
-                      value: index, groupValue: selectValue, onChanged: (value) {},activeColor: ThemeColors.progressStartColor,), Padding(padding: const EdgeInsets.only(left: 10),
+                      value: index, groupValue: selectValue, onChanged: (value) {
+                      setState(() {
+                        selectValue = index;
+                        Hive.box(intKey).put(browserFlagKey, index);
+                        provider.updateUserAgent(item.type);
+                        Navigator.of(context).pop();
+                      });
+                    },activeColor: ThemeColors.progressStartColor,), Padding(padding: const EdgeInsets.only(left: 10),
                       child: Text(item.name,
                         style: TextStyle(fontSize: 13, color: index ==
                             selectValue ? ThemeColors.progressStartColor : Theme.of(context).textTheme.bodyMedium?.color ),),)
                   ],
-                ),
+                )),
               );
             })
       ],

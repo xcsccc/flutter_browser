@@ -710,6 +710,16 @@ class S {
       args: [],
     );
   }
+
+  /// `About`
+  String get aboutTitle {
+    return Intl.message(
+      'About',
+      name: 'aboutTitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
