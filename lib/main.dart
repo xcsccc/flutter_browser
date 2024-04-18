@@ -16,9 +16,12 @@ import 'package:browser01/web_page/main_view/progress_bar.dart';
 import 'package:browser01/web_page/main_view/view.dart';
 import 'package:browser01/web_page/model/HistoryInfo.g.dart';
 import 'package:browser01/web_page/model/SearchInfo.dart';
+import 'package:browser01/web_page/model/SettingCommon.g.dart';
 import 'package:browser01/web_page/model/history_info.dart';
+import 'package:browser01/web_page/model/setting_common_info.dart';
 import 'package:browser01/web_page/page/AboutPage.dart';
 import 'package:browser01/web_page/page/OpenSourcePage.dart';
+import 'package:browser01/web_page/page/SettingCommonPage.dart';
 import 'package:browser01/web_page/page/bookmark_history_save_page.dart';
 import 'package:browser01/web_page/page/scanner_page.dart';
 import 'package:browser01/web_page/page/SettingPage.dart';
@@ -36,10 +39,12 @@ import 'generated/l10n.dart';
 
 void main() async {
   await Hive.initFlutter();
+  Hive.registerAdapter(SettingCommonAdapter());
   Hive.registerAdapter(FuncBottomInfoAdapter());
   Hive.registerAdapter(HistoryInfoAdapter());
   await Hive.openBox<FuncBottomInfo>(funcBottomKey);
   await Hive.openBox<HistoryInfo>(historyInfoKey);
+  await Hive.openBox<SettingCommonInfo>(settingCommonKey);
   await Hive.openBox(intKey);
   await Hive.openBox(boolKey);
   runApp(ChangeNotifierProvider<GlobalProvider>(
@@ -71,6 +76,7 @@ class MyAppState extends State<MyApp> {
         RouteSetting.settings: (context) => const SettingPage(),
         RouteSetting.aboutPage: (context) => const AboutPage(),
         RouteSetting.openSource: (context) => const OpenSourcePage(),
+        RouteSetting.settingsCommon: (context) => const SettingCommonPage(),
       },
       title: 'Flutter Demo',
       theme: provider.currentTheme,

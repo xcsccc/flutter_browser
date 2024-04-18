@@ -54,11 +54,19 @@ class SettingState extends State<SettingPage> {
                   itemCount: settingList.length,
                   itemBuilder: (context, index) {
                     return settingItem(settingList[index], () {
-                      if (index == settingList.length - 1) {
-                        Navigator.of(context)
-                            .pushNamed(RouteSetting.aboutPage, arguments: 3);
-                      } else {
-                        Navigator.of(context).pop(null);
+                      switch (index) {
+                        case 0:
+                          Navigator.of(context).pushNamed(
+                              RouteSetting.settingsCommon,
+                              arguments: 5);
+                          break;
+                        case 5:
+                          Navigator.of(context)
+                              .pushNamed(RouteSetting.aboutPage, arguments: 3);
+                          break;
+                        default:
+                          Navigator.of(context).pop(null);
+                          break;
                       }
                     });
                   }))

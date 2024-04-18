@@ -112,6 +112,7 @@ Map<String, String> searchEngineParams = {
   "duckduckgo.com": "q"
 };
 
+const String settingCommonKey = "settingCommonKey";
 const String funcBottomKey = "funcBottomKey";
 const String historyInfoKey = "historyInfoKey";
 const String localeChangeKey = "localeChangeKey";
@@ -258,6 +259,7 @@ class RouteSetting {
   static const String settings = '/settings';
   static const String aboutPage = '/aboutPage';
   static const String openSource = '/openSource';
+  static const String settingsCommon = '/settingsCommon';
 }
 
 enum FuncBottomType {

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:browser01/web_page/custom/custom.dart';
 import 'package:browser01/web_page/model/history_info.dart';
+import 'package:browser01/web_page/model/setting_common_info.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,6 +36,15 @@ class GlobalProvider with ChangeNotifier{
     var list = FuncBottomInfo.getAll();
     if(list.isEmpty){
       FuncBottomInfo.openBox().addAll(init);
+      list = init;
+    }
+    return list;
+  }
+
+  List<SettingCommonInfo> getSettingCommonInfoList(List<SettingCommonInfo> init){
+    var list = SettingCommonInfo.getAll();
+    if(list.isEmpty){
+      SettingCommonInfo.openBox().addAll(init);
       list = init;
     }
     return list;
