@@ -20,17 +20,27 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'zh';
 
-  static String m0(url) => "${url} 的 Cookies";
+  static String m0(num) => "过去7天(${num})";
 
-  static String m1(month, day, year, hour, minute) =>
+  static String m1(num) => "所有时间(${num})";
+
+  static String m2(url) => "${url} 的 Cookies";
+
+  static String m3(num) => "过去一小时(${num})";
+
+  static String m4(month, day, year, hour, minute) =>
       "${year}年${month}月${day}日 ${hour}:${minute}";
 
-  static String m2(weekday, month, day) => "${month}月${day}日 ${weekday}";
+  static String m5(weekday, month, day) => "${month}月${day}日 ${weekday}";
+
+  static String m6(num) => "今天和昨天(${num})";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "aboutTitle": MessageLookupByLibrary.simpleMessage("关于"),
         "addBookmark": MessageLookupByLibrary.simpleMessage("添加书签"),
+        "allLastSeven": m0,
+        "allTime": m1,
         "bookmark": MessageLookupByLibrary.simpleMessage("书签"),
         "browserFlag": MessageLookupByLibrary.simpleMessage("浏览器标识"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
@@ -39,7 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "clear": MessageLookupByLibrary.simpleMessage("清除数据"),
         "code": MessageLookupByLibrary.simpleMessage("源码"),
         "commonName": MessageLookupByLibrary.simpleMessage("公用名（CN）"),
-        "cookieTitle": m0,
+        "cookieTitle": m2,
         "copiedSuccessfully": MessageLookupByLibrary.simpleMessage("复制成功！"),
         "copyLink": MessageLookupByLibrary.simpleMessage("复制链接"),
         "copyLinkText": MessageLookupByLibrary.simpleMessage("复制链接文本"),
@@ -60,6 +70,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "full": MessageLookupByLibrary.simpleMessage("全屏"),
         "hide": MessageLookupByLibrary.simpleMessage("隐身"),
         "history": MessageLookupByLibrary.simpleMessage("历史"),
+        "historyClear": MessageLookupByLibrary.simpleMessage("清空"),
+        "historyEmpty": MessageLookupByLibrary.simpleMessage("历史记录为空！"),
+        "historyTitle": MessageLookupByLibrary.simpleMessage("清空历史记录"),
         "homeTitle": MessageLookupByLibrary.simpleMessage("主页"),
         "imageMode": MessageLookupByLibrary.simpleMessage("有图模式"),
         "imageModes": MessageLookupByLibrary.simpleMessage(
@@ -72,6 +85,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "night": MessageLookupByLibrary.simpleMessage("夜间模式"),
         "noNetworkHtml": MessageLookupByLibrary.simpleMessage("离线页面"),
         "ok": MessageLookupByLibrary.simpleMessage("确定"),
+        "oneHour": m3,
         "openBg": MessageLookupByLibrary.simpleMessage("后台打开"),
         "openNew": MessageLookupByLibrary.simpleMessage("新标签打开"),
         "organization": MessageLookupByLibrary.simpleMessage("组织（O）"),
@@ -91,8 +105,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "setting": MessageLookupByLibrary.simpleMessage("设置"),
         "share": MessageLookupByLibrary.simpleMessage("分享"),
         "shareImage": MessageLookupByLibrary.simpleMessage("分享图片"),
-        "timeFormat": m1,
-        "timeFormatInfo": m2,
+        "timeFormat": m4,
+        "timeFormatInfo": m5,
+        "todayAndYesterday": m6,
         "tool": MessageLookupByLibrary.simpleMessage("工具箱"),
         "translate": MessageLookupByLibrary.simpleMessage("翻译"),
         "userAgents": MessageLookupByLibrary.simpleMessage(

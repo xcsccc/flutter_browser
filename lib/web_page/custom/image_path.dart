@@ -41,4 +41,5 @@ class AppImages {
   static const String powerOff = "assets/icon/ic_power_off.png";
   static const String qr = "assets/icon/ic_qr.png";
   static const String aboutLogo = "assets/icon/about_logo.png";
+  static const String empty = "assets/icon/ic_empty.png";
 }

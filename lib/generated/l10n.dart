@@ -670,6 +670,76 @@ class S {
     );
   }
 
+  /// `Delete history from`
+  String get historyTitle {
+    return Intl.message(
+      'Delete history from',
+      name: 'historyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete All`
+  String get historyClear {
+    return Intl.message(
+      'Delete All',
+      name: 'historyClear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All time({num})`
+  String allTime(Object num) {
+    return Intl.message(
+      'All time($num)',
+      name: 'allTime',
+      desc: '',
+      args: [num],
+    );
+  }
+
+  /// `Last 7 days({num})`
+  String allLastSeven(Object num) {
+    return Intl.message(
+      'Last 7 days($num)',
+      name: 'allLastSeven',
+      desc: '',
+      args: [num],
+    );
+  }
+
+  /// `Today and yesterday({num})`
+  String todayAndYesterday(Object num) {
+    return Intl.message(
+      'Today and yesterday($num)',
+      name: 'todayAndYesterday',
+      desc: '',
+      args: [num],
+    );
+  }
+
+  /// `The last hour({num})`
+  String oneHour(Object num) {
+    return Intl.message(
+      'The last hour($num)',
+      name: 'oneHour',
+      desc: '',
+      args: [num],
+    );
+  }
+
+  /// `History is empty!`
+  String get historyEmpty {
+    return Intl.message(
+      'History is empty!',
+      name: 'historyEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `{weekday},{month} {day}`
   String timeFormatInfo(Object weekday, Object month, Object day) {
     return Intl.message(

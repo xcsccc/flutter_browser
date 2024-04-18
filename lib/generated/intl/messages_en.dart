@@ -20,17 +20,27 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(url) => "Cookies for ${url}";
+  static String m0(num) => "Last 7 days(${num})";
 
-  static String m1(month, day, year, hour, minute) =>
+  static String m1(num) => "All time(${num})";
+
+  static String m2(url) => "Cookies for ${url}";
+
+  static String m3(num) => "The last hour(${num})";
+
+  static String m4(month, day, year, hour, minute) =>
       "${month} ${day},${year} ${hour}:${minute}";
 
-  static String m2(weekday, month, day) => "${weekday},${month} ${day}";
+  static String m5(weekday, month, day) => "${weekday},${month} ${day}";
+
+  static String m6(num) => "Today and yesterday(${num})";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "aboutTitle": MessageLookupByLibrary.simpleMessage("About"),
         "addBookmark": MessageLookupByLibrary.simpleMessage("Add bookmark"),
+        "allLastSeven": m0,
+        "allTime": m1,
         "bookmark": MessageLookupByLibrary.simpleMessage("Bookmarks"),
         "browserFlag": MessageLookupByLibrary.simpleMessage("User-agent"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
@@ -40,7 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "clear": MessageLookupByLibrary.simpleMessage("Clear data"),
         "code": MessageLookupByLibrary.simpleMessage("View source"),
         "commonName": MessageLookupByLibrary.simpleMessage("Common Name(CN)"),
-        "cookieTitle": m0,
+        "cookieTitle": m2,
         "copiedSuccessfully":
             MessageLookupByLibrary.simpleMessage("Copied Successfully!"),
         "copyLink": MessageLookupByLibrary.simpleMessage("Copy link"),
@@ -63,6 +73,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "full": MessageLookupByLibrary.simpleMessage("Full-screen"),
         "hide": MessageLookupByLibrary.simpleMessage("Incognito mode"),
         "history": MessageLookupByLibrary.simpleMessage("History"),
+        "historyClear": MessageLookupByLibrary.simpleMessage("Delete All"),
+        "historyEmpty":
+            MessageLookupByLibrary.simpleMessage("History is empty!"),
+        "historyTitle":
+            MessageLookupByLibrary.simpleMessage("Delete history from"),
         "homeTitle": MessageLookupByLibrary.simpleMessage("Homepage"),
         "imageMode": MessageLookupByLibrary.simpleMessage("Show images"),
         "imageModes": MessageLookupByLibrary.simpleMessage(
@@ -75,6 +90,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "night": MessageLookupByLibrary.simpleMessage("Night mode"),
         "noNetworkHtml": MessageLookupByLibrary.simpleMessage("Saved page"),
         "ok": MessageLookupByLibrary.simpleMessage("OK"),
+        "oneHour": m3,
         "openBg": MessageLookupByLibrary.simpleMessage("Open in background"),
         "openNew": MessageLookupByLibrary.simpleMessage("Open in new tab"),
         "organization": MessageLookupByLibrary.simpleMessage("organization(O)"),
@@ -97,8 +113,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "setting": MessageLookupByLibrary.simpleMessage("Settings"),
         "share": MessageLookupByLibrary.simpleMessage("Share"),
         "shareImage": MessageLookupByLibrary.simpleMessage("Share image"),
-        "timeFormat": m1,
-        "timeFormatInfo": m2,
+        "timeFormat": m4,
+        "timeFormatInfo": m5,
+        "todayAndYesterday": m6,
         "tool": MessageLookupByLibrary.simpleMessage("Tools"),
         "translate": MessageLookupByLibrary.simpleMessage("Translate"),
         "userAgents": MessageLookupByLibrary.simpleMessage(

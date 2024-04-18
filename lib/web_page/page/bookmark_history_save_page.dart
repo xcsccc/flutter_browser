@@ -6,6 +6,7 @@ import 'package:browser01/web_page/now_icon.dart';
 import 'package:browser01/web_page/page/CommonPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../generated/l10n.dart';
@@ -24,109 +25,102 @@ class BookmarkAndHistoryAndSaveState
     extends State<BookmarkAndHistoryAndSavePage> {
   @override
   Widget build(BuildContext context) {
-    final SearchInfo data = ModalRoute
-        .of(context)!
-        .settings
-        .arguments as SearchInfo;
+    final SearchInfo data =
+        ModalRoute.of(context)!.settings.arguments as SearchInfo;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
           child: DefaultTabController(
-            initialIndex: data.position,
-            length: 3, // 标签数量
-            child: Column(
+        initialIndex: data.position,
+        length: 3, // 标签数量
+        child: Column(
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    IconImageButton(
-                      res: AppImages.back,
-                      onClick: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    Expanded(
-                      child: TabBar(
-                        indicatorColor: Colors.transparent,
-                        indicator: const BoxDecoration(
-                            color: Colors.transparent),
-                        unselectedLabelColor:
-                        ThemeColors.indicatorLightGrayUnSelectColorBlack,
-                        labelColor: Theme
-                            .of(context)
-                            .brightness == Brightness.light
-                            ? ThemeColors.iconColorDark
-                            : ThemeColors.iconColorLight,
-                        tabs: [
-                          Tab(text: S
-                              .of(context)
-                              .bookmark),
-                          Tab(text: S
-                              .of(context)
-                              .history),
-                          Tab(text: S
-                              .of(context)
-                              .noNetworkHtml),
-                        ],
-                      ),
-                    )
-                  ],
+                IconImageButton(
+                  res: AppImages.back,
+                  onClick: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
-                const Divider(height: 1),
                 Expanded(
-                    child: TabBarView(
-                      physics: const BouncingScrollPhysics(),
-                      // 根据标签切换显示不同的内容
-                      children: [
-                        CommonPage(
-                            bottomChild: Container(
-                              color: Colors.blueAccent,
-                            ),
-                            centerChild: Container(
-                              height: 1000,
-                              width: double.infinity,
-                              color: Colors.amberAccent,
-                            ),
-                            searchChange: (search) {}), // 第一个标签对应的页面
-                        HistoryPage(search: data.position == 1 ? data.search : ""), // 第二个标签对应的页面
-                        CommonPage(
-                            bottomChild: Container(
-                              color: Colors.deepOrange,
-                            ),
-                            centerChild: Container(
-                              height: 1000,
-                              width: double.infinity,
-                              color: Colors.blueAccent,
-                            ),
-                            searchChange: (search) {}) // 第三个标签对应的页面
-                      ],
-                    )),
+                  child: TabBar(
+                    indicatorColor: Colors.transparent,
+                    indicator: const BoxDecoration(color: Colors.transparent),
+                    unselectedLabelColor:
+                        ThemeColors.indicatorLightGrayUnSelectColorBlack,
+                    labelColor: Theme.of(context).brightness == Brightness.light
+                        ? ThemeColors.iconColorDark
+                        : ThemeColors.iconColorLight,
+                    tabs: [
+                      Tab(text: S.of(context).bookmark),
+                      Tab(text: S.of(context).history),
+                      Tab(text: S.of(context).noNetworkHtml),
+                    ],
+                  ),
+                )
               ],
             ),
-          )),
+            const Divider(height: 1),
+            Expanded(
+                child: TabBarView(
+              physics: const BouncingScrollPhysics(),
+              // 根据标签切换显示不同的内容
+              children: [
+                CommonPage(
+                    bottomChild: Container(
+                      color: Colors.blueAccent,
+                    ),
+                    centerChild: Container(
+                      height: 1000,
+                      width: double.infinity,
+                      color: Colors.amberAccent,
+                    ),
+                    searchChange: (search) {}),
+                // 第一个标签对应的页面
+                HistoryPage(search: data.position == 1 ? data.search : ""),
+                // 第二个标签对应的页面
+                CommonPage(
+                    bottomChild: Container(
+                      color: Colors.deepOrange,
+                    ),
+                    centerChild: Container(
+                      height: 1000,
+                      width: double.infinity,
+                      color: Colors.blueAccent,
+                    ),
+                    searchChange: (search) {})
+                // 第三个标签对应的页面
+              ],
+            )),
+          ],
+        ),
+      )),
     );
   }
 }
 
-
 class HistoryPage extends StatefulWidget {
   final String search;
+
   const HistoryPage({super.key, required this.search});
 
   @override
   State<StatefulWidget> createState() => _HistoryState();
-
 }
 
 class _HistoryState extends State<HistoryPage> {
   late var provider = Provider.of<GlobalProvider>(context);
   late var search = widget.search;
+  GlobalKey _key = GlobalKey();
 
-  List<HistoryInfo> getList(){
+  List<HistoryInfo> getList() {
     if (search.isEmpty) {
       return provider.historyInfo;
     } else {
-      return provider.historyInfo.where((element) => element.title.contains(search) ||
-          element.url.contains(search))
+      return provider.historyInfo
+          .where((element) =>
+              element.title.contains(search) || element.url.contains(search))
           .toList();
     }
   }
@@ -134,18 +128,48 @@ class _HistoryState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return CommonPage(
-        bottomChild: Container(
-          color: Colors.blueAccent,
+        bottomChild: Row(
+          children: [
+            Expanded(child: Container()),
+            InkWell(
+              key: _key,
+              onTap: () {
+                if(getList().isNotEmpty){
+                  if (_key.currentContext != null) {
+                    final RenderBox renderBox = _key.currentContext?.findRenderObject() as RenderBox;
+                    final Offset offset = renderBox.localToGlobal(Offset.zero);
+                    showClearHistoryMenu(context,offset.dx + renderBox.size.width / 2,offset.dy + 25);
+                  }
+                }else{
+                  toastMsg(S.of(context).historyEmpty);
+                }
+              },
+              borderRadius: BorderRadius.circular(15),
+              child: SizedBox(
+                height: 50,
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Text(
+                    S.of(context).historyClear,
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
         searchInit: widget.search,
-        centerChild: GroupList(list: getList()),
+        centerChild: getList().isNotEmpty ? GroupList(list: getList()) :
+            Padding(padding: const EdgeInsets.only(top: 150),child: Center(
+                child:Image.asset(AppImages.empty,width: 120,height: 120,)
+            ))
+         ,
         searchChange: (search) {
           setState(() {
             this.search = search;
           });
         });
   }
-
 }
 
 class GroupList extends StatefulWidget {
@@ -155,13 +179,9 @@ class GroupList extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _GroupListState();
-
 }
 
-enum GroupType {
-  title,
-  item
-}
+enum GroupType { title, item }
 
 class GroupTitleInfo {
   final GroupType type;
@@ -178,7 +198,6 @@ class GroupItemInfo {
 }
 
 class _GroupListState extends State<GroupList> {
-
   List<Object> getGroupMap() {
     Map<String, List<HistoryInfo>> maps = {};
     for (var element in widget.list) {
@@ -201,21 +220,22 @@ class _GroupListState extends State<GroupList> {
   @override
   Widget build(BuildContext context) {
     var items = getGroupMap();
-    return items.isNotEmpty ? ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: items.length,
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          var item = items[index];
-          if (item is GroupTitleInfo) {
-            return TimeTitleItem(title: item.title);
-          } else {
-            item as GroupItemInfo;
-            return GroupInfoItem(info: item.info);
-          }
-        }) : Container(height: 0);
+    return items.isNotEmpty
+        ? ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: items.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              var item = items[index];
+              if (item is GroupTitleInfo) {
+                return TimeTitleItem(title: item.title);
+              } else {
+                item as GroupItemInfo;
+                return GroupInfoItem(info: item.info);
+              }
+            })
+        : Container(height: 0);
   }
-
 }
 
 class TimeTitleItem extends StatefulWidget {
@@ -230,12 +250,13 @@ class TimeTitleItem extends StatefulWidget {
 class _TimeTitleItemState extends State<TimeTitleItem> {
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: const EdgeInsets.only(top: 5, bottom: 5),
+    return Padding(
+      padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: Text(widget.title,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),);
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
+    );
   }
 }
-
 
 class GroupInfoItem extends StatefulWidget {
   final HistoryInfo info;
@@ -245,7 +266,6 @@ class GroupInfoItem extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _GroupInfoItemState();
-
 }
 
 class _GroupInfoItemState extends State<GroupInfoItem> {
@@ -257,14 +277,14 @@ class _GroupInfoItemState extends State<GroupInfoItem> {
       onTapDown: (details) {
         this.details = details;
       },
-      onTap: (){
-        Navigator.of(context).pop(UrlOpenType(url: widget.info.url, isNowOpen: true));
+      onTap: () {
+        Navigator.of(context)
+            .pop(UrlOpenType(url: widget.info.url, isNowOpen: true));
       },
       onLongPress: () {
         if (details != null) {
-          showHistoryMenu(
-              context, details!.globalPosition.dx, details!.globalPosition.dy,
-              widget.info);
+          showHistoryMenu(context, details!.globalPosition.dx,
+              details!.globalPosition.dy, widget.info);
         }
       },
       borderRadius: BorderRadius.circular(0),
@@ -278,48 +298,38 @@ class _GroupInfoItemState extends State<GroupInfoItem> {
               padding: const EdgeInsets.all(15),
               child: DecoratedBox(
                   decoration: const BoxDecoration(
-                      borderRadius:
-                      BorderRadius.all(
-                          Radius.circular(
-                              5))),
-                  child: widget.info.url.extractDomainWithProtocol() ==
-                      null
-                      ? Image.asset(
-                      AppImages.icon,
-                      width: 20,
-                      height: 20,
-                      fit: BoxFit.cover)
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                  child: widget.info.url.extractDomainWithProtocol() == null
+                      ? Image.asset(AppImages.icon,
+                          width: 20, height: 20, fit: BoxFit.cover)
                       : CachedNetworkImage(
-                    imageUrl: widget.info.url
-                        .iconUrl() ?? "",
-                    errorWidget: (context,
-                        url, error) {
-                      return Image.asset(
-                          AppImages.icon,
-                          width: 20,
-                          height: 20,
-                          fit:
-                          BoxFit.cover);
-                    },
-                  )),
+                          imageUrl: widget.info.url.iconUrl() ?? "",
+                          errorWidget: (context, url, error) {
+                            return Image.asset(AppImages.icon,
+                                width: 20, height: 20, fit: BoxFit.cover);
+                          },
+                        )),
             ),
           ),
-          Expanded(child: Column(
+          Expanded(
+              child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.info.title, maxLines: 1,
+              Text(widget.info.title,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 15)),
-              if(widget.isShowUrl) Text(widget.info.url, maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 13, fontWeight: FontWeight.w300))
+              if (widget.isShowUrl)
+                Text(widget.info.url,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 13, fontWeight: FontWeight.w300))
             ],
           ))
         ],
       ),
     );
   }
-
 }

@@ -127,6 +127,7 @@ flutter:
     - assets/css/night.css
     - assets/css/night10.css
     - assets/icon/about_logo.png
+    - assets/icon/ic_empty.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

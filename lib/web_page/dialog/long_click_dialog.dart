@@ -58,6 +58,7 @@ List<String> _findName(List<FunDialogType> list, BuildContext context) {
         return S.of(context).share;
       case FunDialogType.delete:
         return S.of(context).delete;
+      default:return "";
     }
   }).toList();
 }
@@ -74,6 +75,10 @@ enum FunDialogType {
   scanQR,
   copyLink,
   delete,
+  allTime,
+  allLastSeven,
+  todayAndYesterday,
+  oneHour,
   share;
 
   const FunDialogType();
@@ -109,86 +114,187 @@ void showCustom(
     List<FunDialogType> list,
     List<String> initList,
     GlobalProvider provider,
-    Future<void> Function(FunDialogType, OverlayEntry?) onTop) {
+    Future<void> Function(FunDialogType, OverlayEntry?) onTop,[String? title]) {
   provider.showFunDialog();
   OverlayEntry? overlayEntry;
-  double screenWidth = MediaQuery.of(context).size.width;
-  double screenHeight = MediaQuery.of(context).size.height;
   overlayEntry = OverlayEntry(
     builder: (BuildContext newContext) {
-      return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Visibility(
-            visible: provider.isShowFunDialog,
-            maintainState: true,
-            child: Stack(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    overlayEntry?.remove();
-                  },
-                  behavior:
-                      HitTestBehavior.translucent, // 设置为translucent以便接收点击事件
-                ),
-                Positioned(
-                  width: 200,
-                  height: 300,
-                  left: screenWidth - x >= 200
-                      ? x
-                      : x - 200 >= 0
-                          ? x - 200
-                          : 0,
-                  top: screenHeight - y >= 300
-                      ? y
-                      : y - 300 >= 0
-                          ? y - 300
-                          : 0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.light
-                            ? Colors.white
-                            : ThemeColors.iconColorDark,
-                        border: Border.all(
-                            color:
-                                Theme.of(context).brightness == Brightness.light
-                                    ? ThemeColors.iconColorLight
-                                    : ThemeColors.iconColorDark,
-                            width: 1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(20))),
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.all(0),
-                          shrinkWrap: true,
-                          itemCount: list.length,
-                          itemExtent: 50,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (mContext, index) {
-                            var item = list[index];
-                            return ListTile(
-                                title: Text(initList[index],
-                                    style: const TextStyle(fontSize: 15)),
-                                onTap: () {
-                                  onTop(item, overlayEntry);
-                                });
-                          },
-                        )),
-                  ),
-                ),
-              ],
-            ),
-          ));
+      return LongDialogWidget(list: list, initList: initList, x: x, y: y, overlayEntry: overlayEntry!, onTop: onTop,title: title);
     },
   );
 
   Overlay.of(context).insert(overlayEntry);
 }
 
+class LongDialogWidget extends StatefulWidget{
+  final List<FunDialogType> list;
+  final List<String> initList;
+  final double x;
+  final double y;
+  final OverlayEntry overlayEntry;
+  final String? title;
+  final Future<void> Function(FunDialogType, OverlayEntry?) onTop;
+
+  const LongDialogWidget({super.key, required this.list, required this.initList, required this.x, required this.y, required this.overlayEntry, this.title, required this.onTop});
+
+  @override
+  State<StatefulWidget> createState() =>LongDialogState();
+
+}
+
+class LongDialogState extends State<LongDialogWidget>{
+  late var provider = Provider.of<GlobalProvider>(context, listen: false);
+  late double screenWidth = MediaQuery.of(context).size.width;
+  late double screenHeight = MediaQuery.of(context).size.height;
+  double height = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Visibility(
+          visible: provider.isShowFunDialog,
+          maintainState: true,
+          child: Stack(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  widget.overlayEntry.remove();
+                },
+                behavior:
+                HitTestBehavior.translucent, // 设置为translucent以便接收点击事件
+              ),
+              Visibility(
+                  visible: height != 0,
+                  maintainState: true,child:Stack(
+                children: [
+                  Positioned(
+                      width: 200,
+                      left: screenWidth - widget.x >= 200
+                          ? widget.x
+                          : widget.x - 200 >= 0
+                          ? widget.x - 200
+                          : 0,
+                      top: screenHeight - widget.y >= height
+                          ? widget.y
+                          : widget.y - height >= 0
+                          ? widget.y - height
+                          : 0,
+                      child:  LayoutBuilder(builder: (context,contains){
+                        WidgetsBinding.instance.addPostFrameCallback((callback) {
+                          if(height == 0){
+                            setState(() {
+                              height = context.size?.height ?? 0;
+                              print("height:$height");
+                            });
+                          }
+                        });
+                        return ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 300),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).brightness == Brightness.light
+                                    ? Colors.white
+                                    : ThemeColors.iconColorDark,
+                                border: Border.all(
+                                    color:
+                                    Theme.of(context).brightness == Brightness.light
+                                        ? ThemeColors.iconColorLight
+                                        : ThemeColors.iconColorDark,
+                                    width: 1),
+                                borderRadius:
+                                const BorderRadius.all(Radius.circular(20))),
+                            child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if(widget.title != null) Text(widget.title ?? "",style: const TextStyle(fontSize: 15,fontWeight: FontWeight.w500),),
+                                    ListView.builder(
+                                      padding: const EdgeInsets.all(0),
+                                      shrinkWrap: true,
+                                      itemCount: widget.list.length,
+                                      itemExtent: 50,
+                                      physics: const BouncingScrollPhysics(),
+                                      itemBuilder: (mContext, index) {
+                                        var item = widget.list[index];
+                                        return ListTile(
+                                            title: Text(widget.initList[index],
+                                                style: const TextStyle(fontSize: 15)),
+                                            onTap: () {
+                                              widget.onTop(item, widget.overlayEntry);
+                                            });
+                                      },
+                                    )
+                                  ],
+                                )),
+                          ),
+                        );}
+                      ))],
+              )),
+            ],
+          ),
+        ));
+  }
+
+}
+
 class UrlOpenType{
   final bool isNowOpen;
   final String url;
   const UrlOpenType({required this.url,required this.isNowOpen});
+}
+
+Map<FunDialogType,List<HistoryInfo>> groupBy(List<HistoryInfo> infoList){
+  Map<FunDialogType,List<HistoryInfo>> map = {};
+  for (var element in infoList) {
+    var type = checkToNowDateGap(element.time);
+    if(map[type] == null){
+      map[type] = [];
+    }
+    map[type]!.add(element);
+  }
+  return map;
+}
+
+List<String> findClearHistoryName(Map<FunDialogType,List<HistoryInfo>> map,BuildContext context){
+  List<String> list = [];
+  map.forEach((key, value) {
+    switch(key){
+      case FunDialogType.allTime:
+        list.add(S.of(context).allTime(value.length));
+        break;
+      case FunDialogType.allLastSeven:
+        list.add(S.of(context).allLastSeven(value.length));
+        break;
+      case FunDialogType.todayAndYesterday:
+        list.add(S.of(context).todayAndYesterday(value.length));
+        break;
+      case FunDialogType.oneHour:
+        list.add(S.of(context).oneHour(value.length));
+        break;
+      default:break;
+    }
+  });
+  return list;
+}
+
+void showClearHistoryMenu(BuildContext context, double x, double y) {
+  var provider = Provider.of<GlobalProvider>(context, listen: false);
+  List<FunDialogType> list = [];
+  var historyAll = provider.historyInfo.reversed.toList();
+  var map = groupBy(historyAll);
+  map.forEach((key, value) {
+    list.add(key);
+  });
+  var initList = findClearHistoryName(map, context);
+  showCustom(context, x, y, list, initList, provider, (item, over) async {
+    provider.hideFunDialog();
+    map[item]?.forEach((element) {
+      provider.historyDelete(element);
+    });
+    over?.remove();
+  },S.of(context).historyTitle);
 }
 
 void showHistoryMenu(BuildContext context, double x, double y, HistoryInfo historyInfo) {

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import '../../generated/l10n.dart';
+import '../dialog/long_click_dialog.dart';
 
 const String homeUrl = "assets/home.html";
 
@@ -224,9 +225,29 @@ extension LongExt on int {
   }
 }
 
+enum DateGapDay{
+  all,sevenDay,oneDay,oneHour
+}
+
 extension DataTimeExt on DateTime {
   String formatTime(BuildContext context) {
     return S.of(context).timeFormat(month, day, year, hour, minute);
+  }
+}
+
+
+FunDialogType checkToNowDateGap(int m){
+  var other = DateTime.fromMillisecondsSinceEpoch(m);
+  var now = DateTime.now();
+  Duration difference = now.difference(other).abs();
+  if(difference.inHours <= 1){
+    return FunDialogType.oneHour;
+  }else if(difference.inDays <= 1){
+    return FunDialogType.todayAndYesterday;
+  }else if(difference.inDays <= 7){
+    return FunDialogType.allLastSeven;
+  }else{
+    return FunDialogType.allTime;
   }
 }
 
