@@ -162,12 +162,12 @@ class BrowserState extends State<BrowserView>
                     if (webUrl.toString().startsWith("https://") ||
                         webUrl.toString().startsWith("http://")) {
                       var time = DateTime.now().millisecondsSinceEpoch;
-                      var list = HistoryInfo.getAll()
-                              .where((element) =>
-                                  element.time.formatTime(context) == time.formatTime(context) &&
-                                  element.url == webUrl &&
-                                  element.title == title);
-                      if(list.isNotEmpty){
+                      var list = HistoryInfo.getAll().where((element) =>
+                          element.time.formatTime(context) ==
+                              time.formatTime(context) &&
+                          element.url == webUrl &&
+                          element.title == title);
+                      if (list.isNotEmpty) {
                         for (var element in list) {
                           provider.historyDelete(element);
                         }
@@ -255,8 +255,11 @@ class BrowserState extends State<BrowserView>
                     });
                   },
                   gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                    Factory<OneSequenceGestureRecognizer>(
-                      () => EagerGestureRecognizer(),
+                    Factory<VerticalDragGestureRecognizer>(
+                      () => VerticalDragGestureRecognizer(),
+                    ),
+                    Factory<HorizontalDragGestureRecognizer>(
+                      () => HorizontalDragGestureRecognizer(),
                     ),
                   }));
         })),

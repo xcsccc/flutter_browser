@@ -67,7 +67,8 @@ class MyAppState extends State<MyApp> {
       routes: {
         RouteSetting.mainPage: (context) => const MyHomePage(),
         RouteSetting.scannerPage: (context) => const ScannerPage(),
-        RouteSetting.bookmarkHistorySavePage: (context) => const BookmarkAndHistoryAndSavePage(),
+        RouteSetting.bookmarkHistorySavePage: (context) =>
+            const BookmarkAndHistoryAndSavePage(),
         RouteSetting.settings: (context) => const SettingPage(),
         RouteSetting.aboutPage: (context) => const AboutPage(),
         RouteSetting.openSource: (context) => const OpenSourcePage(),
@@ -121,6 +122,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   bool isShowPagerAllList = false;
   bool isBlackAlphaShow = false;
   bool isShowSSLCookie = false;
+  double initX = 0;
+  double swipingX = 0;
+  double widthInit = 60;
+  bool isSwiping = false;
 
   String invokeMethod = "shareData";
   var channel = const MethodChannel(CHANNEL);
@@ -363,9 +368,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
-  void openUrlForHistory([int position = 0,String searchString = ""]){
-    dynamic type = Navigator.of(context).pushNamed(RouteSetting.bookmarkHistorySavePage,arguments: SearchInfo(search:searchString,position: position));
-    if(type != null && type is UrlOpenType){
+  void openUrlForHistory([int position = 0, String searchString = ""]) {
+    dynamic type = Navigator.of(context).pushNamed(
+        RouteSetting.bookmarkHistorySavePage,
+        arguments: SearchInfo(search: searchString, position: position));
+    if (type != null && type is UrlOpenType) {
       copyInit(type.url.toString(), type.isNowOpen);
     }
   }
@@ -378,365 +385,454 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             : Colors.black,
         resizeToAvoidBottomInset: false,
         body: SafeArea(
-            child: Column(
-          children: [
-            Stack(
-              children: [
-                WillPopScopeRoute(onBack: () async {
-                  var control = getNowControl();
-                  if (control != null) {
-                    var back = await control.canGoBack();
-                    if (back) {
-                      if(isBlackAlphaShow){
-                        setState(() {
-                          isBlackAlphaShow = false;
-                        });
-                      }
-                      control.goBack();
-                      return false;
-                    } else {
-                      if (selectPosition != 0 || browsers.length > 1) {
-                        removeNowPage(selectPosition);
-                        return false;
-                      } else {
-                        return true;
-                      }
-                    }
-                  } else {
-                    return true;
-                  }
-                }),
-                !topSearchShow
-                    ? TopTitleBar(
-                        title: title,
-                        homeTitle: homeTitle,
-                        onScannerClick: () async {
-                          changePagerAllHide();
-                          String? url = await Navigator.push(
-                            context,
-                            MaterialPageRoute<String>(
-                              builder: (context) => const ScannerPage(),
-                            ),
-                          );
-                          if (url != null) {
-                            copyInit(url.toString(), true);
-                          }
-                        },
-                        onTitleClick: () {
-                          blackAlphaShow();
-                          changeSearchShow(true);
-                          getPageNowState()
-                              ?.searchState
-                              .currentState
-                              ?.animationStart();
-                        },
-                        onInfoClick: () {
-                          changePagerAllHide();
-                          if (isShowSSLCookie) {
-                            sslCookieAllHide();
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Stack(
+                    children: [
+                      WillPopScopeRoute(onBack: () async {
+                        var control = getNowControl();
+                        if (control != null) {
+                          var back = await control.canGoBack();
+                          if (back) {
+                            if (isBlackAlphaShow) {
+                              setState(() {
+                                isBlackAlphaShow = false;
+                              });
+                            }
+                            control.goBack();
+                            return false;
                           } else {
-                            setState(() {
-                              isShowSSLCookie = true;
-                            });
-                            blackAlphaShow();
-                            sslCookieKey.currentState?.animationIn();
+                            if (selectPosition != 0 || browsers.length > 1) {
+                              removeNowPage(selectPosition);
+                              return false;
+                            } else {
+                              return true;
+                            }
                           }
-                        },
-                        onRefreshClick: () {
-                          sslCookieAllHide();
-                          changePagerAllHide();
-                          var control = getNowControl();
-                          if (control != null) {
-                            control.reload();
-                          }
-                        },
-                        onSearchIcon: () {
-                          changePagerAllHide();
-                        },
-                      )
-                    : TopSearchBar(
-                        onSearch: (search) {
-                          sslCookieAllHide();
-                          changePagerAllHide();
-                          searchString = search;
-                          getNowControl()?.loadUrl(
-                              urlRequest: URLRequest(
-                                  url: WebUri(searchString.isUrl()
-                                      ? searchString.completeUrl()
-                                      : provider.selectEngin.enginUrl +
-                                          searchString)));
-                          hideSearch();
-                        },
-                        searchKey: searchString,
-                      ),
-              ],
-            ),
-            Expanded(
-                flex: 1,
-                child: Stack(
-                  children: [
-                    Visibility(
-                      visible: browsers.isNotEmpty,
-                      maintainState: true,
-                      child: WebViewPager(
-                        key: pagerStateKey,
-                        browserPages: browsers,
-                        select: selectPosition,
-                        positionChange: () {
-                          sslCookieAllHide();
-                          changePage();
-                        },
-                        browserKeys: provider.browserKey,
-                      ),
-                    ),
-                    if (isBlackAlphaShow)
-                      GestureDetector(
-                        onTap: () {
-                          hideSearch();
-                        },
-                        child: Container(
-                          color: ThemeColors.alphaColorDark,
-                        ),
-                      ),
-                    // if (progress != 100)
-                    Visibility(
-                        visible: isShowSSLCookie,
-                        maintainState: true,
-                        child: FutureBuilder(
-                          future: getNowControl()?.getCertificate(),
-                          builder: (context, sp) {
-                              return SSLCookieView(
-                              key: sslCookieKey,
-                              url: getPageNowState()?.webUrl ?? "",
+                        } else {
+                          return true;
+                        }
+                      }),
+                      !topSearchShow
+                          ? TopTitleBar(
                               title: title,
-                              sslInfo: sp.connectionState == ConnectionState.done ? SSLInfo(
-                                name: sp.data?.issuedTo?.CName ?? "-",
-                                end: sp.data?.validNotAfterDate?.formatTime(context) ?? "-",
-                                oName: sp.data?.issuedTo?.OName ?? "-",
-                                ouName: sp.data?.issuedTo?.UName ?? "-",
-                                start: sp.data?.validNotBeforeDate?.formatTime(context) ?? "-",
-                                tName: sp.data?.issuedBy?.CName ?? "-",
-                                tOName: sp.data?.issuedBy?.OName ?? "-",
-                              ) : const SSLInfo(name: "-", end: "-", oName: "-", ouName: "-", start: "-", tName: "-", tOName: "-") ,
-                              onAnimationOut: () {
-                                setState(() {
-                                  isShowSSLCookie = false;
-                                });
-
-                              }, cookies: CookieManager().getCookies(url: WebUri(getPageNowState()?.webUrl ?? "") ), onClick: (){
+                              homeTitle: homeTitle,
+                              onScannerClick: () async {
+                                changePagerAllHide();
+                                String? url = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute<String>(
+                                    builder: (context) => const ScannerPage(),
+                                  ),
+                                );
+                                if (url != null) {
+                                  copyInit(url.toString(), true);
+                                }
+                              },
+                              onTitleClick: () {
+                                blackAlphaShow();
+                                changeSearchShow(true);
+                                getPageNowState()
+                                    ?.searchState
+                                    .currentState
+                                    ?.animationStart();
+                              },
+                              onInfoClick: () {
+                                changePagerAllHide();
+                                if (isShowSSLCookie) {
+                                  sslCookieAllHide();
+                                } else {
+                                  setState(() {
+                                    isShowSSLCookie = true;
+                                  });
+                                  blackAlphaShow();
+                                  sslCookieKey.currentState?.animationIn();
+                                }
+                              },
+                              onRefreshClick: () {
                                 sslCookieAllHide();
-                              }, onQRClick: (){
-
-                              }, onHistoryClick: (){
-                                openUrlForHistory(1,title);
+                                changePagerAllHide();
+                                var control = getNowControl();
+                                if (control != null) {
+                                  control.reload();
+                                }
+                              },
+                              onSearchIcon: () {
+                                changePagerAllHide();
+                              },
+                            )
+                          : TopSearchBar(
+                              onSearch: (search) {
+                                sslCookieAllHide();
+                                changePagerAllHide();
+                                searchString = search;
+                                getNowControl()?.loadUrl(
+                                    urlRequest: URLRequest(
+                                        url: WebUri(searchString.isUrl()
+                                            ? searchString.completeUrl()
+                                            : provider.selectEngin.enginUrl +
+                                                searchString)));
+                                hideSearch();
+                              },
+                              searchKey: searchString,
+                            ),
+                    ],
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: Stack(
+                        children: [
+                          Visibility(
+                            visible: browsers.isNotEmpty,
+                            maintainState: true,
+                            child: WebViewPager(
+                              key: pagerStateKey,
+                              browserPages: browsers,
+                              select: selectPosition,
+                              positionChange: () {
+                                sslCookieAllHide();
+                                changePage();
+                              },
+                              browserKeys: provider.browserKey,
+                            ),
+                          ),
+                          if (isBlackAlphaShow)
+                            GestureDetector(
+                              onTap: () {
+                                hideSearch();
+                              },
+                              child: Container(
+                                color: ThemeColors.alphaColorDark,
+                              ),
+                            ),
+                          // if (progress != 100)
+                          Visibility(
+                              visible: isShowSSLCookie,
+                              maintainState: true,
+                              child: FutureBuilder(
+                                future: getNowControl()?.getCertificate(),
+                                builder: (context, sp) {
+                                  return SSLCookieView(
+                                    key: sslCookieKey,
+                                    url: getPageNowState()?.webUrl ?? "",
+                                    title: title,
+                                    sslInfo: sp.connectionState ==
+                                            ConnectionState.done
+                                        ? SSLInfo(
+                                            name:
+                                                sp.data?.issuedTo?.CName ?? "-",
+                                            end: sp.data?.validNotAfterDate
+                                                    ?.formatTime(context) ??
+                                                "-",
+                                            oName:
+                                                sp.data?.issuedTo?.OName ?? "-",
+                                            ouName:
+                                                sp.data?.issuedTo?.UName ?? "-",
+                                            start: sp.data?.validNotBeforeDate
+                                                    ?.formatTime(context) ??
+                                                "-",
+                                            tName:
+                                                sp.data?.issuedBy?.CName ?? "-",
+                                            tOName:
+                                                sp.data?.issuedBy?.OName ?? "-",
+                                          )
+                                        : const SSLInfo(
+                                            name: "-",
+                                            end: "-",
+                                            oName: "-",
+                                            ouName: "-",
+                                            start: "-",
+                                            tName: "-",
+                                            tOName: "-"),
+                                    onAnimationOut: () {
+                                      setState(() {
+                                        isShowSSLCookie = false;
+                                      });
+                                    },
+                                    cookies: CookieManager().getCookies(
+                                        url: WebUri(
+                                            getPageNowState()?.webUrl ?? "")),
+                                    onClick: () {
+                                      sslCookieAllHide();
+                                    },
+                                    onQRClick: () {},
+                                    onHistoryClick: () {
+                                      openUrlForHistory(1, title);
+                                    },
+                                  );
+                                },
+                              )),
+                          Visibility(
+                            visible: isShowPagerAllList,
+                            maintainState: true, // 这里设置为 true，保留状态
+                            child: BrowserPagerList(
+                                onAnimationOut: () {
+                                  setState(() {
+                                    isShowPagerAllList = false;
+                                  });
+                                },
+                                key: browserPagerListState,
+                                select: selectPosition,
+                                list: getPagerInfos(),
+                                onDeletePager: (index) {
+                                  removeNowPage(index);
+                                },
+                                onAddPager: () {
+                                  bottomToolKey.currentState
+                                      ?.startPageButtonAnimation();
+                                  copyInit(homeUrl);
+                                  changePagerAllHide();
+                                },
+                                onSelect: (index) {
+                                  setState(() {
+                                    changePagerAllHide();
+                                    selectPosition = index;
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      pagerStateKey.currentState?.changePage();
+                                    });
+                                  });
+                                }),
+                          ),
+                        ],
+                      )),
+                  BottomToolBar(
+                    key: bottomToolKey,
+                    pageSize: browsers.length,
+                    onPageLongClick: () {
+                      sslCookieAllHide();
+                      changePagerAllHide();
+                      copyInit(homeUrl, true);
+                    },
+                    onBackClick: () {
+                      sslCookieAllHide();
+                      changePagerAllHide();
+                      changeBack();
+                    },
+                    onForwardClick: () async {
+                      sslCookieAllHide();
+                      changePagerAllHide();
+                      var control = getNowControl();
+                      if (control != null) {
+                        var forward = await control.canGoForward();
+                        if (forward) {
+                          control.goForward();
+                        }
+                      }
+                    },
+                    onHomeClick: () {
+                      sslCookieAllHide();
+                      changePagerAllHide();
+                      getNowControl()?.loadFile(assetFilePath: homeUrl);
+                    },
+                    onPageClick: () {
+                      setState(() {
+                        topSearchShow = false;
+                      });
+                      sslCookieAllHide();
+                      if (isShowPagerAllList) {
+                        changePagerAllHide();
+                      } else {
+                        setState(() {
+                          isShowPagerAllList = true;
+                        });
+                        blackAlphaShow();
+                        browserPagerListState.currentState!.animationIn();
+                      }
+                    },
+                    onMenuClick: () {
+                      sslCookieAllHide();
+                      changePagerAllHide();
+                      showDialog(
+                          context: context,
+                          builder: (mContext) {
+                            return FuncBottomDialog(
+                              onClick: (type) async {
+                                var isShowChild = false;
+                                switch (type) {
+                                  case FuncBottomType.night:
+                                    provider.toggleTheme();
+                                    Hive.box(boolKey).put(
+                                        nightModeKey,
+                                        !Hive.box(boolKey).get(nightModeKey,
+                                            defaultValue: false));
+                                    provider.setFuncBottomTypeOnChange(
+                                        FuncBottomType.night);
+                                    break;
+                                  case FuncBottomType.bookmark:
+                                    Navigator.of(context).pop();
+                                    isShowChild = true;
+                                    openUrlForHistory(0);
+                                    break;
+                                  case FuncBottomType.history:
+                                    Navigator.of(context).pop();
+                                    isShowChild = true;
+                                    openUrlForHistory(1);
+                                    break;
+                                  case FuncBottomType.download:
+                                    break;
+                                  case FuncBottomType.hide:
+                                    Hive.box(boolKey).put(
+                                        hideKey,
+                                        !Hive.box(boolKey)
+                                            .get(hideKey, defaultValue: false));
+                                    provider.setFuncBottomTypeOnChange(
+                                        FuncBottomType.hide);
+                                    // provider.updateLocale(() {
+                                    //   Phoenix.rebirth(context);
+                                    // });
+                                    break;
+                                  case FuncBottomType.share:
+                                    Share.share(
+                                        getPageNowState()?.webUrl ?? "");
+                                    break;
+                                  case FuncBottomType.addBookmark:
+                                    break;
+                                  case FuncBottomType.desktop:
+                                    var isOpen = !Hive.box(boolKey)
+                                        .get(desktopKey, defaultValue: false);
+                                    provider.desktopChange(isOpen);
+                                    Hive.box(boolKey).put(desktopKey, isOpen);
+                                    provider.setFuncBottomTypeOnChange(
+                                        FuncBottomType.desktop);
+                                    break;
+                                  case FuncBottomType.tool:
+                                    break;
+                                  case FuncBottomType.setting:
+                                    Navigator.of(context).pop();
+                                    isShowChild = true;
+                                    Navigator.of(context).pushNamed(
+                                        RouteSetting.settings,
+                                        arguments: 2);
+                                    break;
+                                  case FuncBottomType.find:
+                                    break;
+                                  case FuncBottomType.save:
+                                    break;
+                                  case FuncBottomType.translate:
+                                    break;
+                                  case FuncBottomType.code:
+                                    copyInit(
+                                        "view-source:${getPageNowState()?.webUrl}",
+                                        true);
+                                    break;
+                                  case FuncBottomType.full:
+                                    Hive.box(boolKey).put(
+                                        fullKey,
+                                        !Hive.box(boolKey)
+                                            .get(fullKey, defaultValue: false));
+                                    provider.setFuncBottomTypeOnChange(
+                                        FuncBottomType.full);
+                                    break;
+                                  case FuncBottomType.imageMode:
+                                    Navigator.of(context).pop();
+                                    isShowChild = true;
+                                    showImageModeDialog(context);
+                                    break;
+                                  case FuncBottomType.browserFlag:
+                                    Navigator.of(context).pop();
+                                    isShowChild = true;
+                                    showUserAgentDialog(context);
+                                    break;
+                                  case FuncBottomType.refresh:
+                                    getNowControl()?.reload();
+                                    break;
+                                  case FuncBottomType.network:
+                                    break;
+                                  case FuncBottomType.findRes:
+                                    break;
+                                  case FuncBottomType.noNetworkHtml:
+                                    break;
+                                  case FuncBottomType.scan:
+                                    String? url = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute<String>(
+                                        builder: (context) =>
+                                            const ScannerPage(),
+                                      ),
+                                    );
+                                    if (url != null) {
+                                      copyInit(url.toString(), true);
+                                    }
+                                    break;
+                                  case FuncBottomType.fontSize:
+                                    break;
+                                  case FuncBottomType.clear:
+                                    break;
+                                  case FuncBottomType.pdf:
+                                    break;
+                                }
+                                if (!isShowChild) {
+                                  Navigator.of(context).pop();
+                                }
                               },
                             );
-                          },
-                        )),
-                    Visibility(
-                      visible: isShowPagerAllList,
-                      maintainState: true, // 这里设置为 true，保留状态
-                      child: BrowserPagerList(
-                          onAnimationOut: () {
-                            setState(() {
-                              isShowPagerAllList = false;
-                            });
-                          },
-                          key: browserPagerListState,
-                          select: selectPosition,
-                          list: getPagerInfos(),
-                          onDeletePager: (index) {
-                            removeNowPage(index);
-                          },
-                          onAddPager: () {
-                            bottomToolKey.currentState
-                                ?.startPageButtonAnimation();
-                            copyInit(homeUrl);
-                            changePagerAllHide();
-                          },
-                          onSelect: (index) {
-                            setState(() {
-                              changePagerAllHide();
-                              selectPosition = index;
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                pagerStateKey.currentState?.changePage();
-                              });
-                            });
-                          }),
-                    ),
-                  ],
-                )),
-            BottomToolBar(
-              key: bottomToolKey,
-              pageSize: browsers.length,
-              onPageLongClick: () {
-                sslCookieAllHide();
-                changePagerAllHide();
-                copyInit(homeUrl, true);
-              },
-              onBackClick: () {
-                sslCookieAllHide();
-                changePagerAllHide();
-                changeBack();
-              },
-              onForwardClick: () async {
-                sslCookieAllHide();
-                changePagerAllHide();
-                var control = getNowControl();
-                if (control != null) {
-                  var forward = await control.canGoForward();
-                  if (forward) {
-                    control.goForward();
-                  }
-                }
-              },
-              onHomeClick: () {
-                sslCookieAllHide();
-                changePagerAllHide();
-                getNowControl()?.loadFile(assetFilePath: homeUrl);
-              },
-              onPageClick: () {
-                setState(() {
-                  topSearchShow = false;
-                });
-                sslCookieAllHide();
-                if (isShowPagerAllList) {
-                  changePagerAllHide();
-                } else {
+                          });
+                    },
+                  )
+                ],
+              ),
+              GestureDetector(
+                onHorizontalDragStart: (DragStartDetails details) {
+                  // 滑动开始时的处理
+                  isSwiping = true;
                   setState(() {
-                    isShowPagerAllList = true;
+                    swipingX = 0;
                   });
-                  blackAlphaShow();
-                  browserPagerListState.currentState!.animationIn();
-                }
-              },
-              onMenuClick: () {
-                sslCookieAllHide();
-                changePagerAllHide();
-                showDialog(
-                    context: context,
-                    builder: (mContext) {
-                      return FuncBottomDialog(
-                        onClick: (type) async {
-                          var isShowChild = false;
-                          switch (type) {
-                            case FuncBottomType.night:
-                              provider.toggleTheme();
-                              Hive.box(boolKey).put(
-                                  nightModeKey,
-                                  !Hive.box(boolKey)
-                                      .get(nightModeKey, defaultValue: false));
-                              provider.setFuncBottomTypeOnChange(
-                                  FuncBottomType.night);
-                              break;
-                            case FuncBottomType.bookmark:
-                              Navigator.of(context).pop();
-                              isShowChild = true;
-                              openUrlForHistory(0);
-                              break;
-                            case FuncBottomType.history:
-                              Navigator.of(context).pop();
-                              isShowChild = true;
-                              openUrlForHistory(1);
-                              break;
-                            case FuncBottomType.download:
-                              break;
-                            case FuncBottomType.hide:
-                              Hive.box(boolKey).put(
-                                  hideKey,
-                                  !Hive.box(boolKey)
-                                      .get(hideKey, defaultValue: false));
-                              provider.setFuncBottomTypeOnChange(
-                                  FuncBottomType.hide);
-                              // provider.updateLocale(() {
-                              //   Phoenix.rebirth(context);
-                              // });
-                              break;
-                            case FuncBottomType.share:
-                              Share.share(getPageNowState()?.webUrl ?? "");
-                              break;
-                            case FuncBottomType.addBookmark:
-                              break;
-                            case FuncBottomType.desktop:
-                              var isOpen = !Hive.box(boolKey)
-                                  .get(desktopKey, defaultValue: false);
-                              provider.desktopChange(isOpen);
-                              Hive.box(boolKey).put(desktopKey, isOpen);
-                              provider.setFuncBottomTypeOnChange(
-                                  FuncBottomType.desktop);
-                              break;
-                            case FuncBottomType.tool:
-                              break;
-                            case FuncBottomType.setting:
-                              Navigator.of(context).pop();
-                              isShowChild = true;
-                              Navigator.of(context).pushNamed(RouteSetting.settings,arguments: 2);
-                              break;
-                            case FuncBottomType.find:
-                              break;
-                            case FuncBottomType.save:
-                              break;
-                            case FuncBottomType.translate:
-                              break;
-                            case FuncBottomType.code:
-                              copyInit(
-                                  "view-source:${getPageNowState()?.webUrl}",
-                                  true);
-                              break;
-                            case FuncBottomType.full:
-                              Hive.box(boolKey).put(
-                                  fullKey,
-                                  !Hive.box(boolKey)
-                                      .get(fullKey, defaultValue: false));
-                              provider.setFuncBottomTypeOnChange(
-                                  FuncBottomType.full);
-                              break;
-                            case FuncBottomType.imageMode:
-                              Navigator.of(context).pop();
-                              isShowChild = true;
-                              showImageModeDialog(context);
-                              break;
-                            case FuncBottomType.browserFlag:
-                              Navigator.of(context).pop();
-                              isShowChild = true;
-                              showUserAgentDialog(context);
-                              break;
-                            case FuncBottomType.refresh:
-                              getNowControl()?.reload();
-                              break;
-                            case FuncBottomType.network:
-                              break;
-                            case FuncBottomType.findRes:
-                              break;
-                            case FuncBottomType.noNetworkHtml:
-                              break;
-                            case FuncBottomType.scan:
-                              String? url = await Navigator.push(
-                                context,
-                                MaterialPageRoute<String>(
-                                  builder: (context) => const ScannerPage(),
-                                ),
-                              );
-                              if (url != null) {
-                                copyInit(url.toString(), true);
-                              }
-                              break;
-                            case FuncBottomType.fontSize:
-                              break;
-                            case FuncBottomType.clear:
-                              break;
-                            case FuncBottomType.pdf:
-                              break;
+                },
+                onHorizontalDragUpdate: (DragUpdateDetails details) async {
+                  if (!isSwiping) {
+                    return;
+                  }
+                  // 滑动更新时的处理
+                  var control = getNowControl();
+                  if (control != null) {
+                    bool isBack = await control.canGoBack();
+
+                    if (isBack) {
+                      if (swipingX > 0 || (swipingX == 0 && details.delta.dx >= 0)) {
+                        setState(() {
+                          if (!isSwiping) {
+                            return;
                           }
-                          if (!isShowChild) {
-                            Navigator.of(context).pop();
+                          swipingX += details.delta.dx;
+                        });
+                      }
+                    }
+                    bool isForward= await control.canGoForward();
+                    if (isForward) {
+                      if (swipingX < 0 || (swipingX == 0 && details.delta.dx <= 0)) {
+                        setState(() {
+                          if (!isSwiping) {
+                            return;
                           }
-                        },
-                      );
-                    });
-              },
-            )
-          ],
-        )));
+                          swipingX += details.delta.dx;
+                        });
+                      }
+                    }
+                  }
+                },
+                onHorizontalDragEnd: (DragEndDetails details) {
+                  isSwiping = false;
+                  // 滑动结束时的处理
+                  print("end:$swipingX");
+                  if (swipingX.abs() >= widthInit * 2) {
+                    if (swipingX > 0) {
+                      getNowControl()?.goBack();
+                    } else if (swipingX < 0) {
+                      getNowControl()?.goForward();
+                    }
+                  }
+                  setState(() {
+                    swipingX = 0;
+                  });
+                },
+              ),
+              GestureWidget(swipingX: swipingX / 2)
+            ],
+          ),
+        ));
   }
 }

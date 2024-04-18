@@ -109,9 +109,7 @@ class BrowserPagerListState extends State<BrowserPagerList>
                 alignment: Alignment.bottomCenter,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                      color: Theme
-                          .of(context)
-                          .brightness == Brightness.light
+                      color: Theme.of(context).brightness == Brightness.light
                           ? ThemeColors.alphaColorWhite
                           : ThemeColors.alphaColorBlack,
                       borderRadius: const BorderRadius.only(
@@ -143,8 +141,7 @@ class BrowserPagerListState extends State<BrowserPagerList>
                           return Material(
                               color: Colors.transparent,
                               child: Dismissible(
-                                key: Key(DateTime
-                                    .now()
+                                key: Key(DateTime.now()
                                     .millisecondsSinceEpoch
                                     .toString()),
                                 child: InkWell(
@@ -165,30 +162,31 @@ class BrowserPagerListState extends State<BrowserPagerList>
                                             child: DecoratedBox(
                                                 decoration: const BoxDecoration(
                                                     borderRadius:
-                                                    BorderRadius.all(
-                                                        Radius.circular(
-                                                            5))),
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5))),
                                                 child: item.url
-                                                    .extractDomainWithProtocol() ==
-                                                    null
+                                                            .extractDomainWithProtocol() ==
+                                                        null
                                                     ? Image.asset(
-                                                    AppImages.icon,
-                                                    width: 20,
-                                                    height: 20,
-                                                    fit: BoxFit.cover)
-                                                    : CachedNetworkImage(
-                                                  imageUrl:item.url
-                                                      .iconUrl() ?? "",
-                                                  errorWidget: (context,
-                                                      url, error) {
-                                                    return Image.asset(
                                                         AppImages.icon,
                                                         width: 20,
                                                         height: 20,
-                                                        fit:
-                                                        BoxFit.cover);
-                                                  },
-                                                )),
+                                                        fit: BoxFit.cover)
+                                                    : CachedNetworkImage(
+                                                        imageUrl: item.url
+                                                                .iconUrl() ??
+                                                            "",
+                                                        errorWidget: (context,
+                                                            url, error) {
+                                                          return Image.asset(
+                                                              AppImages.icon,
+                                                              width: 20,
+                                                              height: 20,
+                                                              fit:
+                                                                  BoxFit.cover);
+                                                        },
+                                                      )),
                                           ),
                                         ),
                                         Expanded(
@@ -196,12 +194,12 @@ class BrowserPagerListState extends State<BrowserPagerList>
                                                 style: TextStyle(
                                                     fontSize: 15,
                                                     color: widget.select ==
-                                                        index
+                                                            index
                                                         ? ThemeColors
-                                                        .progressStartColor
+                                                            .progressStartColor
                                                         : null),
                                                 overflow:
-                                                TextOverflow.ellipsis)),
+                                                    TextOverflow.ellipsis)),
                                         IconImageButton(
                                           res: AppImages.close,
                                           onClick: () {
@@ -242,13 +240,14 @@ class SSLInfo {
   final String start;
   final String end;
 
-  const SSLInfo({required this.name,
-    required this.end,
-    required this.oName,
-    required this.ouName,
-    required this.start,
-    required this.tName,
-    required this.tOName});
+  const SSLInfo(
+      {required this.name,
+      required this.end,
+      required this.oName,
+      required this.ouName,
+      required this.start,
+      required this.tName,
+      required this.tOName});
 }
 
 class SSLCookieView extends StatefulWidget {
@@ -261,12 +260,16 @@ class SSLCookieView extends StatefulWidget {
   final Function onClick;
   final Function onHistoryClick;
 
-  const SSLCookieView({super.key,
-    required this.url,
-    required this.title,
-    required this.cookies,
-    this.sslInfo,
-    required this.onAnimationOut,required this.onQRClick, required this.onHistoryClick, required this.onClick});
+  const SSLCookieView(
+      {super.key,
+      required this.url,
+      required this.title,
+      required this.cookies,
+      this.sslInfo,
+      required this.onAnimationOut,
+      required this.onQRClick,
+      required this.onHistoryClick,
+      required this.onClick});
 
   @override
   State<StatefulWidget> createState() => SSLCookieState();
@@ -350,11 +353,9 @@ class SSLCookieState extends State<SSLCookieView>
                     Container(
                       decoration: BoxDecoration(
                           color:
-                          Theme
-                              .of(context)
-                              .brightness == Brightness.light
-                              ? ThemeColors.alphaColorWhite
-                              : ThemeColors.alphaColorBlack,
+                              Theme.of(context).brightness == Brightness.light
+                                  ? ThemeColors.alphaColorWhite
+                                  : ThemeColors.alphaColorBlack,
                           borderRadius: const BorderRadius.only(
                               bottomLeft: Radius.circular(20),
                               bottomRight: Radius.circular(20))),
@@ -370,52 +371,53 @@ class SSLCookieState extends State<SSLCookieView>
                                   children: [
                                     Expanded(
                                         child: Column(
-                                          crossAxisAlignment:
+                                      crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              widget.title,
-                                              style: const TextStyle(
-                                                  fontSize: 16),
-                                              textAlign: TextAlign.start,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            const SizedBox(height: 5),
-                                            RichText(
-                                              text: TextSpan(
-                                                  text: richStrList.first,
-                                                  style: TextStyle(
-                                                      color: ThemeColors
-                                                          .fixColor,
-                                                      fontSize: 15),
-                                                  children: [
-                                                    if (richStrList.length > 1)
-                                                      TextSpan(
-                                                          text: richStrList[1],
-                                                          style: TextStyle(
-                                                              color: ThemeColors
-                                                                  .indicatorLightGrayUnSelectColorBlack,
-                                                              fontSize: 15)),
-                                                    if(richStrList.length > 2)
-                                                      TextSpan(
-                                                          text: richStrList[2],
-                                                          style: TextStyle(
-                                                              color:  Theme.of(context).brightness ==
+                                      children: [
+                                        Text(
+                                          widget.title,
+                                          style: const TextStyle(fontSize: 16),
+                                          textAlign: TextAlign.start,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 5),
+                                        RichText(
+                                          text: TextSpan(
+                                              text: richStrList.first,
+                                              style: TextStyle(
+                                                  color: ThemeColors.fixColor,
+                                                  fontSize: 15),
+                                              children: [
+                                                if (richStrList.length > 1)
+                                                  TextSpan(
+                                                      text: richStrList[1],
+                                                      style: TextStyle(
+                                                          color: ThemeColors
+                                                              .indicatorLightGrayUnSelectColorBlack,
+                                                          fontSize: 15)),
+                                                if (richStrList.length > 2)
+                                                  TextSpan(
+                                                      text: richStrList[2],
+                                                      style: TextStyle(
+                                                          color: Theme.of(context)
+                                                                      .brightness ==
                                                                   Brightness
-                                                                      .light ? Colors.black : Colors.white,
-                                                              fontSize: 15)),
-                                                    if(richStrList.length > 3)
-                                                      TextSpan(
-                                                          text: richStrList[3],
-                                                          style: TextStyle(
-                                                              color: ThemeColors
-                                                                  .indicatorLightGrayUnSelectColorBlack,
-                                                              fontSize: 15))
-                                                  ]),
-                                            ),
-                                          ],
-                                        )),
+                                                                      .light
+                                                              ? Colors.black
+                                                              : Colors.white,
+                                                          fontSize: 15)),
+                                                if (richStrList.length > 3)
+                                                  TextSpan(
+                                                      text: richStrList[3],
+                                                      style: TextStyle(
+                                                          color: ThemeColors
+                                                              .indicatorLightGrayUnSelectColorBlack,
+                                                          fontSize: 15))
+                                              ]),
+                                        ),
+                                      ],
+                                    )),
                                     IconImageButton(
                                       res: AppImages.history,
                                       onClick: () {
@@ -430,29 +432,35 @@ class SSLCookieState extends State<SSLCookieView>
                                     )
                                   ],
                                 ),
-                                FutureBuilder(future: widget.cookies, builder: (context,sp){
-                                  if (sp.connectionState == ConnectionState.done && sp.data != null && sp.data!.isNotEmpty) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        widget.onClick();
-                                        showCookiesDialog(sp.data ?? [], widget.url, context);
-                                      },
-                                      child: Container(
-                                    width: double.infinity,
-                                    height: 50,
-                                    color: Colors.transparent,
-                                    child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text("Cookies",
-                                              style: TextStyle(
-                                                  color: ThemeColors
-                                                      .progressStartColor)),
-                                        )),
-                                  );
-                                  } else {
-                                    return Container();
-                                  }
-                                }),
+                                FutureBuilder(
+                                    future: widget.cookies,
+                                    builder: (context, sp) {
+                                      if (sp.connectionState ==
+                                              ConnectionState.done &&
+                                          sp.data != null &&
+                                          sp.data!.isNotEmpty) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            widget.onClick();
+                                            showCookiesDialog(sp.data ?? [],
+                                                widget.url, context);
+                                          },
+                                          child: Container(
+                                              width: double.infinity,
+                                              height: 50,
+                                              color: Colors.transparent,
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text("Cookies",
+                                                    style: TextStyle(
+                                                        color: ThemeColors
+                                                            .progressStartColor)),
+                                              )),
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    }),
                                 if (widget.sslInfo != null)
                                   GestureDetector(
                                     onTap: () {
@@ -460,14 +468,12 @@ class SSLCookieState extends State<SSLCookieView>
                                       showSSLDialog(widget.sslInfo!, context);
                                     },
                                     child: Container(
-                                    width: double.infinity,
-                                    height: 50,
+                                      width: double.infinity,
+                                      height: 50,
                                       color: Colors.transparent,
-                                    child: Align(
+                                      child: Align(
                                         alignment: Alignment.centerLeft,
-                                        child: Text(S
-                                            .of(context)
-                                            .certificate,
+                                        child: Text(S.of(context).certificate,
                                             style: TextStyle(
                                                 color: ThemeColors
                                                     .progressStartColor)),
@@ -482,5 +488,74 @@ class SSLCookieState extends State<SSLCookieView>
                 ),
               ));
         });
+  }
+}
+
+class GestureWidget extends StatefulWidget {
+  final double swipingX;
+
+  const GestureWidget({super.key, required this.swipingX});
+
+  @override
+  State<StatefulWidget> createState() => GestureState();
+}
+
+class GestureState extends State<GestureWidget> {
+  late double screenWidth = MediaQuery.of(context).size.width;
+  late double screenHeight = MediaQuery.of(context).size.height;
+
+  @override
+  Widget build(BuildContext context) {
+    print("swipingx:${widget.swipingX}");
+    return Stack(
+      children: [
+        Transform.translate(
+            offset: Offset(
+                -60 + (widget.swipingX > 0
+                    ? widget.swipingX >= 60
+                        ? 60
+                        : widget.swipingX
+                    : 0),
+                screenHeight / 2 - 30),
+            child: backOrForward(true),),
+        Transform.translate(
+            offset: Offset(
+                screenWidth + (widget.swipingX < 0
+                    ? widget.swipingX <= -60
+                        ? -60
+                        : widget.swipingX
+                    : 0),
+                screenHeight / 2 - 30),
+            child:  backOrForward(false)),
+      ],
+    );
+  }
+
+  Widget backOrForward(bool isBack) {
+    return SizedBox(
+        height: 60,
+        width: 60,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: isBack
+                ? const BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    bottomRight: Radius.circular(15))
+                : const BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    bottomLeft: Radius.circular(15)),
+            color: ThemeColors.alphaColorBlack,
+          ),
+          child: Transform.rotate(
+            angle: isBack ? 0 : 3,
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Image.asset(AppImages.back,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? ThemeColors.iconColorLight
+                      : ThemeColors.iconColorDark),
+            ),
+          ),
+        ));
   }
 }

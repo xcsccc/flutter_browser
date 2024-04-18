@@ -112,7 +112,7 @@ class HistoryPage extends StatefulWidget {
 class _HistoryState extends State<HistoryPage> {
   late var provider = Provider.of<GlobalProvider>(context);
   late var search = widget.search;
-  GlobalKey _key = GlobalKey();
+  final GlobalKey _key = GlobalKey();
 
   List<HistoryInfo> getList() {
     if (search.isEmpty) {
