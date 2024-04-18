@@ -180,7 +180,6 @@ class BrowserState extends State<BrowserView>
                     }
 
                     if (_isSelect) {
-                      print("change:$title");
                       widget.browserInfo.onTitleChange(title);
                     }
                   },
@@ -260,6 +259,9 @@ class BrowserState extends State<BrowserView>
                     ),
                     Factory<HorizontalDragGestureRecognizer>(
                       () => HorizontalDragGestureRecognizer(),
+                    ),
+                    Factory<OneSequenceGestureRecognizer>(
+                          () => EagerGestureRecognizer(),
                     ),
                   }));
         })),

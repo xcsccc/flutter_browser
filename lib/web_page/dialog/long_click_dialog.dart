@@ -58,7 +58,8 @@ List<String> _findName(List<FunDialogType> list, BuildContext context) {
         return S.of(context).share;
       case FunDialogType.delete:
         return S.of(context).delete;
-      default:return "";
+      default:
+        return "";
     }
   }).toList();
 }
@@ -94,15 +95,25 @@ List<FunDialogType> _findDialogTypeList(RequestFocusNodeHrefResult result) {
           element == FunDialogType.pageInfo ||
           element == FunDialogType.share;
     } else if (result.src != null && result.url == null) {
-      return element == FunDialogType.viewImage &&
-          element == FunDialogType.saveImage &&
-          element == FunDialogType.shareImage &&
-          element == FunDialogType.pictureMode &&
-          element == FunDialogType.pageInfo &&
-          element == FunDialogType.scanQR &&
+      return element == FunDialogType.viewImage ||
+          element == FunDialogType.saveImage ||
+          element == FunDialogType.shareImage ||
+          element == FunDialogType.pictureMode ||
+          element == FunDialogType.pageInfo ||
+          element == FunDialogType.scanQR ||
           element == FunDialogType.share;
     } else {
-      return true;
+      return  element == FunDialogType.openBackground ||
+          element == FunDialogType.openNew ||
+          element == FunDialogType.copyLink ||
+          element == FunDialogType.copyLinkText ||
+          element == FunDialogType.pageInfo ||
+          element == FunDialogType.share ||
+          element == FunDialogType.viewImage ||
+          element == FunDialogType.saveImage ||
+          element == FunDialogType.shareImage ||
+          element == FunDialogType.pictureMode ||
+          element == FunDialogType.scanQR;
     }
   }).toList();
 }
@@ -114,19 +125,27 @@ void showCustom(
     List<FunDialogType> list,
     List<String> initList,
     GlobalProvider provider,
-    Future<void> Function(FunDialogType, OverlayEntry?) onTop,[String? title]) {
+    Future<void> Function(FunDialogType, OverlayEntry?) onTop,
+    [String? title]) {
   provider.showFunDialog();
   OverlayEntry? overlayEntry;
   overlayEntry = OverlayEntry(
     builder: (BuildContext newContext) {
-      return LongDialogWidget(list: list, initList: initList, x: x, y: y, overlayEntry: overlayEntry!, onTop: onTop,title: title);
+      return LongDialogWidget(
+          list: list,
+          initList: initList,
+          x: x,
+          y: y,
+          overlayEntry: overlayEntry!,
+          onTop: onTop,
+          title: title);
     },
   );
 
   Overlay.of(context).insert(overlayEntry);
 }
 
-class LongDialogWidget extends StatefulWidget{
+class LongDialogWidget extends StatefulWidget {
   final List<FunDialogType> list;
   final List<String> initList;
   final double x;
@@ -135,14 +154,21 @@ class LongDialogWidget extends StatefulWidget{
   final String? title;
   final Future<void> Function(FunDialogType, OverlayEntry?) onTop;
 
-  const LongDialogWidget({super.key, required this.list, required this.initList, required this.x, required this.y, required this.overlayEntry, this.title, required this.onTop});
+  const LongDialogWidget(
+      {super.key,
+      required this.list,
+      required this.initList,
+      required this.x,
+      required this.y,
+      required this.overlayEntry,
+      this.title,
+      required this.onTop});
 
   @override
-  State<StatefulWidget> createState() =>LongDialogState();
-
+  State<StatefulWidget> createState() => LongDialogState();
 }
 
-class LongDialogState extends State<LongDialogWidget>{
+class LongDialogState extends State<LongDialogWidget> {
   late var provider = Provider.of<GlobalProvider>(context, listen: false);
   double height = 0;
 
@@ -161,95 +187,109 @@ class LongDialogState extends State<LongDialogWidget>{
                 onTap: () {
                   widget.overlayEntry.remove();
                 },
-                behavior:
-                HitTestBehavior.translucent, // 设置为translucent以便接收点击事件
+                behavior: HitTestBehavior.translucent, // 设置为translucent以便接收点击事件
               ),
               Visibility(
                   visible: height != 0,
-                  maintainState: true,child:Stack(
-                children: [
-                  Positioned(
-                      width: 200,
-                      left: screenWidth - widget.x >= 200
-                          ? widget.x
-                          : widget.x - 200 >= 0
-                          ? widget.x - 200
-                          : 0,
-                      top: screenHeight - widget.y >= height
-                          ? widget.y
-                          : widget.y - height >= 0
-                          ? widget.y - height
-                          : 0,
-                      child:  LayoutBuilder(builder: (context,contains){
-                        WidgetsBinding.instance.addPostFrameCallback((callback) {
-                          if(height == 0){
-                            setState(() {
-                              height = context.size?.height ?? 0;
-                              print("height:$height");
+                  maintainState: true,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                          width: 200,
+                          left: screenWidth - widget.x >= 200
+                              ? widget.x
+                              : widget.x - 200 >= 0
+                                  ? widget.x - 200
+                                  : 0,
+                          top: screenHeight - widget.y >= height
+                              ? widget.y
+                              : widget.y - height >= 0
+                                  ? widget.y - height
+                                  : 0,
+                          child: LayoutBuilder(builder: (context, contains) {
+                            WidgetsBinding.instance
+                                .addPostFrameCallback((callback) {
+                              if (height == 0) {
+                                setState(() {
+                                  height = context.size?.height ?? 0;
+                                  print("height:$height");
+                                });
+                              }
                             });
-                          }
-                        });
-                        return ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 300),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).brightness == Brightness.light
-                                    ? Colors.white
-                                    : ThemeColors.iconColorDark,
-                                border: Border.all(
-                                    color:
-                                    Theme.of(context).brightness == Brightness.light
-                                        ? ThemeColors.iconColorLight
+                            return Container(
+                                constraints:
+                                    const BoxConstraints(maxHeight: 300),
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.white
                                         : ThemeColors.iconColorDark,
-                                    width: 1),
-                                borderRadius:
-                                const BorderRadius.all(Radius.circular(20))),
-                            child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if(widget.title != null) Text(widget.title ?? "",style: const TextStyle(fontSize: 15,fontWeight: FontWeight.w500),),
-                                    ListView.builder(
-                                      padding: const EdgeInsets.all(0),
-                                      shrinkWrap: true,
-                                      itemCount: widget.list.length,
-                                      itemExtent: 50,
-                                      physics: const BouncingScrollPhysics(),
-                                      itemBuilder: (mContext, index) {
-                                        var item = widget.list[index];
-                                        return ListTile(
-                                            title: Text(widget.initList[index],
-                                                style: const TextStyle(fontSize: 15)),
-                                            onTap: () {
-                                              widget.onTop(item, widget.overlayEntry);
-                                            });
-                                      },
-                                    )
-                                  ],
-                                )),
-                          ),
-                        );}
-                      ))],
-              )),
+                                    border: Border.all(
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? ThemeColors.iconColorLight
+                                            : ThemeColors.iconColorDark,
+                                        width: 1),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(20))),
+                                child: SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          if (widget.title != null)
+                                            Text(
+                                              widget.title ?? "",
+                                              style: const TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ListView.builder(
+                                            padding: const EdgeInsets.all(0),
+                                            shrinkWrap: true,
+                                            itemCount: widget.list.length,
+                                            itemExtent: 50,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemBuilder: (mContext, index) {
+                                              var item = widget.list[index];
+                                              return ListTile(
+                                                  title: Text(
+                                                      widget.initList[index],
+                                                      style: const TextStyle(
+                                                          fontSize: 15)),
+                                                  onTap: () {
+                                                    widget.onTop(item,
+                                                        widget.overlayEntry);
+                                                  });
+                                            },
+                                          )
+                                        ],
+                                      )),
+                                ));
+                          }))
+                    ],
+                  )),
             ],
           ),
         ));
   }
-
 }
 
-class UrlOpenType{
+class UrlOpenType {
   final bool isNowOpen;
   final String url;
-  const UrlOpenType({required this.url,required this.isNowOpen});
+
+  const UrlOpenType({required this.url, required this.isNowOpen});
 }
 
-Map<FunDialogType,List<HistoryInfo>> groupBy(List<HistoryInfo> infoList){
-  Map<FunDialogType,List<HistoryInfo>> map = {};
+Map<FunDialogType, List<HistoryInfo>> groupBy(List<HistoryInfo> infoList) {
+  Map<FunDialogType, List<HistoryInfo>> map = {};
   for (var element in infoList) {
     var type = checkToNowDateGap(element.time);
-    if(map[type] == null){
+    if (map[type] == null) {
       map[type] = [];
     }
     map[type]!.add(element);
@@ -257,10 +297,11 @@ Map<FunDialogType,List<HistoryInfo>> groupBy(List<HistoryInfo> infoList){
   return map;
 }
 
-List<String> findClearHistoryName(Map<FunDialogType,List<HistoryInfo>> map,BuildContext context){
+List<String> findClearHistoryName(
+    Map<FunDialogType, List<HistoryInfo>> map, BuildContext context) {
   List<String> list = [];
   map.forEach((key, value) {
-    switch(key){
+    switch (key) {
       case FunDialogType.allTime:
         list.add(S.of(context).allTime(value.length));
         break;
@@ -273,7 +314,8 @@ List<String> findClearHistoryName(Map<FunDialogType,List<HistoryInfo>> map,Build
       case FunDialogType.oneHour:
         list.add(S.of(context).oneHour(value.length));
         break;
-      default:break;
+      default:
+        break;
     }
   });
   return list;
@@ -294,10 +336,11 @@ void showClearHistoryMenu(BuildContext context, double x, double y) {
       provider.historyDelete(element);
     });
     over?.remove();
-  },S.of(context).historyTitle);
+  }, S.of(context).historyTitle);
 }
 
-void showHistoryMenu(BuildContext context, double x, double y, HistoryInfo historyInfo) {
+void showHistoryMenu(
+    BuildContext context, double x, double y, HistoryInfo historyInfo) {
   var provider = Provider.of<GlobalProvider>(context, listen: false);
   var list = [
     FunDialogType.openBackground,
@@ -311,10 +354,12 @@ void showHistoryMenu(BuildContext context, double x, double y, HistoryInfo histo
     provider.hideFunDialog();
     switch (item) {
       case FunDialogType.openBackground:
-        Navigator.of(context).pop(UrlOpenType(url: historyInfo.url.toString(), isNowOpen: false));
+        Navigator.of(context).pop(
+            UrlOpenType(url: historyInfo.url.toString(), isNowOpen: false));
         break;
       case FunDialogType.openNew:
-        Navigator.of(context).pop(UrlOpenType(url: historyInfo.url.toString(), isNowOpen: true));
+        Navigator.of(context)
+            .pop(UrlOpenType(url: historyInfo.url.toString(), isNowOpen: true));
         break;
       case FunDialogType.delete:
         provider.historyDelete(historyInfo);

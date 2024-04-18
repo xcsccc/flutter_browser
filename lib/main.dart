@@ -350,15 +350,25 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     List<BrowserPagerInfo> list = [];
     for (int index = 0; index < browsers.length; index++) {
       var title = provider.browserKey[index].currentState?.title;
-      var url = provider.browserKey[index].currentState?.webUrl;
+      var nowUrl = provider.browserKey[index].currentState?.webUrl;
+      var url ="";
+      if(nowUrl != null ){
+        if(nowUrl.isNotEmpty){
+          url = nowUrl;
+        }else{
+          url = browsers[index].loadUrl;
+        }
+      }else{
+        url = browsers[index].loadUrl;
+      }
       if (title != null) {
-        if (title.isEmpty) {
-          title = url?.endsWith(homeUrl) ?? true ? homeTitle : url;
+        if (title.isEmpty || title.startsWith(homeTitle)) {
+          title = url.endsWith(homeUrl) ? homeTitle : url;
         }
       } else {
-        title = url?.endsWith(homeUrl) ?? true ? homeTitle : url;
+        title = url.endsWith(homeUrl) ? homeTitle : url;
       }
-      list.add(BrowserPagerInfo(url: url ?? "", title: title ?? homeTitle));
+      list.add(BrowserPagerInfo(url: url , title: title ));
     }
     return list;
   }
@@ -373,8 +383,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
-  void openUrlForHistory([int position = 0, String searchString = ""]) {
-    dynamic type = Navigator.of(context).pushNamed(
+  void openUrlForHistory([int position = 0, String searchString = ""]) async {
+    dynamic type = await Navigator.of(context).pushNamed(
         RouteSetting.bookmarkHistorySavePage,
         arguments: SearchInfo(search: searchString, position: position));
     if (type != null && type is UrlOpenType) {

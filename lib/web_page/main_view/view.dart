@@ -14,6 +14,11 @@ class BrowserPagerInfo {
   final String url;
   final String title;
 
+  @override
+  String toString() {
+    return 'BrowserPagerInfo{url: $url, title: $title}';
+  }
+
   const BrowserPagerInfo({required this.url, required this.title});
 }
 
