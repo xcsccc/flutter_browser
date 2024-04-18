@@ -15,4 +15,5 @@ class ThemeColors{
   static var progressEndColor = const Color(0xff684bff);
   static var fixColor = const Color(0xff1bb623);
   static var divideColor = const Color(0xffE0E0E0);
+  static var descColor = const Color(0xFF454545);
 }

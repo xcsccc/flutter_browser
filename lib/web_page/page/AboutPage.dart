@@ -76,7 +76,7 @@ class AboutState extends State<AboutPage> {
               child: InkWell(
                   onTap: () {},
                   customBorder: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0), // 设置圆角半径为10.0
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: const Padding(
                       padding: EdgeInsets.only(left: 15, top: 20, bottom: 20),
@@ -90,7 +90,7 @@ class AboutState extends State<AboutPage> {
                         .pushNamed(RouteSetting.openSource, arguments: 4);
                   },
                   customBorder: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0), // 设置圆角半径为10.0
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: const Padding(
                       padding: EdgeInsets.only(left: 15, top: 20, bottom: 20),
