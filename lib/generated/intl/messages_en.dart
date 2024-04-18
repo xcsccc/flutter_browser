@@ -50,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "clear": MessageLookupByLibrary.simpleMessage("Clear data"),
         "code": MessageLookupByLibrary.simpleMessage("View source"),
         "commonName": MessageLookupByLibrary.simpleMessage("Common Name(CN)"),
+        "commonTitle": MessageLookupByLibrary.simpleMessage("Common"),
         "cookieTitle": m2,
         "copiedSuccessfully":
             MessageLookupByLibrary.simpleMessage("Copied Successfully!"),

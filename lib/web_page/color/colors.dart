@@ -9,6 +9,7 @@ class ThemeColors{
   static var secondDartColor = const Color(0xffe8e8e8);
   static var alphaColorWhite = const Color(0xe2ffffff);
   static var alphaColorBlack = const Color(0xe21e1e1e);
+  static var alphaColorGray = const Color(0xd3656565);
   static var indicatorLightGrayUnSelectColorBlack = const Color(0xe2c5c5c5);
   static var indicatorLightGraySelectColorBlack = const Color(0xe2464646);
   static var progressStartColor = const Color(0xff1fbcff);

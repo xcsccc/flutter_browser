@@ -132,7 +132,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   double swipingX = 0;
   double widthInit = 60;
   bool isSwiping = false;
-
   String invokeMethod = "shareData";
   var channel = const MethodChannel(CHANNEL);
 
@@ -782,7 +781,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               ),
               GestureDetector(
                 onHorizontalDragStart: (DragStartDetails details) {
-                  // 滑动开始时的处理
                   isSwiping = true;
                   setState(() {
                     swipingX = 0;
@@ -792,13 +790,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   if (!isSwiping) {
                     return;
                   }
-                  // 滑动更新时的处理
                   var control = getNowControl();
                   if (control != null) {
                     bool isBack = await control.canGoBack();
 
                     if (isBack) {
-                      if (swipingX > 0 || (swipingX == 0 && details.delta.dx >= 0)) {
+                      if (swipingX >= 0 &&  swipingX + details.delta.dx >= 0) {
                         setState(() {
                           if (!isSwiping) {
                             return;
@@ -809,7 +806,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     }
                     bool isForward= await control.canGoForward();
                     if (isForward) {
-                      if (swipingX < 0 || (swipingX == 0 && details.delta.dx <= 0)) {
+                      if (swipingX <= 0 &&  swipingX + details.delta.dx <= 0) {
                         setState(() {
                           if (!isSwiping) {
                             return;
@@ -822,8 +819,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 },
                 onHorizontalDragEnd: (DragEndDetails details) {
                   isSwiping = false;
-                  // 滑动结束时的处理
-                  print("end:$swipingX");
                   if (swipingX.abs() >= widthInit * 2) {
                     if (swipingX > 0) {
                       getNowControl()?.goBack();

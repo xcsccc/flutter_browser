@@ -144,12 +144,12 @@ class LongDialogWidget extends StatefulWidget{
 
 class LongDialogState extends State<LongDialogWidget>{
   late var provider = Provider.of<GlobalProvider>(context, listen: false);
-  late double screenWidth = MediaQuery.of(context).size.width;
-  late double screenHeight = MediaQuery.of(context).size.height;
   double height = 0;
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: Colors.transparent,
         body: Visibility(

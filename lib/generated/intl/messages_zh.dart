@@ -49,6 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "clear": MessageLookupByLibrary.simpleMessage("清除数据"),
         "code": MessageLookupByLibrary.simpleMessage("源码"),
         "commonName": MessageLookupByLibrary.simpleMessage("公用名（CN）"),
+        "commonTitle": MessageLookupByLibrary.simpleMessage("通用"),
         "cookieTitle": m2,
         "copiedSuccessfully": MessageLookupByLibrary.simpleMessage("复制成功！"),
         "copyLink": MessageLookupByLibrary.simpleMessage("复制链接"),

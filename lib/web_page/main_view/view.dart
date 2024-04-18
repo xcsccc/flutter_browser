@@ -501,12 +501,10 @@ class GestureWidget extends StatefulWidget {
 }
 
 class GestureState extends State<GestureWidget> {
-  late double screenWidth = MediaQuery.of(context).size.width;
-  late double screenHeight = MediaQuery.of(context).size.height;
-
   @override
   Widget build(BuildContext context) {
-    print("swipingx:${widget.swipingX}");
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Stack(
       children: [
         Transform.translate(
@@ -544,16 +542,14 @@ class GestureState extends State<GestureWidget> {
                 : const BorderRadius.only(
                     topLeft: Radius.circular(15),
                     bottomLeft: Radius.circular(15)),
-            color: ThemeColors.alphaColorBlack,
+            color:  ThemeColors.alphaColorGray,
           ),
           child: Transform.rotate(
             angle: isBack ? 0 : 3,
             child: Padding(
               padding: const EdgeInsets.all(15),
               child: Image.asset(AppImages.back,
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? ThemeColors.iconColorLight
-                      : ThemeColors.iconColorDark),
+                  color: ThemeColors.iconColorLight),
             ),
           ),
         ));
