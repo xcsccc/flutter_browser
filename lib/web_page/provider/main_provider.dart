@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:browser01/web_page/custom/custom.dart';
+import 'package:browser01/web_page/dialog/user_agent_dialog.dart';
 import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/model/setting_common_info.dart';
 import 'package:connectivity/connectivity.dart';
@@ -31,6 +32,7 @@ class GlobalProvider with ChangeNotifier{
   late InAppWebViewSettings settings = updateSettings();
 
   List<HistoryInfo> get historyInfo  => HistoryInfo.getAll().reversed.toList();
+  List<SettingCommonInfo> get settingCommonInfo  => SettingCommonInfo.getAll().toList();
 
   List<FuncBottomInfo> getFuncBottomInfoList(List<FuncBottomInfo> init){
     var list = FuncBottomInfo.getAll();
@@ -91,6 +93,19 @@ class GlobalProvider with ChangeNotifier{
     for (var element in browserKey) {
       element.currentState?.control?.reload();
     }
+    notifyListeners();
+  }
+
+  void updateUserAgentSetting(UserAgentInfo info, int index){
+    nowType = info.type;
+    userAgent = info.type.userAgent;
+    settings = updateSettings();
+    changeAllSetting();
+    for (var element in browserKey) {
+      element.currentState?.control?.reload();
+    }
+    settingCommonInfo[index].desc = info.name;
+    settingCommonInfo[index].edit(index);
     notifyListeners();
   }
 

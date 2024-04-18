@@ -22,6 +22,7 @@ import 'package:browser01/web_page/model/setting_common_info.dart';
 import 'package:browser01/web_page/page/AboutPage.dart';
 import 'package:browser01/web_page/page/OpenSourcePage.dart';
 import 'package:browser01/web_page/page/SettingCommonPage.dart';
+import 'package:browser01/web_page/page/UserAgentSettingPage.dart';
 import 'package:browser01/web_page/page/bookmark_history_save_page.dart';
 import 'package:browser01/web_page/page/scanner_page.dart';
 import 'package:browser01/web_page/page/SettingPage.dart';
@@ -59,7 +60,10 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<StatefulWidget> createState() => MyAppState();
+  State<StatefulWidget> createState() {
+    print('hello');
+    return MyAppState();
+  }
 }
 
 class MyAppState extends State<MyApp> {
@@ -78,6 +82,7 @@ class MyAppState extends State<MyApp> {
         RouteSetting.aboutPage: (context) => const AboutPage(),
         RouteSetting.openSource: (context) => const OpenSourcePage(),
         RouteSetting.settingsCommon: (context) => const SettingCommonPage(),
+        RouteSetting.userAgentSetting: (context) => const UserAgentSettingPage(),
       },
       title: 'Flutter Demo',
       theme: provider.currentTheme,

@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import '../custom/custom.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 2)
 class SettingCommonInfo{
   @HiveField(0)
   String title;
@@ -14,12 +14,16 @@ class SettingCommonInfo{
     return Hive.box<SettingCommonInfo>(settingCommonKey);
   }
 
-  void save() {
-    openBox().add(this);
+  void edit(int index) {
+    openBox().putAt(index, this);
   }
 
   static List<SettingCommonInfo> getAll() {
     return openBox().values.toList();
   }
 
+  @override
+  String toString() {
+    return 'SettingCommonInfo{title: $title, desc: $desc}';
+  }
 }
