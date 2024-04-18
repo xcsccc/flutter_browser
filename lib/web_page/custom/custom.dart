@@ -260,6 +260,7 @@ class RouteSetting {
   static const String aboutPage = '/aboutPage';
   static const String openSource = '/openSource';
   static const String settingsCommon = '/settingsCommon';
+  static const String userAgentSetting = '/userAgentSetting';
 }
 
 enum FuncBottomType {
