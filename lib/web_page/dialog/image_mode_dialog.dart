@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:browser01/web_page/color/colors.dart';
 import 'package:browser01/web_page/custom/custom.dart';
 import 'package:browser01/web_page/dialog/long_click_dialog.dart';

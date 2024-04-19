@@ -1,9 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
-import 'dart:isolate';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
 import 'package:browser01/web_page/color/colors.dart';
@@ -103,7 +101,7 @@ List<FunDialogType> _findDialogTypeList(RequestFocusNodeHrefResult result) {
           element == FunDialogType.scanQR ||
           element == FunDialogType.share;
     } else {
-      return  element == FunDialogType.openBackground ||
+      return element == FunDialogType.openBackground ||
           element == FunDialogType.openNew ||
           element == FunDialogType.copyLink ||
           element == FunDialogType.copyLinkText ||
@@ -287,12 +285,24 @@ class UrlOpenType {
 
 Map<FunDialogType, List<HistoryInfo>> groupBy(List<HistoryInfo> infoList) {
   Map<FunDialogType, List<HistoryInfo>> map = {};
-  for (var element in infoList) {
-    var type = checkToNowDateGap(element.time);
-    if (map[type] == null) {
-      map[type] = [];
-    }
-    map[type]!.add(element);
+  if(infoList.isNotEmpty){
+    map[FunDialogType.allTime] = infoList;
+  }
+  var allLastSevenList = infoList.where((element) => checkToNowDateGap(element.time) != FunDialogType.allTime).toList();
+  if(allLastSevenList.isNotEmpty){
+    map[FunDialogType.allLastSeven] = allLastSevenList;
+  }
+  var todayAndYesterdayList = infoList
+      .where((element) =>
+  checkToNowDateGap(element.time) == FunDialogType.todayAndYesterday ||
+      checkToNowDateGap(element.time) == FunDialogType.oneHour)
+      .toList();
+  if(todayAndYesterdayList.isNotEmpty){
+    map[FunDialogType.todayAndYesterday] = todayAndYesterdayList;
+  }
+  var  oneHourList = infoList.where((element) => checkToNowDateGap(element.time) == FunDialogType.oneHour).toList();
+  if(oneHourList.isNotEmpty){
+    map[FunDialogType.oneHour] = oneHourList;
   }
   return map;
 }

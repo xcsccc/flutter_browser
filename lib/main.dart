@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:browser01/web_page/back/back_click.dart';
 import 'package:browser01/web_page/bar/bottom_tool_bar.dart';
 import 'package:browser01/web_page/color/colors.dart';

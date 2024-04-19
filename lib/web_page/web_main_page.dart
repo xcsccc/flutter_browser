@@ -254,14 +254,14 @@ class BrowserState extends State<BrowserView>
                     });
                   },
                   gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                    Factory<OneSequenceGestureRecognizer>(
+                          () => LongPressGestureRecognizer(),
+                    ),
                     Factory<VerticalDragGestureRecognizer>(
                       () => VerticalDragGestureRecognizer(),
                     ),
                     Factory<HorizontalDragGestureRecognizer>(
                       () => HorizontalDragGestureRecognizer(),
-                    ),
-                    Factory<OneSequenceGestureRecognizer>(
-                          () => EagerGestureRecognizer(),
                     ),
                   }));
         })),
