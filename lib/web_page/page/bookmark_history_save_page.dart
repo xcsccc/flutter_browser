@@ -70,7 +70,7 @@ class BookmarkAndHistoryAndSaveState
               physics: const BouncingScrollPhysics(),
               // 根据标签切换显示不同的内容
               children: [
-               const BookmarkPage(),
+                const BookmarkPage(),
                 // 第一个标签对应的页面
                 HistoryPage(search: data.position == 1 ? data.search : ""),
                 // 第二个标签对应的页面
@@ -289,8 +289,12 @@ class _GroupInfoItemState extends State<GroupInfoItem> {
         }
       },
       borderRadius: BorderRadius.circular(0),
-      child:
-          Item(url: widget.info.url, title: widget.info.title, isShowUrl: true,iconPath: AppImages.icon,),
+      child: Item(
+        url: widget.info.url,
+        title: widget.info.title,
+        isShowUrl: true,
+        iconPath: AppImages.icon,
+      ),
     );
   }
 }
@@ -305,7 +309,8 @@ class Item extends StatefulWidget {
       {super.key,
       required this.url,
       required this.title,
-      required this.isShowUrl, this.iconPath});
+      required this.isShowUrl,
+      this.iconPath});
 
   @override
   State<StatefulWidget> createState() => ItemState();
@@ -327,13 +332,14 @@ class ItemState extends State<Item> {
                     borderRadius: BorderRadius.all(Radius.circular(5))),
                 child: widget.url.extractDomainWithProtocol() != null
                     ? CachedNetworkImage(
-                  imageUrl: widget.url.iconUrl() ?? "",
-                  errorWidget: (context, url, error) {
-                    return Image.asset(AppImages.icon,
-                        width: 20, height: 20, fit: BoxFit.cover);
-                  },
-                ) : Image.asset(widget.iconPath!,
-                    width: 20, height: 20, fit: BoxFit.cover)),
+                        imageUrl: widget.url.iconUrl() ?? "",
+                        errorWidget: (context, url, error) {
+                          return Image.asset(AppImages.icon,
+                              width: 20, height: 20, fit: BoxFit.cover);
+                        },
+                      )
+                    : Image.asset(widget.iconPath!,
+                        width: 20, height: 20, fit: BoxFit.cover)),
           ),
         ),
         Expanded(
@@ -369,7 +375,7 @@ class BookmarkState extends State<BookmarkPage> {
   late var provider = context.read<GlobalProvider>();
   late var search = "";
   bool isSelect = false;
-  late TreeNode preNode = provider.treeNodeInfo;
+  late List<TreeNode> preNodes = [];
   late TreeNode clickTreeFolder = provider.treeNodeInfo;
 
   List<TreeNode> getList() {
@@ -377,8 +383,7 @@ class BookmarkState extends State<BookmarkPage> {
       return clickTreeFolder.children;
     } else {
       return clickTreeFolder.children
-          .where((element) =>
-              element.info.title.contains(search))
+          .where((element) => element.info.title.contains(search))
           .toList();
     }
   }
@@ -388,24 +393,51 @@ class BookmarkState extends State<BookmarkPage> {
     var items = getList();
     return CommonPage(
         bottomChild: isSelect ? select() : unselect(),
-        centerChild: items.isNotEmpty
-            ? ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: items.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  var item = items[index];
-
-                  return BookmarkItem(info: item);
-                })
-            : Padding(
-                padding: const EdgeInsets.only(top: 150),
-                child: Center(
-                    child: Image.asset(
-                  AppImages.empty,
-                  width: 120,
-                  height: 120,
-                ))),
+        centerChild: Column(
+          children: [
+            if (preNodes.isNotEmpty)
+              BookmarkItem(
+                  info: TreeNode(
+                      fileType: FileType.none,
+                      children: [],
+                      info: BookmarkInfo(url: "", title: "...")),
+                  onClick: () {
+                    setState(() {
+                      clickTreeFolder = preNodes.last;
+                      preNodes.remove(preNodes.last);
+                    });
+                  }),
+            items.isNotEmpty
+                ? ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: items.length ,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      var item = items[index];
+                      return BookmarkItem(
+                          info: item,
+                          onClick: () {
+                            if (item.fileType == FileType.folder) {
+                              preNodes.add(clickTreeFolder);
+                              setState(() {
+                                clickTreeFolder = item;
+                              });
+                            } else {
+                              Navigator.of(context).pop(UrlOpenType(
+                                  url: item.info.url, isNowOpen: true));
+                            }
+                          });
+                    })
+                : preNodes.isEmpty ? Padding(
+                    padding: const EdgeInsets.only(top: 150),
+                    child: Center(
+                        child: Image.asset(
+                      AppImages.empty,
+                      width: 120,
+                      height: 120,
+                    ))) : Container()
+          ],
+        ),
         searchChange: (search) {
           setState(() {
             this.search = search;
@@ -424,8 +456,9 @@ class BookmarkState extends State<BookmarkPage> {
 
 class BookmarkItem extends StatefulWidget {
   final TreeNode info;
+  final Function onClick;
 
-  const BookmarkItem({super.key, required this.info});
+  const BookmarkItem({super.key, required this.info, required this.onClick});
 
   @override
   State<StatefulWidget> createState() => BookmarkItemState();
@@ -441,20 +474,20 @@ class BookmarkItemState extends State<BookmarkItem> {
           this.details = details;
         },
         onTap: () {
-          if(widget.info.fileType == FileType.bookmark){
-            Navigator.of(context)
-                .pop(UrlOpenType(url: widget.info.info.url, isNowOpen: true));
-          }else{
-
-          }
+          widget.onClick();
         },
         onLongPress: () {
-          if (details != null) {
-
-          }
+          if (details != null) {}
         },
         borderRadius: BorderRadius.circular(0),
         child: Item(
-            url: widget.info.info.url, title: widget.info.info.title, isShowUrl: false,iconPath: widget.info.fileType == FileType.folder ? AppImages.folder : AppImages.bookmark,));
+          url: widget.info.info.url,
+          title: widget.info.info.title,
+          isShowUrl: false,
+          iconPath: widget.info.fileType == FileType.folder ||
+                  widget.info.fileType == FileType.none
+              ? AppImages.folder
+              : AppImages.bookmark,
+        ));
   }
 }

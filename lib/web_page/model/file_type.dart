@@ -5,5 +5,6 @@ enum FileType{
   @HiveField(0)
   folder,
   @HiveField(1)
-  bookmark
+  bookmark,
+  none
 }

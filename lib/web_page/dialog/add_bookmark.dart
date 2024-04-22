@@ -153,11 +153,14 @@ class AddBookmarkState extends State<AddBookmarkDialog> {
                 width: 20,
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   if (controller.text.isNotEmpty &&
                       controller2.text.isNotEmpty) {
                     //添加到书签
-                    historyNode.put();
+                    selectNode.addChild(TreeNode(
+                        fileType: FileType.bookmark,
+                        info: BookmarkInfo(title: title, url: url),children: []));
+                    await historyNode.put();
                     Navigator.of(context).pop();
                   } else {
                     toastMsg(S.of(context).msgEmpty);
@@ -234,7 +237,7 @@ class AddBookmarkState extends State<AddBookmarkDialog> {
                     if (newFolderName.isNotEmpty) {
                       //添加文件夹
                       setState(() {
-                        selectNode.children.add(TreeNode(
+                        selectNode.addChild(TreeNode(
                             fileType: FileType.folder,
                             info: BookmarkInfo(title: newFolderName, url: ""),children: []));
                       });
@@ -311,6 +314,7 @@ class Folder extends StatefulWidget {
 
 class FolderState extends State<Folder> {
   Widget? getFolder(TreeNode node) {
+    print("widget:$node");
     if (node.fileType == FileType.folder) {
       List<Widget> widgets = [];
       for (TreeNode node in node.children) {

@@ -18,6 +18,9 @@ class TreeNode{
   TreeNode({required this.fileType,required this.info,required this.children});
 
   void addChild(TreeNode child) {
+    if(child.fileType == FileType.folder && children.contains(child)){
+      return;
+    }
     children.add(child);
   }
 
@@ -25,8 +28,8 @@ class TreeNode{
     return Hive.box<TreeNode>(treeNodeKey);
   }
 
-  void put(){
-    openBox().put(treeNodeInfoKey,this);
+  Future<void> put() async {
+    await openBox().put(treeNodeInfoKey,this);
   }
 
   static TreeNode get(){
