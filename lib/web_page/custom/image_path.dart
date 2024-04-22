@@ -42,4 +42,6 @@ class AppImages {
   static const String qr = "assets/icon/ic_qr.png";
   static const String aboutLogo = "assets/icon/about_logo.png";
   static const String empty = "assets/icon/ic_empty.png";
+  static const String folder = "assets/icon/ic_folder.png";
+  static const String folderAdd = "assets/icon/ic_folder_add.png";
 }

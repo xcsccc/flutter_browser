@@ -530,6 +530,66 @@ class S {
     );
   }
 
+  /// `Select folder`
+  String get selectFolder {
+    return Intl.message(
+      'Select folder',
+      name: 'selectFolder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New`
+  String get newFolder {
+    return Intl.message(
+      'New',
+      name: 'newFolder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Incorrect format!`
+  String get msgEmpty {
+    return Intl.message(
+      'Incorrect format!',
+      name: 'msgEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Title`
+  String get title {
+    return Intl.message(
+      'Title',
+      name: 'title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Url`
+  String get url {
+    return Intl.message(
+      'Url',
+      name: 'url',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `add to homepage`
+  String get addHomepage {
+    return Intl.message(
+      'add to homepage',
+      name: 'addHomepage',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Translate`
   String get translate {
     return Intl.message(

@@ -47,6 +47,12 @@
   "save":"Save",
   "setting":"Settings",
   "tool":"Tools",
+  "selectFolder":"Select folder",
+  "newFolder":"New",
+  "msgEmpty": "Incorrect format!",
+  "title":"Title",
+  "url":"Url",
+  "addHomepage":"add to homepage",
   "translate":"Translate",
   "certificate":"Certificate",
   "@AppStr": {

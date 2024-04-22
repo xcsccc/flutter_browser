@@ -6,6 +6,7 @@ import 'package:browser01/web_page/custom/custom.dart';
 import 'package:browser01/web_page/bar/top_search_bar.dart';
 import 'package:browser01/web_page/bar/top_title_bar.dart';
 import 'package:browser01/web_page/custom/func_bottom_info.dart';
+import 'package:browser01/web_page/dialog/add_bookmark.dart';
 import 'package:browser01/web_page/dialog/func_dialog.dart';
 import 'package:browser01/web_page/dialog/image_mode_dialog.dart';
 import 'package:browser01/web_page/dialog/long_click_dialog.dart';
@@ -17,6 +18,7 @@ import 'package:browser01/web_page/model/FileType.g.dart';
 import 'package:browser01/web_page/model/HistoryInfo.g.dart';
 import 'package:browser01/web_page/model/SearchInfo.dart';
 import 'package:browser01/web_page/model/SettingCommon.g.dart';
+import 'package:browser01/web_page/model/bookmark_info.dart';
 import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/model/setting_common_info.dart';
 import 'package:browser01/web_page/model/tree_node.dart';
@@ -87,7 +89,8 @@ class MyAppState extends State<MyApp> {
         RouteSetting.aboutPage: (context) => const AboutPage(),
         RouteSetting.openSource: (context) => const OpenSourcePage(),
         RouteSetting.settingsCommon: (context) => const SettingCommonPage(),
-        RouteSetting.userAgentSetting: (context) => const UserAgentSettingPage(),
+        RouteSetting.userAgentSetting: (context) =>
+            const UserAgentSettingPage(),
       },
       title: 'Flutter Demo',
       theme: provider.currentTheme,
@@ -128,6 +131,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   String searchString = "";
   DateTime? _lastPressedAt; //上次点击时间
   List<BrowserInfo> browsers = [];
+
   int get selectPosition => provider.selectPosition;
   late BrowserInfo initInfo;
   GlobalKey<WebViewPagerState> pagerStateKey = GlobalKey();
@@ -197,8 +201,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     }
   }
 
-  BrowserState? getPageNowState() =>
-      provider.getPageNowState();
+  BrowserState? getPageNowState() => provider.getPageNowState();
 
   InAppWebViewController? getNowControl() => provider.getNowControl();
 
@@ -361,14 +364,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (int index = 0; index < browsers.length; index++) {
       var title = provider.browserKey[index].currentState?.title;
       var nowUrl = provider.browserKey[index].currentState?.webUrl;
-      var url ="";
-      if(nowUrl != null ){
-        if(nowUrl.isNotEmpty){
+      var url = "";
+      if (nowUrl != null) {
+        if (nowUrl.isNotEmpty) {
           url = nowUrl;
-        }else{
+        } else {
           url = browsers[index].loadUrl;
         }
-      }else{
+      } else {
         url = browsers[index].loadUrl;
       }
       if (title != null) {
@@ -378,7 +381,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       } else {
         title = url.endsWith(homeUrl) ? homeTitle : url;
       }
-      list.add(BrowserPagerInfo(url: url , title: title ));
+      list.add(BrowserPagerInfo(url: url, title: title));
     }
     return list;
   }
@@ -714,6 +717,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                         getPageNowState()?.webUrl ?? "");
                                     break;
                                   case FuncBottomType.addBookmark:
+                                    Navigator.of(context).pop();
+                                    isShowChild = true;
+                                    showAddBookmarkDialog(context, BookmarkInfo(
+                                        title: getPageNowState()?.title ?? "",
+                                        url: getPageNowState()?.webUrl ?? ""));
                                     break;
                                   case FuncBottomType.desktop:
                                     var isOpen = !Hive.box(boolKey)
@@ -815,7 +823,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     bool isBack = await control.canGoBack();
 
                     if (isBack) {
-                      if (swipingX >= 0 &&  swipingX + details.delta.dx >= 0) {
+                      if (swipingX >= 0 && swipingX + details.delta.dx >= 0) {
                         setState(() {
                           if (!isSwiping) {
                             return;
@@ -824,9 +832,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         });
                       }
                     }
-                    bool isForward= await control.canGoForward();
+                    bool isForward = await control.canGoForward();
                     if (isForward) {
-                      if (swipingX <= 0 &&  swipingX + details.delta.dx <= 0) {
+                      if (swipingX <= 0 && swipingX + details.delta.dx <= 0) {
                         setState(() {
                           if (!isSwiping) {
                             return;

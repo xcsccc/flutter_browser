@@ -458,6 +458,6 @@ class BookmarkItemState extends State<BookmarkItem> {
         },
         borderRadius: BorderRadius.circular(0),
         child: Item(
-            url: widget.info.info.url, title: widget.info.info.title, isShowUrl: false,iconPath: widget.info.fileType == FileType.bookmark ? AppImages.add : AppImages.add,));
+            url: widget.info.info.url, title: widget.info.info.title, isShowUrl: false,iconPath: widget.info.fileType == FileType.bookmark ? AppImages.folder : AppImages.bookmark,));
   }
 }

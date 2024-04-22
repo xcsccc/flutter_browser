@@ -13,6 +13,8 @@ class TreeNode{
   @HiveField(2)
   List<TreeNode> children = [];
 
+  bool select = false;
+
   TreeNode({required this.fileType,required this.info});
 
   void addChild(TreeNode child) {
@@ -29,6 +31,16 @@ class TreeNode{
 
   void delete(){
     openBox().deleteAt(getAll().indexWhere((element) => element == this,-1));
+  }
+
+  void put(){
+    openBox().put(treeNodeKey, this);
+  }
+
+  static TreeNode get(){
+    return openBox().get(treeNodeKey,defaultValue: TreeNode(
+    fileType: FileType.folder,
+        info: BookmarkInfo(title: 'Root folder', url: "")))!;
   }
 
 

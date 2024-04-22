@@ -49,11 +49,7 @@ class GlobalProvider with ChangeNotifier {
 
   List<HistoryInfo> get historyInfo => HistoryInfo.getAll().reversed.toList();
 
-  TreeNode get treeNodeInfo => TreeNode.getAll().isNotEmpty
-      ? TreeNode.getAll().first
-      : TreeNode(
-          fileType: FileType.folder,
-          info: BookmarkInfo(title: 'Root folder', url: ""));
+  TreeNode get treeNodeInfo => TreeNode.get();
 
   List<SettingCommonInfo> get settingCommonInfo =>
       SettingCommonInfo.getAll().toList();
