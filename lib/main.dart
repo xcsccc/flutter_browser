@@ -12,11 +12,14 @@ import 'package:browser01/web_page/dialog/long_click_dialog.dart';
 import 'package:browser01/web_page/dialog/user_agent_dialog.dart';
 import 'package:browser01/web_page/main_view/progress_bar.dart';
 import 'package:browser01/web_page/main_view/view.dart';
+import 'package:browser01/web_page/model/BookmarkInfo.g.dart';
+import 'package:browser01/web_page/model/FileType.g.dart';
 import 'package:browser01/web_page/model/HistoryInfo.g.dart';
 import 'package:browser01/web_page/model/SearchInfo.dart';
 import 'package:browser01/web_page/model/SettingCommon.g.dart';
 import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/model/setting_common_info.dart';
+import 'package:browser01/web_page/model/tree_node.dart';
 import 'package:browser01/web_page/page/AboutPage.dart';
 import 'package:browser01/web_page/page/OpenSourcePage.dart';
 import 'package:browser01/web_page/page/SettingCommonPage.dart';
@@ -41,8 +44,12 @@ void main() async {
   Hive.registerAdapter(SettingCommonAdapter());
   Hive.registerAdapter(FuncBottomInfoAdapter());
   Hive.registerAdapter(HistoryInfoAdapter());
+  Hive.registerAdapter(BookmarkInfoAdapter());
+  Hive.registerAdapter(TreeNodeAdapter());
+  Hive.registerAdapter(FileTypeAdapter());
   await Hive.openBox<FuncBottomInfo>(funcBottomKey);
   await Hive.openBox<HistoryInfo>(historyInfoKey);
+  await Hive.openBox<TreeNode>(treeNodeKey);
   await Hive.openBox<SettingCommonInfo>(settingCommonKey);
   await Hive.openBox(intKey);
   await Hive.openBox(boolKey);
@@ -121,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   String searchString = "";
   DateTime? _lastPressedAt; //上次点击时间
   List<BrowserInfo> browsers = [];
-  int selectPosition = 0;
+  int get selectPosition => provider.selectPosition;
   late BrowserInfo initInfo;
   GlobalKey<WebViewPagerState> pagerStateKey = GlobalKey();
   GlobalKey<BottomToolState> bottomToolKey = GlobalKey();
@@ -191,9 +198,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   BrowserState? getPageNowState() =>
-      provider.browserKey[selectPosition].currentState;
+      provider.getPageNowState();
 
-  InAppWebViewController? getNowControl() => getPageNowState()?.control;
+  InAppWebViewController? getNowControl() => provider.getNowControl();
 
   BrowserInfo copyInit(String initUrl, [bool? isChange]) {
     var key = GlobalKey<BrowserState>();
@@ -209,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     browsers.add(info);
     setState(() {
       if (isChange ?? false) {
-        selectPosition = browsers.length - 1;
+        provider.setSelectPositionPage(browsers.length - 1);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           pagerStateKey.currentState?.changePage();
         });
@@ -231,21 +238,21 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       if (selectPosition == index) {
         if (selectPosition == 0) {
           if (browsers.isNotEmpty) {
-            selectPosition = 0;
+            provider.setSelectPositionPage(0);
             WidgetsBinding.instance.addPostFrameCallback((_) {
               pagerStateKey.currentState?.changePage();
               changePage();
             });
           } else {
             copyInit(homeUrl);
-            selectPosition = 0;
+            provider.setSelectPositionPage(0);
             WidgetsBinding.instance.addPostFrameCallback((_) {
               pagerStateKey.currentState?.changePage();
               changePage();
             });
           }
         } else {
-          selectPosition -= 1;
+          provider.setSelectPositionPage(selectPosition - 1);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             pagerStateKey.currentState?.changePage();
             changePage();
@@ -253,7 +260,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         }
       } else {
         if (index < selectPosition) {
-          selectPosition -= 1;
+          provider.setSelectPositionPage(selectPosition - 1);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             pagerStateKey.currentState?.changePage();
             changePage();
@@ -606,7 +613,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                 onSelect: (index) {
                                   setState(() {
                                     changePagerAllHide();
-                                    selectPosition = index;
+                                    provider.setSelectPositionPage(index);
                                     WidgetsBinding.instance
                                         .addPostFrameCallback((_) {
                                       pagerStateKey.currentState?.changePage();

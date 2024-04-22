@@ -115,6 +115,8 @@ Map<String, String> searchEngineParams = {
 const String settingCommonKey = "settingCommonKey";
 const String funcBottomKey = "funcBottomKey";
 const String historyInfoKey = "historyInfoKey";
+const String bookmarkInfoKey = "bookmarkInfoKey";
+const String treeNodeKey = "treeNodeKey";
 const String localeChangeKey = "localeChangeKey";
 const String intKey = "intKey";
 

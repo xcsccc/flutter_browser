@@ -2,6 +2,9 @@ import 'package:browser01/web_page/custom/custom.dart';
 import 'package:browser01/web_page/custom/image_path.dart';
 import 'package:browser01/web_page/dialog/long_click_dialog.dart';
 import 'package:browser01/web_page/model/SearchInfo.dart';
+import 'package:browser01/web_page/model/bookmark_info.dart';
+import 'package:browser01/web_page/model/file_type.dart';
+import 'package:browser01/web_page/model/tree_node.dart';
 import 'package:browser01/web_page/now_icon.dart';
 import 'package:browser01/web_page/page/CommonPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -134,13 +137,15 @@ class _HistoryState extends State<HistoryPage> {
             InkWell(
               key: _key,
               onTap: () {
-                if(getList().isNotEmpty){
+                if (getList().isNotEmpty) {
                   if (_key.currentContext != null) {
-                    final RenderBox renderBox = _key.currentContext?.findRenderObject() as RenderBox;
+                    final RenderBox renderBox =
+                        _key.currentContext?.findRenderObject() as RenderBox;
                     final Offset offset = renderBox.localToGlobal(Offset.zero);
-                    showClearHistoryMenu(context,offset.dx + renderBox.size.width / 2,offset.dy + 25);
+                    showClearHistoryMenu(context,
+                        offset.dx + renderBox.size.width / 2, offset.dy + 25);
                   }
-                }else{
+                } else {
                   toastMsg(S.of(context).historyEmpty);
                 }
               },
@@ -159,11 +164,16 @@ class _HistoryState extends State<HistoryPage> {
           ],
         ),
         searchInit: widget.search,
-        centerChild: getList().isNotEmpty ? GroupList(list: getList()) :
-            Padding(padding: const EdgeInsets.only(top: 150),child: Center(
-                child:Image.asset(AppImages.empty,width: 120,height: 120,)
-            ))
-         ,
+        centerChild: getList().isNotEmpty
+            ? GroupList(list: getList())
+            : Padding(
+                padding: const EdgeInsets.only(top: 150),
+                child: Center(
+                    child: Image.asset(
+                  AppImages.empty,
+                  width: 120,
+                  height: 120,
+                ))),
         searchChange: (search) {
           setState(() {
             this.search = search;
@@ -190,9 +200,9 @@ class GroupTitleInfo {
   const GroupTitleInfo({required this.title, required this.type});
 }
 
-class GroupItemInfo {
+class GroupItemInfo<T> {
   final GroupType type;
-  final HistoryInfo info;
+  final T info;
 
   const GroupItemInfo({required this.info, required this.type});
 }
@@ -211,7 +221,7 @@ class _GroupListState extends State<GroupList> {
     maps.forEach((key, value) {
       re.add(GroupTitleInfo(title: key, type: GroupType.title));
       for (var element in value) {
-        re.add(GroupItemInfo(info: element, type: GroupType.item));
+        re.add(GroupItemInfo<HistoryInfo>(info: element, type: GroupType.item));
       }
     });
     return re;
@@ -288,48 +298,166 @@ class _GroupInfoItemState extends State<GroupInfoItem> {
         }
       },
       borderRadius: BorderRadius.circular(0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 50,
-            width: 50,
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: DecoratedBox(
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                  child: widget.info.url.extractDomainWithProtocol() == null
-                      ? Image.asset(AppImages.icon,
-                          width: 20, height: 20, fit: BoxFit.cover)
-                      : CachedNetworkImage(
-                          imageUrl: widget.info.url.iconUrl() ?? "",
-                          errorWidget: (context, url, error) {
-                            return Image.asset(AppImages.icon,
-                                width: 20, height: 20, fit: BoxFit.cover);
-                          },
-                        )),
-            ),
+      child:
+          Item(url: widget.info.url, title: widget.info.title, isShowUrl: true,iconPath: AppImages.icon,),
+    );
+  }
+}
+
+class Item extends StatefulWidget {
+  final String url;
+  final String title;
+  final bool isShowUrl;
+  final String? iconPath;
+
+  const Item(
+      {super.key,
+      required this.url,
+      required this.title,
+      required this.isShowUrl, this.iconPath});
+
+  @override
+  State<StatefulWidget> createState() => ItemState();
+}
+
+class ItemState extends State<Item> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 50,
+          width: 50,
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: DecoratedBox(
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(5))),
+                child: widget.iconPath != null ? Image.asset(widget.iconPath!,
+                    width: 20, height: 20, fit: BoxFit.cover) : widget.url.extractDomainWithProtocol() == null
+                    ? Image.asset(widget.iconPath!,
+                    width: 20, height: 20, fit: BoxFit.cover) : CachedNetworkImage(
+                        imageUrl: widget.url.iconUrl() ?? "",
+                        errorWidget: (context, url, error) {
+                          return Image.asset(AppImages.icon,
+                              width: 20, height: 20, fit: BoxFit.cover);
+                        },
+                      )),
           ),
-          Expanded(
-              child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(widget.info.title,
+        ),
+        Expanded(
+            child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 15)),
+            if (widget.isShowUrl)
+              Text(widget.url,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 15)),
-              if (widget.isShowUrl)
-                Text(widget.info.url,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w300))
-            ],
-          ))
-        ],
-      ),
+                  style: const TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.w300))
+          ],
+        ))
+      ],
     );
+  }
+}
+
+class BookmarkPage extends StatefulWidget {
+  const BookmarkPage({super.key});
+
+  @override
+  State<StatefulWidget> createState() => BookmarkState();
+}
+
+class BookmarkState extends State<BookmarkPage> {
+  late var search = "";
+  bool isSelect = false;
+
+  List<TreeNode> getList() {
+    late var provider = context.read<GlobalProvider>();
+    if (search.isEmpty) {
+      return provider.treeNodeInfo.children;
+    } else {
+      return provider.treeNodeInfo.children
+          .where((element) =>
+              element.info.title.contains(search))
+          .toList();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var items = getList();
+    return CommonPage(
+        bottomChild: isSelect ? select() : unselect(),
+        centerChild: items.isNotEmpty
+            ? ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: items.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  var item = items[index];
+                  return BookmarkItem(info: item);
+                })
+            : Padding(
+                padding: const EdgeInsets.only(top: 150),
+                child: Center(
+                    child: Image.asset(
+                  AppImages.empty,
+                  width: 120,
+                  height: 120,
+                ))),
+        searchChange: (search) {
+          setState(() {
+            this.search = search;
+          });
+        });
+  }
+
+  Widget unselect() {
+    return Container();
+  }
+
+  Widget select() {
+    return Container();
+  }
+}
+
+class BookmarkItem extends StatefulWidget {
+  final TreeNode info;
+
+  const BookmarkItem({super.key, required this.info});
+
+  @override
+  State<StatefulWidget> createState() => BookmarkItemState();
+}
+
+class BookmarkItemState extends State<BookmarkItem> {
+  TapDownDetails? details;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTapDown: (details) {
+          this.details = details;
+        },
+        onTap: () {
+          if(widget.info.fileType == FileType.bookmark){
+            Navigator.of(context)
+                .pop(UrlOpenType(url: widget.info.info.url, isNowOpen: true));
+          }
+        },
+        onLongPress: () {
+          if (details != null) {}
+        },
+        borderRadius: BorderRadius.circular(0),
+        child: Item(
+            url: widget.info.info.url, title: widget.info.info.title, isShowUrl: false,iconPath: widget.info.fileType == FileType.bookmark ? AppImages.add : AppImages.add,));
   }
 }

@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:browser01/web_page/custom/custom.dart';
 import 'package:browser01/web_page/dialog/user_agent_dialog.dart';
+import 'package:browser01/web_page/model/bookmark_info.dart';
+import 'package:browser01/web_page/model/file_type.dart';
 import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/model/setting_common_info.dart';
 import 'package:connectivity/connectivity.dart';
@@ -12,80 +14,108 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hive/hive.dart';
 
 import '../custom/func_bottom_info.dart';
+import '../model/tree_node.dart';
 import '../web_main_page.dart';
 
-class GlobalProvider with ChangeNotifier{
+class GlobalProvider with ChangeNotifier {
   int selectLocale = 0;
   final List<Locale> _listLocale = [
-    const Locale("en",""),
-    const Locale("zh","")
+    const Locale("en", ""),
+    const Locale("zh", "")
   ];
   bool isShowFunDialog = true;
   bool isShowDownloadDialog = true;
+  int selectPosition = 0;
   List<GlobalKey<BrowserState>> browserKey = [];
-  late ThemeData currentTheme = Hive.box(boolKey).get(nightModeKey,defaultValue: false) ? ThemeData.dark() : ThemeData.light();
+  late ThemeData currentTheme =
+      Hive.box(boolKey).get(nightModeKey, defaultValue: false)
+          ? ThemeData.dark()
+          : ThemeData.light();
   FuncBottomType nowClickType = FuncBottomType.night;
-  late String? userAgent = Hive.box(boolKey).get(desktopKey,defaultValue: false) ? UserAgentType.windowChrome.userAgent:UserAgentType.androidAgent.userAgent;
+  late String? userAgent =
+      Hive.box(boolKey).get(desktopKey, defaultValue: false)
+          ? UserAgentType.windowChrome.userAgent
+          : UserAgentType.androidAgent.userAgent;
   UserAgentType? nowType;
   ImageModeType? modeType;
-  late SearchEnginType selectEngin = SearchEnginType.values[Hive.box(intKey).get(searchEnginKey,defaultValue: 0)];
+  late SearchEnginType selectEngin = SearchEnginType
+      .values[Hive.box(intKey).get(searchEnginKey, defaultValue: 0)];
   late InAppWebViewSettings settings = updateSettings();
 
-  List<HistoryInfo> get historyInfo  => HistoryInfo.getAll().reversed.toList();
-  List<SettingCommonInfo> get settingCommonInfo  => SettingCommonInfo.getAll().toList();
+  BrowserState? getPageNowState() =>
+      browserKey[selectPosition].currentState;
 
-  List<FuncBottomInfo> getFuncBottomInfoList(List<FuncBottomInfo> init){
+  InAppWebViewController? getNowControl() => getPageNowState()?.control;
+
+  List<HistoryInfo> get historyInfo => HistoryInfo.getAll().reversed.toList();
+
+  TreeNode get treeNodeInfo => TreeNode.getAll().isNotEmpty
+      ? TreeNode.getAll().first
+      : TreeNode(
+          fileType: FileType.folder,
+          info: BookmarkInfo(title: 'Root folder', url: ""));
+
+  List<SettingCommonInfo> get settingCommonInfo =>
+      SettingCommonInfo.getAll().toList();
+
+  List<FuncBottomInfo> getFuncBottomInfoList(List<FuncBottomInfo> init) {
     var list = FuncBottomInfo.getAll();
-    if(list.isEmpty){
+    if (list.isEmpty) {
       FuncBottomInfo.openBox().addAll(init);
       list = init;
     }
     return list;
   }
 
-  List<SettingCommonInfo> getSettingCommonInfoList(List<SettingCommonInfo> init){
+  void setSelectPositionPage(int pagePosition){
+    selectPosition = pagePosition;
+    notifyListeners();
+  }
+
+  List<SettingCommonInfo> getSettingCommonInfoList(
+      List<SettingCommonInfo> init) {
     var list = SettingCommonInfo.getAll();
-    if(list.isEmpty){
+    if (list.isEmpty) {
       SettingCommonInfo.openBox().addAll(init);
       list = init;
     }
     return list;
   }
 
-  void historyDelete(HistoryInfo history){
+  void historyDelete(HistoryInfo history) {
     history.delete();
     notifyListeners();
   }
 
-  InAppWebViewSettings updateSettings(){
+  InAppWebViewSettings updateSettings() {
     return InAppWebViewSettings(
         javaScriptEnabled: true,
         useOnDownloadStart: true,
         supportZoom: true,
         enableViewportScale: true,
         userAgent: userAgent,
-        forceDark: currentTheme == ThemeData.light() ? ForceDark.OFF : ForceDark.ON,
+        forceDark:
+            currentTheme == ThemeData.light() ? ForceDark.OFF : ForceDark.ON,
         forceDarkStrategy: ForceDarkStrategy.USER_AGENT_DARKENING_ONLY,
         verticalScrollBarEnabled: false,
         horizontalScrollBarEnabled: false,
         javaScriptCanOpenWindowsAutomatically: true,
         supportMultipleWindows: true,
-        blockNetworkImage:false
-    );
+        blockNetworkImage: false);
   }
 
-  void changeAllSetting(){
+  void changeAllSetting() {
     for (var element in browserKey) {
       element.currentState?.control?.setSettings(settings: settings);
     }
   }
 
-  void changeSearchEngin(SearchEnginType type){
+  void changeSearchEngin(SearchEnginType type) {
     selectEngin = type;
     notifyListeners();
   }
 
-  void updateUserAgent(UserAgentType type){
+  void updateUserAgent(UserAgentType type) {
     nowType = type;
     userAgent = type.userAgent;
     settings = updateSettings();
@@ -96,7 +126,7 @@ class GlobalProvider with ChangeNotifier{
     notifyListeners();
   }
 
-  void updateUserAgentSetting(UserAgentInfo info, int index){
+  void updateUserAgentSetting(UserAgentInfo info, int index) {
     nowType = info.type;
     userAgent = info.type.userAgent;
     settings = updateSettings();
@@ -112,13 +142,14 @@ class GlobalProvider with ChangeNotifier{
   Future<void> updateImageMode(ImageModeType type) async {
     modeType = type;
     settings = updateSettings();
-    if(modeType == ImageModeType.display){
+    if (modeType == ImageModeType.display) {
       settings.blockNetworkImage = false;
-    } else if(modeType == ImageModeType.noDisplay){
+    } else if (modeType == ImageModeType.noDisplay) {
       settings.blockNetworkImage = true;
     } else {
       var connectivityResult = await Connectivity().checkConnectivity();
-      settings.blockNetworkImage = connectivityResult != ConnectivityResult.wifi;
+      settings.blockNetworkImage =
+          connectivityResult != ConnectivityResult.wifi;
     }
     changeAllSetting();
     for (var element in browserKey) {
@@ -127,13 +158,13 @@ class GlobalProvider with ChangeNotifier{
     notifyListeners();
   }
 
-  void desktopChange(bool isOpen){
-    if(isOpen){
+  void desktopChange(bool isOpen) {
+    if (isOpen) {
       userAgent = UserAgentType.windowChrome.userAgent;
-    }else{
-      if(nowType != null){
+    } else {
+      if (nowType != null) {
         userAgent = nowType!.userAgent;
-      }else{
+      } else {
         userAgent = UserAgentType.androidAgent.userAgent;
       }
     }
@@ -145,16 +176,18 @@ class GlobalProvider with ChangeNotifier{
     notifyListeners();
   }
 
-  void setFuncBottomTypeOnChange(FuncBottomType type){
+  void setFuncBottomTypeOnChange(FuncBottomType type) {
     nowClickType = type;
     notifyListeners();
   }
 
   void toggleTheme() async {
-    currentTheme = currentTheme == ThemeData.light() ? ThemeData.dark() : ThemeData.light();
+    currentTheme = currentTheme == ThemeData.light()
+        ? ThemeData.dark()
+        : ThemeData.light();
     settings = updateSettings();
     changeAllSetting();
-    if(Platform.isAndroid){
+    if (Platform.isAndroid) {
       var androidInfo = await DeviceInfoPlugin().androidInfo;
       if (androidInfo.version.sdkInt > 32) {
         for (var element in browserKey) {
@@ -165,37 +198,38 @@ class GlobalProvider with ChangeNotifier{
     notifyListeners();
   }
 
-  late var locale =  _listLocale[Hive.box(intKey).get(localeChangeKey,defaultValue: 0)!];
+  late var locale =
+      _listLocale[Hive.box(intKey).get(localeChangeKey, defaultValue: 0)!];
 
-  void hideFunDialog(){
+  void hideFunDialog() {
     isShowFunDialog = false;
     notifyListeners();
   }
 
-  void showFunDialog(){
+  void showFunDialog() {
     isShowFunDialog = true;
     notifyListeners();
   }
 
-  void hideDownloadDialog(){
+  void hideDownloadDialog() {
     isShowDownloadDialog = false;
     notifyListeners();
   }
 
-  void showDownloadDialog(){
+  void showDownloadDialog() {
     isShowDownloadDialog = true;
     notifyListeners();
   }
 
   void updateLocale(Function onFinish) async {
-    if(selectLocale != _listLocale.length - 1){
+    if (selectLocale != _listLocale.length - 1) {
       selectLocale += 1;
       locale = _listLocale[selectLocale];
-    }else{
+    } else {
       selectLocale = 0;
       locale = _listLocale[selectLocale];
     }
-    await Hive.box(intKey).put(localeChangeKey,selectLocale);
+    await Hive.box(intKey).put(localeChangeKey, selectLocale);
     onFinish();
     notifyListeners();
   }
