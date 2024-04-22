@@ -70,16 +70,7 @@ class BookmarkAndHistoryAndSaveState
               physics: const BouncingScrollPhysics(),
               // 根据标签切换显示不同的内容
               children: [
-                CommonPage(
-                    bottomChild: Container(
-                      color: Colors.blueAccent,
-                    ),
-                    centerChild: Container(
-                      height: 1000,
-                      width: double.infinity,
-                      color: Colors.amberAccent,
-                    ),
-                    searchChange: (search) {}),
+               const BookmarkPage(),
                 // 第一个标签对应的页面
                 HistoryPage(search: data.position == 1 ? data.search : ""),
                 // 第二个标签对应的页面
@@ -454,7 +445,9 @@ class BookmarkItemState extends State<BookmarkItem> {
           }
         },
         onLongPress: () {
-          if (details != null) {}
+          if (details != null) {
+
+          }
         },
         borderRadius: BorderRadius.circular(0),
         child: Item(

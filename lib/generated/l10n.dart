@@ -861,6 +861,7 @@ class S {
     );
   }
 
+  /// `Cache,Form Data,History,Web Storage,Cookies,Application Cache`
   String get clearMode {
     return Intl.message(
       'Cache,Form Data,History,Web Storage,Cookies,Application Cache',

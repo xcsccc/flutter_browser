@@ -48,6 +48,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "certificate": MessageLookupByLibrary.simpleMessage("查看证书"),
         "certificateInfo": MessageLookupByLibrary.simpleMessage("证书信息"),
         "clear": MessageLookupByLibrary.simpleMessage("清除数据"),
+        "clearMode": MessageLookupByLibrary.simpleMessage(
+            "缓存,表格数据,历史记录,网页存储,Cookies,应用缓存"),
         "code": MessageLookupByLibrary.simpleMessage("源码"),
         "commonName": MessageLookupByLibrary.simpleMessage("公用名（CN）"),
         "commonTitle": MessageLookupByLibrary.simpleMessage("通用"),

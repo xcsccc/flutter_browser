@@ -49,6 +49,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "certificateInfo":
             MessageLookupByLibrary.simpleMessage("Certificate Info"),
         "clear": MessageLookupByLibrary.simpleMessage("Clear data"),
+        "clearMode": MessageLookupByLibrary.simpleMessage(
+            "Cache,Form Data,History,Web Storage,Cookies,Application Cache"),
         "code": MessageLookupByLibrary.simpleMessage("View source"),
         "commonName": MessageLookupByLibrary.simpleMessage("Common Name(CN)"),
         "commonTitle": MessageLookupByLibrary.simpleMessage("Common"),
