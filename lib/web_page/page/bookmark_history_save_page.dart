@@ -325,16 +325,15 @@ class ItemState extends State<Item> {
             child: DecoratedBox(
                 decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(5))),
-                child: widget.iconPath != null ? Image.asset(widget.iconPath!,
-                    width: 20, height: 20, fit: BoxFit.cover) : widget.url.extractDomainWithProtocol() == null
-                    ? Image.asset(widget.iconPath!,
-                    width: 20, height: 20, fit: BoxFit.cover) : CachedNetworkImage(
-                        imageUrl: widget.url.iconUrl() ?? "",
-                        errorWidget: (context, url, error) {
-                          return Image.asset(AppImages.icon,
-                              width: 20, height: 20, fit: BoxFit.cover);
-                        },
-                      )),
+                child: widget.url.extractDomainWithProtocol() != null
+                    ? CachedNetworkImage(
+                  imageUrl: widget.url.iconUrl() ?? "",
+                  errorWidget: (context, url, error) {
+                    return Image.asset(AppImages.icon,
+                        width: 20, height: 20, fit: BoxFit.cover);
+                  },
+                ) : Image.asset(widget.iconPath!,
+                    width: 20, height: 20, fit: BoxFit.cover)),
           ),
         ),
         Expanded(
@@ -367,15 +366,17 @@ class BookmarkPage extends StatefulWidget {
 }
 
 class BookmarkState extends State<BookmarkPage> {
+  late var provider = context.read<GlobalProvider>();
   late var search = "";
   bool isSelect = false;
+  late TreeNode preNode = provider.treeNodeInfo;
+  late TreeNode clickTreeFolder = provider.treeNodeInfo;
 
   List<TreeNode> getList() {
-    late var provider = context.read<GlobalProvider>();
     if (search.isEmpty) {
-      return provider.treeNodeInfo.children;
+      return clickTreeFolder.children;
     } else {
-      return provider.treeNodeInfo.children
+      return clickTreeFolder.children
           .where((element) =>
               element.info.title.contains(search))
           .toList();
@@ -394,6 +395,7 @@ class BookmarkState extends State<BookmarkPage> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   var item = items[index];
+
                   return BookmarkItem(info: item);
                 })
             : Padding(
@@ -442,6 +444,8 @@ class BookmarkItemState extends State<BookmarkItem> {
           if(widget.info.fileType == FileType.bookmark){
             Navigator.of(context)
                 .pop(UrlOpenType(url: widget.info.info.url, isNowOpen: true));
+          }else{
+
           }
         },
         onLongPress: () {
@@ -451,6 +455,6 @@ class BookmarkItemState extends State<BookmarkItem> {
         },
         borderRadius: BorderRadius.circular(0),
         child: Item(
-            url: widget.info.info.url, title: widget.info.info.title, isShowUrl: false,iconPath: widget.info.fileType == FileType.bookmark ? AppImages.folder : AppImages.bookmark,));
+            url: widget.info.info.url, title: widget.info.info.title, isShowUrl: false,iconPath: widget.info.fileType == FileType.folder ? AppImages.folder : AppImages.bookmark,));
   }
 }

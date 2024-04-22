@@ -236,7 +236,7 @@ class AddBookmarkState extends State<AddBookmarkDialog> {
                       setState(() {
                         selectNode.children.add(TreeNode(
                             fileType: FileType.folder,
-                            info: BookmarkInfo(title: newFolderName, url: "")));
+                            info: BookmarkInfo(title: newFolderName, url: ""),children: []));
                       });
 
                       pageController.animateToPage(0,
