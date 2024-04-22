@@ -31,6 +31,31 @@ class SettingCommonState extends State<SettingCommonPage> {
   bool isFirst = true;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (isFirst) {
+      isFirst = false;
+      var settingCommonInit = [
+        SettingCommonInfo(title: "Browser User Agent", desc: "Android(Phone)"),
+        SettingCommonInfo(title: "Clear Data", desc: ""),
+        SettingCommonInfo(title: "Dark Mode", desc: ""),
+        SettingCommonInfo(title: "Auto Hide Action Bar", desc: "Disabled"),
+        SettingCommonInfo(title: "Custom Menu", desc: ""),
+        SettingCommonInfo(title: "Home", desc: "Default"),
+        SettingCommonInfo(title: "Search Engine", desc: "Baidu"),
+        SettingCommonInfo(title: "Search Suggestions", desc: ""),
+        SettingCommonInfo(
+            title: "DownLoad Manager", desc: "Built in Downloader"),
+        SettingCommonInfo(title: "Address Bar Content", desc: "TITLE"),
+        SettingCommonInfo(title: "Clear Data On Exit", desc: ""),
+        SettingCommonInfo(title: "Set Default In Browser", desc: "")
+      ];
+      settingCommonInfoList =
+          provider.getSettingCommonInfoList(settingCommonInit).toList();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     var names = S.of(context).userAgents.split(',');
     return SettingTopView([
@@ -55,6 +80,10 @@ class SettingCommonState extends State<SettingCommonPage> {
                         case 1:
                           showClearDialog(context);
                           break;
+                        case 2:
+                          Navigator.of(context)
+                              .pushNamed(RouteSetting.darkMode, arguments: 7);
+                          break;
                         default:
                           toastMsg(settingCommonInfoList[index].title);
                           break;
@@ -73,7 +102,10 @@ class SettingCommonState extends State<SettingCommonPage> {
                                 child: Text(settingCommonInfoList[index].desc,
                                     style: TextStyle(
                                         fontSize: 12,
-                                        color: ThemeColors.descColor)),
+                                        color: provider.currentTheme ==
+                                                ThemeData.dark()
+                                            ? ThemeColors.descLightColor
+                                            : ThemeColors.descDarkColor)),
                               )
                           ],
                         ))),

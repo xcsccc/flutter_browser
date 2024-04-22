@@ -870,6 +870,15 @@ class S {
       args: [],
     );
   }
+
+  String get maskFilter {
+    return Intl.message(
+      'Web Masking Filter',
+      name: 'maskFilter',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

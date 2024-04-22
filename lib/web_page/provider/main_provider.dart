@@ -27,6 +27,8 @@ class GlobalProvider with ChangeNotifier {
   bool isShowDownloadDialog = true;
   int selectPosition = 0;
   List<GlobalKey<BrowserState>> browserKey = [];
+  late bool forceDark =
+      Hive.box(boolKey).get(forceDarkKey, defaultValue: false);
   late ThemeData currentTheme =
       Hive.box(boolKey).get(nightModeKey, defaultValue: false)
           ? ThemeData.dark()
@@ -42,8 +44,7 @@ class GlobalProvider with ChangeNotifier {
       .values[Hive.box(intKey).get(searchEnginKey, defaultValue: 0)];
   late InAppWebViewSettings settings = updateSettings();
 
-  BrowserState? getPageNowState() =>
-      browserKey[selectPosition].currentState;
+  BrowserState? getPageNowState() => browserKey[selectPosition].currentState;
 
   InAppWebViewController? getNowControl() => getPageNowState()?.control;
 
@@ -63,7 +64,7 @@ class GlobalProvider with ChangeNotifier {
     return list;
   }
 
-  void setSelectPositionPage(int pagePosition){
+  void setSelectPositionPage(int pagePosition) {
     selectPosition = pagePosition;
     notifyListeners();
   }
@@ -84,14 +85,16 @@ class GlobalProvider with ChangeNotifier {
   }
 
   InAppWebViewSettings updateSettings() {
+    print("${currentTheme == ThemeData.light() && !forceDark} force dark");
     return InAppWebViewSettings(
         javaScriptEnabled: true,
         useOnDownloadStart: true,
         supportZoom: true,
         enableViewportScale: true,
         userAgent: userAgent,
-        forceDark:
-            currentTheme == ThemeData.light() ? ForceDark.OFF : ForceDark.ON,
+        forceDark: (currentTheme == ThemeData.dark() && forceDark)
+            ? ForceDark.ON
+            : ForceDark.OFF,
         forceDarkStrategy: ForceDarkStrategy.USER_AGENT_DARKENING_ONLY,
         verticalScrollBarEnabled: false,
         horizontalScrollBarEnabled: false,
@@ -132,6 +135,13 @@ class GlobalProvider with ChangeNotifier {
     }
     settingCommonInfo[index].desc = info.name;
     settingCommonInfo[index].edit(index);
+    notifyListeners();
+  }
+
+  void updateForceDark(bool isForceDark) {
+    forceDark = isForceDark;
+    settings = updateSettings();
+    changeAllSetting();
     notifyListeners();
   }
 

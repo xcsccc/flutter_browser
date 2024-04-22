@@ -101,14 +101,16 @@ class ClearDataState extends State<ClearDataDialog> {
                                   child: Row(
                                     children: [
                                       Radio(
-                                          value: index,
-                                          groupValue:
-                                              item.isSelect ? index : 10,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              item.isSelect = !item.isSelect;
-                                            });
-                                          }),
+                                        value: index,
+                                        groupValue: item.isSelect ? index : 10,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            item.isSelect = !item.isSelect;
+                                          });
+                                        },
+                                        activeColor:
+                                            ThemeColors.blueButtonColor,
+                                      ),
                                       Text(
                                         item.name,
                                         style: const TextStyle(fontSize: 15),

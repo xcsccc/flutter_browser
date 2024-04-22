@@ -80,5 +80,6 @@
   "imageModes": "Display Image,Do not display images,Display images only on WiFi",
   "aboutTitle": "关于",
   "commonTitle": "通用",
-  "clearMode": "缓存,表格数据,历史记录,网页存储,Cookies,应用缓存"
+  "clearMode": "缓存,表格数据,历史记录,网页存储,Cookies,应用缓存",
+  "maskFilter": "网页遮罩"
 }

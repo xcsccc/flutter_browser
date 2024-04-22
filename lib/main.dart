@@ -23,6 +23,7 @@ import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/model/setting_common_info.dart';
 import 'package:browser01/web_page/model/tree_node.dart';
 import 'package:browser01/web_page/page/AboutPage.dart';
+import 'package:browser01/web_page/page/DarkModePage.dart';
 import 'package:browser01/web_page/page/OpenSourcePage.dart';
 import 'package:browser01/web_page/page/SettingCommonPage.dart';
 import 'package:browser01/web_page/page/UserAgentSettingPage.dart';
@@ -89,8 +90,8 @@ class MyAppState extends State<MyApp> {
         RouteSetting.aboutPage: (context) => const AboutPage(),
         RouteSetting.openSource: (context) => const OpenSourcePage(),
         RouteSetting.settingsCommon: (context) => const SettingCommonPage(),
-        RouteSetting.userAgentSetting: (context) =>
-            const UserAgentSettingPage(),
+        RouteSetting.userAgentSetting: (context) => const UserAgentSettingPage(),
+        RouteSetting.darkMode: (context) => const DarkModePage(),
       },
       title: 'Flutter Demo',
       theme: provider.currentTheme,
