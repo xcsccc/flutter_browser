@@ -143,7 +143,7 @@ extension LongExt on int {
   }
 
   String formatTime(BuildContext context) {
-    var provider = Provider.of<GlobalProvider>(context,listen: false);
+    var provider = Provider.of<GlobalProvider>(context, listen: false);
     DateTime dateTimeMilliseconds = DateTime.fromMillisecondsSinceEpoch(this);
     var weekday = dateTimeMilliseconds.weekday;
     var month = dateTimeMilliseconds.month;
@@ -228,9 +228,7 @@ extension LongExt on int {
   }
 }
 
-enum DateGapDay{
-  all,sevenDay,oneDay,oneHour
-}
+enum DateGapDay { all, sevenDay, oneDay, oneHour }
 
 extension DataTimeExt on DateTime {
   String formatTime(BuildContext context) {
@@ -238,18 +236,17 @@ extension DataTimeExt on DateTime {
   }
 }
 
-
-FunDialogType checkToNowDateGap(int m){
+FunDialogType checkToNowDateGap(int m) {
   var other = DateTime.fromMillisecondsSinceEpoch(m);
   var now = DateTime.now();
   Duration difference = now.difference(other).abs();
-  if(difference.inHours <= 1){
+  if (difference.inHours <= 1) {
     return FunDialogType.oneHour;
-  }else if(difference.inDays <= 1){
+  } else if (difference.inDays <= 1) {
     return FunDialogType.todayAndYesterday;
-  }else if(difference.inDays <= 7){
+  } else if (difference.inDays <= 7) {
     return FunDialogType.allLastSeven;
-  }else{
+  } else {
     return FunDialogType.allTime;
   }
 }
@@ -364,3 +361,16 @@ List<String> sourceList = [
   "cupertino_icons",
   "connectivity"
 ];
+
+enum ClearDataType {
+  cache("Cache"),
+  form("Form Data"),
+  history("History"),
+  webStorage("Web Storage"),
+  cookie("Cookies"),
+  appCache("Application Cache");
+
+  final String clearName;
+
+  const ClearDataType(this.clearName);
+}

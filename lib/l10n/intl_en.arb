@@ -76,5 +76,6 @@
   "userAgents": "Android(Phone),Android(Tablet),Windows(Chrome),Windows(IE 11),macOS,iPhone,iPad,Symbian",
   "imageModes": "Display Image,Do not display images,Display images only on WiFi",
   "aboutTitle": "About",
-  "commonTitle": "Common"
+  "commonTitle": "Common",
+  "clearMode": "Cache,Form Data,History,Web Storage,Cookies,Application Cache"
 }

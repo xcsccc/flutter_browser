@@ -1,5 +1,6 @@
 import 'package:browser01/web_page/color/colors.dart';
 import 'package:browser01/web_page/custom/image_path.dart';
+import 'package:browser01/web_page/dialog/clear_data_dialog.dart';
 import 'package:browser01/web_page/dialog/long_click_dialog.dart';
 import 'package:browser01/web_page/now_icon.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,9 @@ class SettingCommonState extends State<SettingCommonPage> {
                           Navigator.of(context).pushNamed(
                               RouteSetting.userAgentSetting,
                               arguments: 6);
+                          break;
+                        case 1:
+                          showClearDialog(context);
                           break;
                         default:
                           toastMsg(settingCommonInfoList[index].title);
