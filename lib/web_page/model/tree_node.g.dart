@@ -19,7 +19,8 @@ class TreeNodeAdapter extends TypeAdapter<TreeNode> {
     return TreeNode(
       fileType: fields[0] as FileType,
       info: fields[1] as BookmarkInfo,
-    )..children = (fields[2] as List).cast<TreeNode>();
+      children: (fields[2] as List).cast<TreeNode>(),
+    );
   }
 
   @override
