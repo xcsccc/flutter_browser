@@ -20,7 +20,7 @@ class BookmarkInfoAdapter extends TypeAdapter<BookmarkInfo> {
   @override
   void write(BinaryWriter writer, BookmarkInfo obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(2)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)

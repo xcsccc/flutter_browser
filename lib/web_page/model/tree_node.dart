@@ -11,11 +11,11 @@ class TreeNode{
   @HiveField(1)
   BookmarkInfo info;
   @HiveField(2)
-  List<TreeNode> children = [];
+  List<TreeNode> children;
 
   bool select = false;
 
-  TreeNode({required this.fileType,required this.info});
+  TreeNode({required this.fileType,required this.info,required this.children});
 
   void addChild(TreeNode child) {
     children.add(child);
@@ -25,22 +25,14 @@ class TreeNode{
     return Hive.box<TreeNode>(treeNodeKey);
   }
 
-  void save() {
-    openBox().add(this);
-  }
-
-  void delete(){
-    openBox().deleteAt(getAll().indexWhere((element) => element == this,-1));
-  }
-
   void put(){
-    openBox().put(treeNodeKey, this);
+    openBox().put(treeNodeInfoKey,this);
   }
 
   static TreeNode get(){
-    return openBox().get(treeNodeKey,defaultValue: TreeNode(
+    return openBox().get(treeNodeInfoKey,defaultValue: TreeNode(
     fileType: FileType.folder,
-        info: BookmarkInfo(title: 'Root folder', url: "")))!;
+        info: BookmarkInfo(title: 'Root folder', url: ""),children:[]),)!;
   }
 
 
@@ -61,8 +53,4 @@ class TreeNode{
 
   @override
   int get hashCode => fileType.hashCode ^ info.hashCode ^ children.hashCode;
-
-  static List<TreeNode> getAll() {
-    return openBox().values.toList();
-  }
 }

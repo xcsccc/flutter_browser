@@ -117,6 +117,7 @@ const String funcBottomKey = "funcBottomKey";
 const String historyInfoKey = "historyInfoKey";
 const String bookmarkInfoKey = "bookmarkInfoKey";
 const String treeNodeKey = "treeNodeKey";
+const String treeNodeInfoKey = "treeNodeInfoKey";
 const String localeChangeKey = "localeChangeKey";
 const String intKey = "intKey";
 
