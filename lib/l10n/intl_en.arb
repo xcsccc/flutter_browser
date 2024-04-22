@@ -83,5 +83,6 @@
   "imageModes": "Display Image,Do not display images,Display images only on WiFi",
   "aboutTitle": "About",
   "commonTitle": "Common",
-  "clearMode": "Cache,Form Data,History,Web Storage,Cookies,Application Cache"
+  "clearMode": "Cache,Form Data,History,Web Storage,Cookies,Application Cache",
+  "maskFilter": "Web Masking Filter"
 }

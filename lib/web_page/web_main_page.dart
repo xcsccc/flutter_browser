@@ -47,8 +47,7 @@ class BrowserView extends StatefulWidget {
   State<StatefulWidget> createState() => BrowserState();
 }
 
-class BrowserState extends State<BrowserView>
-    with AutomaticKeepAliveClientMixin {
+class BrowserState extends State<BrowserView> with AutomaticKeepAliveClientMixin {
   late var provider = Provider.of<GlobalProvider>(context);
   String home = homeUrl;
   bool isHomeUrl = false;
@@ -96,7 +95,8 @@ class BrowserState extends State<BrowserView>
   void loadDark() async {
     if (Platform.isAndroid &&
         provider.currentTheme == ThemeData.dark() &&
-        !url.toString().endsWith(homeUrl)) {
+        !url.toString().endsWith(homeUrl) &&
+        provider.forceDark) {
       control?.evaluateJavascript(source: """
               (function() {
                 var parent = document.getElementsByTagName('head').item(0);
@@ -122,30 +122,24 @@ class BrowserState extends State<BrowserView>
               maintainState: true,
               child: InAppWebView(
                   keepAlive: InAppWebViewKeepAlive(),
-                  initialUrlRequest: widget.browserInfo.loadUrl
-                              .endsWith(homeUrl) ||
+                  initialUrlRequest: widget.browserInfo.loadUrl.endsWith(homeUrl) ||
                           (!widget.browserInfo.loadUrl.isUrl() &&
                               !widget.browserInfo.loadUrl.isBase64() &&
-                              !widget.browserInfo.loadUrl
-                                  .startsWith("view-source:"))
+                              !widget.browserInfo.loadUrl.startsWith("view-source:"))
                       ? null
                       : URLRequest(
                           url: WebUri(widget.browserInfo.loadUrl.isBase64()
                               ? widget.browserInfo.loadUrl
-                              : widget.browserInfo.loadUrl
-                                      .startsWith("view-source:")
+                              : widget.browserInfo.loadUrl.startsWith("view-source:")
                                   ? widget.browserInfo.loadUrl
                                   : widget.browserInfo.loadUrl.completeUrl())),
                   initialData: !widget.browserInfo.loadUrl.endsWith(homeUrl) &&
                           !widget.browserInfo.loadUrl.isUrl() &&
                           !widget.browserInfo.loadUrl.isBase64() &&
                           !widget.browserInfo.loadUrl.startsWith("view-source:")
-                      ? InAppWebViewInitialData(
-                          data: widget.browserInfo.loadUrl)
+                      ? InAppWebViewInitialData(data: widget.browserInfo.loadUrl)
                       : null,
-                  initialFile: widget.browserInfo.loadUrl.endsWith(homeUrl)
-                      ? widget.browserInfo.loadUrl
-                      : null,
+                  initialFile: widget.browserInfo.loadUrl.endsWith(homeUrl) ? widget.browserInfo.loadUrl : null,
                   findInteractionController: findController,
                   initialSettings: getSetting(),
                   onDownloadStartRequest: (control, request) {
@@ -159,12 +153,10 @@ class BrowserState extends State<BrowserView>
                     }
                     print("change control:$title");
 
-                    if (webUrl.toString().startsWith("https://") ||
-                        webUrl.toString().startsWith("http://")) {
+                    if (webUrl.toString().startsWith("https://") || webUrl.toString().startsWith("http://")) {
                       var time = DateTime.now().millisecondsSinceEpoch;
                       var list = HistoryInfo.getAll().where((element) =>
-                          element.time.formatTime(context) ==
-                              time.formatTime(context) &&
+                          element.time.formatTime(context) == time.formatTime(context) &&
                           element.url == webUrl &&
                           element.title == title);
                       if (list.isNotEmpty) {
@@ -172,11 +164,7 @@ class BrowserState extends State<BrowserView>
                           provider.historyDelete(element);
                         }
                       }
-                      HistoryInfo(
-                              title: this.title,
-                              url: webUrl.toString(),
-                              time: time)
-                          .save();
+                      HistoryInfo(title: this.title, url: webUrl.toString(), time: time).save();
                     }
 
                     if (_isSelect) {
@@ -188,15 +176,8 @@ class BrowserState extends State<BrowserView>
                     if (info != null) {
                       if (info.url != null || info.src != null) {
                         // ignore: use_build_context_synchronously
-                        showCustomMenu(
-                            context,
-                            details?.globalPosition.dx ?? 0,
-                            details?.globalPosition.dy ?? 0,
-                            widget.browserInfo,
-                            info,
-                            title,
-                            webUrl,
-                            imgUrls);
+                        showCustomMenu(context, details?.globalPosition.dx ?? 0, details?.globalPosition.dy ?? 0,
+                            widget.browserInfo, info, title, webUrl, imgUrls);
                       }
                     }
                   },
@@ -223,13 +204,11 @@ class BrowserState extends State<BrowserView>
                   },
                   onCloseWindow: (control) {},
                   onCreateWindow: (control, window) async {
-                    widget.browserInfo
-                        .onNewWindow(window.request.url.toString(), true);
+                    widget.browserInfo.onNewWindow(window.request.url.toString(), true);
                     return true;
                   },
                   onLoadResource: (control, res) {
-                    if (res.initiatorType == "img" &&
-                        !imgUrls.contains(res.url.toString())) {
+                    if (res.initiatorType == "img" && !imgUrls.contains(res.url.toString())) {
                       imgUrls.add(res.url.toString());
                     }
                   },
@@ -241,9 +220,7 @@ class BrowserState extends State<BrowserView>
                     imgUrls.clear();
                     webUrl = url.toString();
                     checkHomeUrl();
-                    this.url = url.toString().startsWith('file:///')
-                        ? ""
-                        : url.toString().extractSearchKeyword();
+                    this.url = url.toString().startsWith('file:///') ? "" : url.toString().extractSearchKeyword();
                     widget.browserInfo.onSearchChange(this.url);
                   },
                   onLoadStop: (control, url) async {
@@ -255,7 +232,7 @@ class BrowserState extends State<BrowserView>
                   },
                   gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
                     Factory<OneSequenceGestureRecognizer>(
-                          () => LongPressGestureRecognizer(),
+                      () => LongPressGestureRecognizer(),
                     ),
                     Factory<VerticalDragGestureRecognizer>(
                       () => VerticalDragGestureRecognizer(),
@@ -287,15 +264,13 @@ class SearchAllWidget extends StatefulWidget {
   final ValueChanged<String> onSearch;
   final String searchStr;
 
-  const SearchAllWidget(
-      {super.key, required this.onSearch, required this.searchStr});
+  const SearchAllWidget({super.key, required this.onSearch, required this.searchStr});
 
   @override
   State<StatefulWidget> createState() => SearchAllState();
 }
 
-class SearchAllState extends State<SearchAllWidget>
-    with SingleTickerProviderStateMixin {
+class SearchAllState extends State<SearchAllWidget> with SingleTickerProviderStateMixin {
   TextEditingController controller = TextEditingController();
   FocusNode node = FocusNode();
   String searchString = "";
@@ -344,11 +319,8 @@ class SearchAllState extends State<SearchAllWidget>
     node.addListener(_onFocusChange);
     controller.text = widget.searchStr;
     searchString = widget.searchStr;
-    animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 200));
-    animation =
-        Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, -0.5))
-            .animate(animationController);
+    animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
+    animation = Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, -0.5)).animate(animationController);
     super.initState();
   }
 
@@ -368,9 +340,7 @@ class SearchAllState extends State<SearchAllWidget>
             width: double.infinity,
             height: double.infinity,
             child: Container(
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.white
-                  : Colors.black,
+              color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
             ),
           ),
           onTap: () {
@@ -393,11 +363,8 @@ class SearchAllState extends State<SearchAllWidget>
                               color: Colors.transparent,
                               width: 0,
                             ),
-                            image: const DecorationImage(
-                                image: AssetImage(AppImages.logo),
-                                fit: BoxFit.fill),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)))),
+                            image: const DecorationImage(image: AssetImage(AppImages.logo), fit: BoxFit.fill),
+                            borderRadius: const BorderRadius.all(Radius.circular(20)))),
                   ),
                   Container(height: 10),
                   SizedBox(
@@ -412,17 +379,12 @@ class SearchAllState extends State<SearchAllWidget>
                               width: double.infinity,
                               child: DecoratedBox(
                                   decoration: BoxDecoration(
-                                      color:
-                                          ThemeColors.borderColor.withAlpha(0),
-                                      border: Border.all(
-                                          color: ThemeColors.borderColor,
-                                          width: 2.0),
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(20)))),
+                                      color: ThemeColors.borderColor.withAlpha(0),
+                                      border: Border.all(color: ThemeColors.borderColor, width: 2.0),
+                                      borderRadius: const BorderRadius.all(Radius.circular(20)))),
                             ),
                             Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 10, right: 10),
+                              padding: const EdgeInsets.only(left: 10, right: 10),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -434,8 +396,7 @@ class SearchAllState extends State<SearchAllWidget>
                                             decoration: const InputDecoration(
                                               border: InputBorder.none,
                                               fillColor: Colors.transparent,
-                                              hintStyle:
-                                                  TextStyle(fontSize: 15),
+                                              hintStyle: TextStyle(fontSize: 15),
                                             ),
                                             maxLines: 1,
                                             onChanged: (value) {
@@ -443,8 +404,7 @@ class SearchAllState extends State<SearchAllWidget>
                                                 searchString = value;
                                               });
                                             },
-                                            style:
-                                                const TextStyle(fontSize: 15),
+                                            style: const TextStyle(fontSize: 15),
                                           ))),
                                   if (searchIconIsShow)
                                     IconImageButton(
@@ -515,9 +475,7 @@ class WebViewPagerState extends State<WebViewPager> {
             itemBuilder: (context, index) {
               return Visibility(
                   maintainState: true,
-                  child: BrowserView(
-                      key: widget.browserKeys[index],
-                      browserInfo: widget.browserPages[index]));
+                  child: BrowserView(key: widget.browserKeys[index], browserInfo: widget.browserPages[index]));
             }));
   }
 }

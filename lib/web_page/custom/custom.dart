@@ -129,6 +129,7 @@ const String browserFlagKey = "browserFlagKey";
 const String fullKey = "fullKey";
 const String searchEnginKey = "searchEnginKey";
 const String imageModeKey = "imageModeKey";
+const String forceDarkKey = "forceDarkKey";
 
 extension LongExt on int {
   String toFileSize() {
@@ -260,6 +261,7 @@ class RouteSetting {
   static const String openSource = '/openSource';
   static const String settingsCommon = '/settingsCommon';
   static const String userAgentSetting = '/userAgentSetting';
+  static const String darkMode = '/darkMode';
 }
 
 enum FuncBottomType {
