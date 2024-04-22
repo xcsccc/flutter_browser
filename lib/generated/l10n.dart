@@ -860,6 +860,15 @@ class S {
       args: [],
     );
   }
+
+  String get clearMode {
+    return Intl.message(
+      'Cache,Form Data,History,Web Storage,Cookies,Application Cache',
+      name: 'clearMode',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

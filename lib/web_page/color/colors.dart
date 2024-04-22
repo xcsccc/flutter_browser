@@ -17,4 +17,5 @@ class ThemeColors{
   static var fixColor = const Color(0xff1bb623);
   static var divideColor = const Color(0xffE0E0E0);
   static var descColor = const Color(0xFF454545);
+  static var blueButtonColor = const Color(0xFF2196F3);
 }
