@@ -17,30 +17,23 @@ import '../web_main_page.dart';
 
 class GlobalProvider with ChangeNotifier {
   int selectLocale = 0;
-  final List<Locale> _listLocale = [
-    const Locale("en", ""),
-    const Locale("zh", "")
-  ];
+  final List<Locale> _listLocale = [const Locale("en", ""), const Locale("zh", "")];
   bool isShowFunDialog = true;
   bool isShowDownloadDialog = true;
   int selectPosition = 0;
   List<GlobalKey<BrowserState>> browserKey = [];
-  late bool forceDark =
-      Hive.box(boolKey).get(forceDarkKey, defaultValue: false);
+  late bool forceDark = Hive.box(boolKey).get(forceDarkKey, defaultValue: false);
   late ThemeData currentTheme =
-      Hive.box(boolKey).get(nightModeKey, defaultValue: false)
-          ? ThemeData.dark()
-          : ThemeData.light();
+      Hive.box(boolKey).get(nightModeKey, defaultValue: false) ? ThemeData.dark() : ThemeData.light();
   FuncBottomType nowClickType = FuncBottomType.night;
-  late String? userAgent =
-      Hive.box(boolKey).get(desktopKey, defaultValue: false)
-          ? UserAgentType.windowChrome.userAgent
-          : UserAgentType.androidAgent.userAgent;
+  late String? userAgent = Hive.box(boolKey).get(desktopKey, defaultValue: false)
+      ? UserAgentType.windowChrome.userAgent
+      : UserAgentType.androidAgent.userAgent;
   UserAgentType? nowType;
   ImageModeType? modeType;
-  late SearchEnginType selectEngin = SearchEnginType
-      .values[Hive.box(intKey).get(searchEnginKey, defaultValue: 0)];
+  late SearchEnginType selectEngin = SearchEnginType.values[Hive.box(intKey).get(searchEnginKey, defaultValue: 0)];
   late InAppWebViewSettings settings = updateSettings();
+  late int maskAlpha = Hive.box(intKey).get(maskAlphaKey, defaultValue: 40);
 
   BrowserState? getPageNowState() => browserKey[selectPosition].currentState;
 
@@ -63,8 +56,7 @@ class GlobalProvider with ChangeNotifier {
     }
   }
 
-  List<SettingCommonInfo> get settingCommonInfo =>
-      SettingCommonInfo.getAll().toList();
+  List<SettingCommonInfo> get settingCommonInfo => SettingCommonInfo.getAll().toList();
 
   List<FuncBottomInfo> getFuncBottomInfoList(List<FuncBottomInfo> init) {
     var list = FuncBottomInfo.getAll();
@@ -80,8 +72,7 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<SettingCommonInfo> getSettingCommonInfoList(
-      List<SettingCommonInfo> init) {
+  List<SettingCommonInfo> getSettingCommonInfoList(List<SettingCommonInfo> init) {
     var list = SettingCommonInfo.getAll();
     if (list.isEmpty) {
       SettingCommonInfo.openBox().addAll(init);
@@ -103,9 +94,7 @@ class GlobalProvider with ChangeNotifier {
         supportZoom: true,
         enableViewportScale: true,
         userAgent: userAgent,
-        forceDark: (currentTheme == ThemeData.dark() && forceDark)
-            ? ForceDark.ON
-            : ForceDark.OFF,
+        forceDark: (currentTheme == ThemeData.dark() && forceDark) ? ForceDark.ON : ForceDark.OFF,
         forceDarkStrategy: ForceDarkStrategy.USER_AGENT_DARKENING_ONLY,
         verticalScrollBarEnabled: false,
         horizontalScrollBarEnabled: false,
@@ -156,6 +145,11 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateMaskAlpha(int alpha) {
+    maskAlpha = alpha;
+    notifyListeners();
+  }
+
   Future<void> updateImageMode(ImageModeType type) async {
     modeType = type;
     settings = updateSettings();
@@ -165,8 +159,7 @@ class GlobalProvider with ChangeNotifier {
       settings.blockNetworkImage = true;
     } else {
       var connectivityResult = await Connectivity().checkConnectivity();
-      settings.blockNetworkImage =
-          connectivityResult != ConnectivityResult.wifi;
+      settings.blockNetworkImage = connectivityResult != ConnectivityResult.wifi;
     }
     changeAllSetting();
     for (var element in browserKey) {
@@ -199,9 +192,7 @@ class GlobalProvider with ChangeNotifier {
   }
 
   void toggleTheme() async {
-    currentTheme = currentTheme == ThemeData.light()
-        ? ThemeData.dark()
-        : ThemeData.light();
+    currentTheme = currentTheme == ThemeData.light() ? ThemeData.dark() : ThemeData.light();
     settings = updateSettings();
     changeAllSetting();
     if (Platform.isAndroid) {
@@ -215,8 +206,7 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  late var locale =
-      _listLocale[Hive.box(intKey).get(localeChangeKey, defaultValue: 0)!];
+  late var locale = _listLocale[Hive.box(intKey).get(localeChangeKey, defaultValue: 0)!];
 
   void hideFunDialog() {
     isShowFunDialog = false;
