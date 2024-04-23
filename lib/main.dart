@@ -718,11 +718,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                         getPageNowState()?.webUrl ?? "");
                                     break;
                                   case FuncBottomType.addBookmark:
-                                    Navigator.of(context).pop();
-                                    isShowChild = true;
-                                    showAddBookmarkDialog(context, BookmarkInfo(
-                                        title: getPageNowState()?.title ?? "",
-                                        url: getPageNowState()?.webUrl ?? ""));
+                                    String url = getPageNowState()?.webUrl ??  "";
+                                    if(!url.endsWith(homeUrl) && url.isNotEmpty){
+                                      Navigator.of(context).pop();
+                                      isShowChild = true;
+                                      showAddBookmarkDialog(context, BookmarkInfo(
+                                          title: getPageNowState()?.title ?? "",
+                                          url: url));
+                                    }
                                     break;
                                   case FuncBottomType.desktop:
                                     var isOpen = !Hive.box(boolKey)

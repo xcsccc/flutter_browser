@@ -159,7 +159,9 @@ class AddBookmarkState extends State<AddBookmarkDialog> {
                     //添加到书签
                     selectNode.addChild(TreeNode(
                         fileType: FileType.bookmark,
-                        info: BookmarkInfo(title: title, url: url),children: []));
+                        info: BookmarkInfo(title: title, url: url),
+                        children: [],
+                        level: selectNode.level + 1));
                     await historyNode.put();
                     Navigator.of(context).pop();
                   } else {
@@ -181,108 +183,110 @@ class AddBookmarkState extends State<AddBookmarkDialog> {
 
   Widget twoPage() {
     return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            IconImageButton(
+              res: AppImages.back,
+              onClick: () {
+                pageController.animateToPage(0,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.fastEaseInToSlowEaseOut);
+              },
+            ),
+            Container(
+              width: 20,
+            ),
+            Text(S.of(context).selectFolder,
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+            Expanded(child: Container()),
+            IconImageButton(
+              res: newFolder ? AppImages.close : AppImages.add,
+              onClick: () {
+                setState(() {
+                  newFolder = !newFolder;
+                });
+              },
+            )
+          ],
+        ),
+        if (newFolder)
           Row(
             children: [
-              IconImageButton(
-                res: AppImages.back,
-                onClick: () {
-                  pageController.animateToPage(0,
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.fastEaseInToSlowEaseOut);
-                },
+              const IconImageButton(res: AppImages.folderAdd),
+              Expanded(
+                child: TextField(
+                  controller: controllerNewFolder,
+                  decoration: InputDecoration(
+                    hintText: S.of(context).newFolder,
+                    border: InputBorder.none,
+                    hintStyle: const TextStyle(fontSize: 15),
+                  ),
+                  maxLines: 1,
+                  onChanged: (value) {
+                    setState(() {
+                      newFolderName = value;
+                    });
+                  },
+                  style: const TextStyle(fontSize: 15),
+                ),
               ),
-              Container(
-                width: 20,
-              ),
-              Text(S.of(context).selectFolder,
-                  style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.w500)),
-              Expanded(child: Container()),
-              IconImageButton(
-                res: newFolder ? AppImages.close : AppImages.add,
-                onClick: () {
-                  setState(() {
-                    newFolder = !newFolder;
-                  });
+              GestureDetector(
+                onTap: () {
+                  if (newFolderName.isNotEmpty) {
+                    //添加文件夹
+                    setState(() {
+                      selectNode.addChild(TreeNode(
+                          fileType: FileType.folder,
+                          info: BookmarkInfo(title: newFolderName, url: ""),
+                          children: [],
+                          level: selectNode.level + 1));
+                    });
+
+                    pageController.animateToPage(0,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.fastEaseInToSlowEaseOut);
+
+                    setState(() {
+                      controllerNewFolder.text = "";
+                      newFolder = false;
+                    });
+                  } else {
+                    toastMsg(S.of(context).msgEmpty);
+                  }
                 },
-              )
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    S.of(context).ok,
+                    style: TextStyle(
+                        fontSize: 15, color: ThemeColors.progressStartColor),
+                  ),
+                ),
+              ),
             ],
           ),
-          if (newFolder)
-            Row(
-              children: [
-                const IconImageButton(res: AppImages.folderAdd),
-                Expanded(
-                  child: TextField(
-                    controller: controllerNewFolder,
-                    decoration: InputDecoration(
-                      hintText: S.of(context).newFolder,
-                      border: InputBorder.none,
-                      hintStyle: const TextStyle(fontSize: 15),
-                    ),
-                    maxLines: 1,
-                    onChanged: (value) {
-                      setState(() {
-                        newFolderName = value;
-                      });
-                    },
-                    style: const TextStyle(fontSize: 15),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    if (newFolderName.isNotEmpty) {
-                      //添加文件夹
-                      setState(() {
-                        selectNode.addChild(TreeNode(
-                            fileType: FileType.folder,
-                            info: BookmarkInfo(title: newFolderName, url: ""),children: []));
-                      });
-
-                      pageController.animateToPage(0,
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.fastEaseInToSlowEaseOut);
-
-                      setState(() {
-                        controllerNewFolder.text = "";
-                        newFolder = false;
-                      });
-                    } else {
-                      toastMsg(S.of(context).msgEmpty);
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Text(
-                      S.of(context).ok,
-                      style: TextStyle(
-                          fontSize: 15, color: ThemeColors.progressStartColor),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          Folder(
-            node: historyNode,
-            selectNode: selectNode,
-            onClick: (select) {
-              selectNode = select;
+        Folder(
+          node: historyNode,
+          selectNode: selectNode,
+          onClick: (select) {
+            selectNode = select;
+            setState(() {
+              controller3.text = selectNode.info.title;
               setState(() {
-                controller3.text = selectNode.info.title;
-                setState(() {
-                  controllerNewFolder.text = "";
-                  newFolder = false;
-                });
+                controllerNewFolder.text = "";
+                newFolder = false;
               });
-              pageController.animateToPage(0,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.fastEaseInToSlowEaseOut);
-            },
-          )
-        ],
+            });
+            pageController.animateToPage(0,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.fastEaseInToSlowEaseOut);
+          },
+        )
+      ],
     );
   }
 
@@ -314,7 +318,6 @@ class Folder extends StatefulWidget {
 
 class FolderState extends State<Folder> {
   Widget? getFolder(TreeNode node) {
-    print("widget:$node");
     if (node.fileType == FileType.folder) {
       List<Widget> widgets = [];
       for (TreeNode node in node.children) {
@@ -323,34 +326,36 @@ class FolderState extends State<Folder> {
           widgets.add(folder);
         }
       }
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
+      return Column(mainAxisSize: MainAxisSize.min, children: [
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(15)),
+              color: node == widget.selectNode
+                  ? ThemeColors.borderColor
+                  : Colors.transparent),
+          child: InkWell(
             onTap: () {
               widget.onClick(node);
             },
-            child: Container(
-                color: node == widget.selectNode
-                    ? ThemeColors.divideColor
-                    : Colors.transparent,
-                child: Row(
-                  children: [
-                    const IconImageButton(res: AppImages.folder),
-                    Container(
-                      width: 20,
-                    ),
-                    Text(node.info.title, style: const TextStyle(fontSize: 13))
-                  ],
-                )),
+            borderRadius:  const BorderRadius.all(Radius.circular(15)),
+            child: Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: node.level * 10),
+                  child: const IconImageButton(res: AppImages.folder),
+                ),
+                Container(
+                  width: 20,
+                ),
+                Expanded(
+                    child: Text(node.info.title,
+                        style: const TextStyle(fontSize: 13)))
+              ],
+            ),
           ),
-          Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Column(
-                children: [...widgets],
-              ))
-        ],
-      );
+        ),
+        ...widgets
+      ]);
     } else {
       return null;
     }
@@ -361,7 +366,7 @@ class FolderState extends State<Folder> {
     return Container(
       constraints: const BoxConstraints(maxHeight: 300),
       child: SingleChildScrollView(
-      child: getFolder(widget.node) ?? Container(),
+        child: getFolder(widget.node) ?? Container(),
       ),
     );
   }

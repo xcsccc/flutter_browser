@@ -7,7 +7,9 @@ import 'package:android_intent_plus/flag.dart';
 import 'package:browser01/web_page/color/colors.dart';
 import 'package:browser01/web_page/custom/image_path.dart';
 import 'package:browser01/web_page/dialog/page_info_dialog.dart';
+import 'package:browser01/web_page/model/file_type.dart';
 import 'package:browser01/web_page/model/history_info.dart';
+import 'package:browser01/web_page/model/tree_node.dart';
 import 'package:browser01/web_page/provider/main_provider.dart';
 import 'package:browser01/web_page/web_main_page.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -56,6 +58,10 @@ List<String> _findName(List<FunDialogType> list, BuildContext context) {
         return S.of(context).share;
       case FunDialogType.delete:
         return S.of(context).delete;
+      case FunDialogType.edit:
+        return S.of(context).edit;
+      case FunDialogType.addHomepage:
+        return S.of(context).addHomepage;
       default:
         return "";
     }
@@ -75,6 +81,8 @@ enum FunDialogType {
   copyLink,
   delete,
   allTime,
+  edit,
+  addHomepage,
   allLastSeven,
   todayAndYesterday,
   oneHour,
@@ -347,6 +355,61 @@ void showClearHistoryMenu(BuildContext context, double x, double y) {
     });
     over?.remove();
   }, S.of(context).historyTitle);
+}
+
+void showBookmarkItemMenu(BuildContext context, double x, double y, TreeNode parent,TreeNode info,Function(TreeNode parent) onDelete){
+  var provider = Provider.of<GlobalProvider>(context,listen: false);
+  List<FunDialogType> list = [];
+  if(info.fileType == FileType.folder){
+    list.addAll([
+      FunDialogType.edit,
+      FunDialogType.addHomepage,
+      FunDialogType.delete,
+    ]);
+  }else if(info.fileType == FileType.bookmark){
+    list.addAll([ FunDialogType.openBackground,
+      FunDialogType.openNew,
+      FunDialogType.edit,
+      FunDialogType.addHomepage,
+      FunDialogType.delete,
+      FunDialogType.copyLink,
+      FunDialogType.share]);
+  }
+  var initList = _findName(list, context);
+  showCustom(context, x, y, list, initList, provider, (item, over) async {
+    provider.hideFunDialog();
+    switch (item) {
+      case FunDialogType.openBackground:
+        Navigator.of(context).pop(
+            UrlOpenType(url: info.info.url.toString(), isNowOpen: false));
+        break;
+      case FunDialogType.openNew:
+        Navigator.of(context)
+            .pop(UrlOpenType(url:  info.info.url.toString(), isNowOpen: true));
+        break;
+      case FunDialogType.edit:
+        //todo 两种修改策略
+        break;
+      case FunDialogType.addHomepage:
+        //todo 待完成
+        break;
+      case FunDialogType.delete:
+        var node = provider.removeTreeNode(parent,info,provider.treeNodeInfo);
+        if(node != null){
+          onDelete(node);
+        }
+        break;
+      case FunDialogType.copyLink:
+        copyToClipboard(info.info.url, context);
+        break;
+      case FunDialogType.share:
+        _shareText(info.info.url.toString());
+        break;
+      default:
+        break;
+    }
+    over?.remove();
+  });
 }
 
 void showHistoryMenu(
@@ -915,7 +978,10 @@ class CustomBaseDialog extends StatelessWidget {
                 borderRadius: const BorderRadius.all(Radius.circular(20))),
             child: Padding(
               padding: const EdgeInsets.all(15),
-              child: child,
+              child: Material(
+                color: Colors.transparent,
+                child: child,
+              ),
             )));
   }
 }

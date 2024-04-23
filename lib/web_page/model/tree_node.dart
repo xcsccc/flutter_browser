@@ -12,10 +12,13 @@ class TreeNode{
   BookmarkInfo info;
   @HiveField(2)
   List<TreeNode> children;
+  @HiveField(3)
+  //0 1 2 3 4 5 6 ...
+  int level;
 
   bool select = false;
 
-  TreeNode({required this.fileType,required this.info,required this.children});
+  TreeNode({required this.fileType,required this.info,required this.children,required this.level});
 
   void addChild(TreeNode child) {
     if(child.fileType == FileType.folder && children.contains(child)){
@@ -35,15 +38,8 @@ class TreeNode{
   static TreeNode get(){
     return openBox().get(treeNodeInfoKey,defaultValue: TreeNode(
     fileType: FileType.folder,
-        info: BookmarkInfo(title: 'Root folder', url: ""),children:[]),)!;
+        info: BookmarkInfo(title: 'Root folder', url: ""),children:[], level: 0),)!;
   }
-
-
-  @override
-  String toString() {
-    return 'TreeNode{fileType: $fileType, info: $info, children: $children}';
-  }
-
 
   @override
   bool operator ==(Object other) =>
@@ -52,8 +48,15 @@ class TreeNode{
           runtimeType == other.runtimeType &&
           fileType == other.fileType &&
           info == other.info &&
-          children == other.children;
+          children == other.children &&
+          level == other.level;
 
   @override
-  int get hashCode => fileType.hashCode ^ info.hashCode ^ children.hashCode;
+  int get hashCode =>
+      fileType.hashCode ^ info.hashCode ^ children.hashCode ^ level.hashCode;
+
+  @override
+  String toString() {
+    return 'TreeNode{fileType: $fileType, info: $info, children: $children, level: $level, select: $select}';
+  }
 }

@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:browser01/web_page/custom/custom.dart';
 import 'package:browser01/web_page/dialog/user_agent_dialog.dart';
-import 'package:browser01/web_page/model/bookmark_info.dart';
-import 'package:browser01/web_page/model/file_type.dart';
 import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/model/setting_common_info.dart';
 import 'package:connectivity/connectivity.dart';
@@ -50,7 +48,20 @@ class GlobalProvider with ChangeNotifier {
 
   List<HistoryInfo> get historyInfo => HistoryInfo.getAll().reversed.toList();
 
-  TreeNode get treeNodeInfo => TreeNode.get();
+  late TreeNode treeNodeInfo = TreeNode.get();
+
+  //递归删除
+  TreeNode? removeTreeNode(TreeNode parent,TreeNode removeInfo,TreeNode now){
+    if(now == parent){
+      now.children.remove(removeInfo);
+      treeNodeInfo.put();
+      return now;
+    }else{
+      for (var element in now.children) {
+       return removeTreeNode(parent, removeInfo,element);
+      }
+    }
+  }
 
   List<SettingCommonInfo> get settingCommonInfo =>
       SettingCommonInfo.getAll().toList();

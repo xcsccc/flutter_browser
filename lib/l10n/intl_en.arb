@@ -55,6 +55,7 @@
   "addHomepage":"add to homepage",
   "translate":"Translate",
   "certificate":"Certificate",
+  "edit": "Edit",
   "@AppStr": {
     "description": "AppStr"
   },

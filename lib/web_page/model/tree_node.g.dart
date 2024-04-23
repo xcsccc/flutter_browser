@@ -20,19 +20,23 @@ class TreeNodeAdapter extends TypeAdapter<TreeNode> {
       fileType: fields[0] as FileType,
       info: fields[1] as BookmarkInfo,
       children: (fields[2] as List).cast<TreeNode>(),
+      level: fields[3] as int
     );
   }
 
   @override
   void write(BinaryWriter writer, TreeNode obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.fileType)
       ..writeByte(1)
       ..write(obj.info)
       ..writeByte(2)
-      ..write(obj.children);
+      ..write(obj.children)
+      ..writeByte(3)
+      ..write(obj.level)
+    ;
   }
 
   @override

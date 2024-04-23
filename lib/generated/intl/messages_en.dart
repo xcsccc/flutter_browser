@@ -69,6 +69,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "downloadSize": MessageLookupByLibrary.simpleMessage("File size:"),
         "downloadSuccess":
             MessageLookupByLibrary.simpleMessage("download successful!"),
+        "edit": MessageLookupByLibrary.simpleMessage("Edit"),
         "error": MessageLookupByLibrary.simpleMessage("Error"),
         "expiresOn": MessageLookupByLibrary.simpleMessage("Expires On"),
         "find": MessageLookupByLibrary.simpleMessage("Find in page"),
@@ -90,6 +91,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "issuedOn": MessageLookupByLibrary.simpleMessage("Issued On"),
         "issuedTo": MessageLookupByLibrary.simpleMessage("Issued To"),
         "linkUrl": MessageLookupByLibrary.simpleMessage("Link URL:"),
+        "maskFilter":
+            MessageLookupByLibrary.simpleMessage("Web Masking Filter"),
         "msgEmpty": MessageLookupByLibrary.simpleMessage("Incorrect format!"),
         "network": MessageLookupByLibrary.simpleMessage("Network log"),
         "newFolder": MessageLookupByLibrary.simpleMessage("New"),

@@ -400,7 +400,8 @@ class BookmarkState extends State<BookmarkPage> {
                   info: TreeNode(
                       fileType: FileType.none,
                       children: [],
-                      info: BookmarkInfo(url: "", title: "...")),
+                      info: BookmarkInfo(url: "", title: "..."),
+                      level: preNodes.last.level + 1),
                   onClick: () {
                     setState(() {
                       clickTreeFolder = preNodes.last;
@@ -410,32 +411,49 @@ class BookmarkState extends State<BookmarkPage> {
             items.isNotEmpty
                 ? ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: items.length ,
+                    itemCount: items.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       var item = items[index];
                       return BookmarkItem(
-                          info: item,
-                          onClick: () {
-                            if (item.fileType == FileType.folder) {
-                              preNodes.add(clickTreeFolder);
-                              setState(() {
-                                clickTreeFolder = item;
-                              });
-                            } else {
-                              Navigator.of(context).pop(UrlOpenType(
-                                  url: item.info.url, isNowOpen: true));
-                            }
+                        info: item,
+                        onClick: () {
+                          if (item.fileType == FileType.folder) {
+                            preNodes.add(clickTreeFolder);
+                            setState(() {
+                              clickTreeFolder = item;
+                            });
+                          } else {
+                            Navigator.of(context).pop(UrlOpenType(
+                                url: item.info.url, isNowOpen: true));
+                          }
+                        },
+                        onLongClick: (details) {
+                          showBookmarkItemMenu(
+                              context,
+                              details.globalPosition.dx,
+                              details.globalPosition.dy,
+                              preNodes.isNotEmpty
+                                  ? clickTreeFolder
+                                  : provider.treeNodeInfo,
+                              item,(parent){
+                                setState(() {
+                                  clickTreeFolder = parent;
+                                });
                           });
+                        },
+                      );
                     })
-                : preNodes.isEmpty ? Padding(
-                    padding: const EdgeInsets.only(top: 150),
-                    child: Center(
-                        child: Image.asset(
-                      AppImages.empty,
-                      width: 120,
-                      height: 120,
-                    ))) : Container()
+                : preNodes.isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 150),
+                        child: Center(
+                            child: Image.asset(
+                          AppImages.empty,
+                          width: 120,
+                          height: 120,
+                        )))
+                    : Container()
           ],
         ),
         searchChange: (search) {
@@ -457,8 +475,10 @@ class BookmarkState extends State<BookmarkPage> {
 class BookmarkItem extends StatefulWidget {
   final TreeNode info;
   final Function onClick;
+  final Function(TapDownDetails details)? onLongClick;
 
-  const BookmarkItem({super.key, required this.info, required this.onClick});
+  const BookmarkItem(
+      {super.key, required this.info, required this.onClick, this.onLongClick});
 
   @override
   State<StatefulWidget> createState() => BookmarkItemState();
@@ -477,7 +497,9 @@ class BookmarkItemState extends State<BookmarkItem> {
           widget.onClick();
         },
         onLongPress: () {
-          if (details != null) {}
+          if (details != null && widget.onLongClick != null) {
+            widget.onLongClick!(details!);
+          }
         },
         borderRadius: BorderRadius.circular(0),
         child: Item(

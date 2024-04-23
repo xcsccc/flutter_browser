@@ -610,6 +610,16 @@ class S {
     );
   }
 
+  /// `Edit`
+  String get edit {
+    return Intl.message(
+      'Edit',
+      name: 'edit',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Certificate Info`
   String get certificateInfo {
     return Intl.message(
@@ -871,6 +881,7 @@ class S {
     );
   }
 
+  /// `Web Masking Filter`
   String get maskFilter {
     return Intl.message(
       'Web Masking Filter',
