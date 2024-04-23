@@ -513,12 +513,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                             ),
                           ),
                           if (Theme.of(context).brightness == Brightness.dark)
-                            GestureDetector(
-                              onTap: () {
-                                hideSearch();
-                              },
-                              child: Container(
-                                color: const Color(0xFF3E3E3E).withOpacity(provider.maskAlpha / 100),
+                            IgnorePointer(
+                              child: GestureDetector(
+                                onTap: () {
+                                  hideSearch();
+                                },
+                                child: Container(
+                                  color: const Color(0xFF3E3E3E).withOpacity(provider.maskAlpha / 100),
+                                ),
                               ),
                             ),
                           if (isBlackAlphaShow)
