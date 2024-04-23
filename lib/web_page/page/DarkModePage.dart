@@ -1,3 +1,4 @@
+import 'package:browser01/web_page/dialog/mask_filter_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +29,9 @@ class DarkModeState extends State<DarkModePage> {
         width: double.infinity,
         child: InkWell(
           onTap: () {
-
+            showMaskDialog(context,(value){
+              provider.updateMaskAlpha(value);
+            });
           },
           customBorder: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),

@@ -131,6 +131,7 @@ const String fullKey = "fullKey";
 const String searchEnginKey = "searchEnginKey";
 const String imageModeKey = "imageModeKey";
 const String forceDarkKey = "forceDarkKey";
+const String maskAlphaKey = "maskAlphaKey";
 
 extension LongExt on int {
   String toFileSize() {

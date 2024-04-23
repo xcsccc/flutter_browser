@@ -84,8 +84,7 @@ class MyAppState extends State<MyApp> {
       routes: {
         RouteSetting.mainPage: (context) => const MyHomePage(),
         RouteSetting.scannerPage: (context) => const ScannerPage(),
-        RouteSetting.bookmarkHistorySavePage: (context) =>
-            const BookmarkAndHistoryAndSavePage(),
+        RouteSetting.bookmarkHistorySavePage: (context) => const BookmarkAndHistoryAndSavePage(),
         RouteSetting.settings: (context) => const SettingPage(),
         RouteSetting.aboutPage: (context) => const AboutPage(),
         RouteSetting.openSource: (context) => const OpenSourcePage(),
@@ -107,9 +106,7 @@ class MyAppState extends State<MyApp> {
         Locale('zh', ''), // 中文
       ],
       // 暗黑主题
-      themeMode: provider.currentTheme == ThemeData.light()
-          ? ThemeMode.light
-          : ThemeMode.dark,
+      themeMode: provider.currentTheme == ThemeData.light() ? ThemeMode.light : ThemeMode.dark,
     );
   }
 }
@@ -300,9 +297,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       if (call.method == invokeMethod) {
         String callString = call.arguments;
         if (callString != "") {
-          initLoadUrl = callString.isUrl()
-              ? callString.completeUrl()
-              : checkUrlType(callString);
+          initLoadUrl = callString.isUrl() ? callString.completeUrl() : checkUrlType(callString);
           if (provider.browserKey.isNotEmpty) {
             copyInit(initLoadUrl, true);
           }
@@ -322,9 +317,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         });
         getNowControl()?.loadUrl(
             urlRequest: URLRequest(
-                url: WebUri(searchString.isUrl()
-                    ? searchString.completeUrl()
-                    : provider.selectEngin.enginUrl + searchString)));
+                url: WebUri(
+                    searchString.isUrl() ? searchString.completeUrl() : provider.selectEngin.enginUrl + searchString)));
       },
       loadUrl: initLoadUrl,
       onTitleChange: (title) {
@@ -343,9 +337,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   void onBack() {
-    if (_lastPressedAt == null ||
-        DateTime.now().difference(_lastPressedAt!) >
-            const Duration(seconds: 1)) {
+    if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt!) > const Duration(seconds: 1)) {
       _lastPressedAt = DateTime.now();
     } else {
       SystemNavigator.pop();
@@ -398,8 +390,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   void openUrlForHistory([int position = 0, String searchString = ""]) async {
-    dynamic type = await Navigator.of(context).pushNamed(
-        RouteSetting.bookmarkHistorySavePage,
+    dynamic type = await Navigator.of(context).pushNamed(RouteSetting.bookmarkHistorySavePage,
         arguments: SearchInfo(search: searchString, position: position));
     if (type != null && type is UrlOpenType) {
       copyInit(type.url.toString(), type.isNowOpen);
@@ -409,9 +400,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.white
-            : Colors.black,
+        backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
         resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: Stack(
@@ -463,10 +452,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               onTitleClick: () {
                                 blackAlphaShow();
                                 changeSearchShow(true);
-                                getPageNowState()
-                                    ?.searchState
-                                    .currentState
-                                    ?.animationStart();
+                                getPageNowState()?.searchState.currentState?.animationStart();
                               },
                               onInfoClick: () {
                                 changePagerAllHide();
@@ -501,8 +487,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                     urlRequest: URLRequest(
                                         url: WebUri(searchString.isUrl()
                                             ? searchString.completeUrl()
-                                            : provider.selectEngin.enginUrl +
-                                                searchString)));
+                                            : provider.selectEngin.enginUrl + searchString)));
                                 hideSearch();
                               },
                               searchKey: searchString,
@@ -527,6 +512,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               browserKeys: provider.browserKey,
                             ),
                           ),
+                          if (Theme.of(context).brightness == Brightness.dark)
+                            GestureDetector(
+                              onTap: () {
+                                hideSearch();
+                              },
+                              child: Container(
+                                color: const Color(0xFF3E3E3E).withOpacity(provider.maskAlpha / 100),
+                              ),
+                            ),
                           if (isBlackAlphaShow)
                             GestureDetector(
                               onTap: () {
@@ -547,25 +541,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                     key: sslCookieKey,
                                     url: getPageNowState()?.webUrl ?? "",
                                     title: title,
-                                    sslInfo: sp.connectionState ==
-                                            ConnectionState.done
+                                    sslInfo: sp.connectionState == ConnectionState.done
                                         ? SSLInfo(
-                                            name:
-                                                sp.data?.issuedTo?.CName ?? "-",
-                                            end: sp.data?.validNotAfterDate
-                                                    ?.formatTime(context) ??
-                                                "-",
-                                            oName:
-                                                sp.data?.issuedTo?.OName ?? "-",
-                                            ouName:
-                                                sp.data?.issuedTo?.UName ?? "-",
-                                            start: sp.data?.validNotBeforeDate
-                                                    ?.formatTime(context) ??
-                                                "-",
-                                            tName:
-                                                sp.data?.issuedBy?.CName ?? "-",
-                                            tOName:
-                                                sp.data?.issuedBy?.OName ?? "-",
+                                            name: sp.data?.issuedTo?.CName ?? "-",
+                                            end: sp.data?.validNotAfterDate?.formatTime(context) ?? "-",
+                                            oName: sp.data?.issuedTo?.OName ?? "-",
+                                            ouName: sp.data?.issuedTo?.UName ?? "-",
+                                            start: sp.data?.validNotBeforeDate?.formatTime(context) ?? "-",
+                                            tName: sp.data?.issuedBy?.CName ?? "-",
+                                            tOName: sp.data?.issuedBy?.OName ?? "-",
                                           )
                                         : const SSLInfo(
                                             name: "-",
@@ -580,9 +564,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                         isShowSSLCookie = false;
                                       });
                                     },
-                                    cookies: CookieManager().getCookies(
-                                        url: WebUri(
-                                            getPageNowState()?.webUrl ?? "")),
+                                    cookies: CookieManager().getCookies(url: WebUri(getPageNowState()?.webUrl ?? "")),
                                     onClick: () {
                                       sslCookieAllHide();
                                     },
@@ -609,8 +591,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   removeNowPage(index);
                                 },
                                 onAddPager: () {
-                                  bottomToolKey.currentState
-                                      ?.startPageButtonAnimation();
+                                  bottomToolKey.currentState?.startPageButtonAnimation();
                                   copyInit(homeUrl);
                                   changePagerAllHide();
                                 },
@@ -618,8 +599,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   setState(() {
                                     changePagerAllHide();
                                     provider.setSelectPositionPage(index);
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
                                       pagerStateKey.currentState?.changePage();
                                     });
                                   });
@@ -683,12 +663,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                 switch (type) {
                                   case FuncBottomType.night:
                                     provider.toggleTheme();
-                                    Hive.box(boolKey).put(
-                                        nightModeKey,
-                                        !Hive.box(boolKey).get(nightModeKey,
-                                            defaultValue: false));
-                                    provider.setFuncBottomTypeOnChange(
-                                        FuncBottomType.night);
+                                    Hive.box(boolKey)
+                                        .put(nightModeKey, !Hive.box(boolKey).get(nightModeKey, defaultValue: false));
+                                    provider.setFuncBottomTypeOnChange(FuncBottomType.night);
                                     break;
                                   case FuncBottomType.bookmark:
                                     Navigator.of(context).pop();
@@ -703,43 +680,37 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   case FuncBottomType.download:
                                     break;
                                   case FuncBottomType.hide:
-                                    Hive.box(boolKey).put(
-                                        hideKey,
-                                        !Hive.box(boolKey)
-                                            .get(hideKey, defaultValue: false));
-                                    provider.setFuncBottomTypeOnChange(
-                                        FuncBottomType.hide);
+                                    Hive.box(boolKey)
+                                        .put(hideKey, !Hive.box(boolKey).get(hideKey, defaultValue: false));
+                                    provider.setFuncBottomTypeOnChange(FuncBottomType.hide);
                                     // provider.updateLocale(() {
                                     //   Phoenix.rebirth(context);
                                     // });
                                     break;
                                   case FuncBottomType.share:
-                                    Share.share(
-                                        getPageNowState()?.webUrl ?? "");
+                                    Share.share(getPageNowState()?.webUrl ?? "");
                                     break;
                                   case FuncBottomType.addBookmark:
                                     Navigator.of(context).pop();
                                     isShowChild = true;
-                                    showAddBookmarkDialog(context, BookmarkInfo(
-                                        title: getPageNowState()?.title ?? "",
-                                        url: getPageNowState()?.webUrl ?? ""));
+                                    showAddBookmarkDialog(
+                                        context,
+                                        BookmarkInfo(
+                                            title: getPageNowState()?.title ?? "",
+                                            url: getPageNowState()?.webUrl ?? ""));
                                     break;
                                   case FuncBottomType.desktop:
-                                    var isOpen = !Hive.box(boolKey)
-                                        .get(desktopKey, defaultValue: false);
+                                    var isOpen = !Hive.box(boolKey).get(desktopKey, defaultValue: false);
                                     provider.desktopChange(isOpen);
                                     Hive.box(boolKey).put(desktopKey, isOpen);
-                                    provider.setFuncBottomTypeOnChange(
-                                        FuncBottomType.desktop);
+                                    provider.setFuncBottomTypeOnChange(FuncBottomType.desktop);
                                     break;
                                   case FuncBottomType.tool:
                                     break;
                                   case FuncBottomType.setting:
                                     Navigator.of(context).pop();
                                     isShowChild = true;
-                                    Navigator.of(context).pushNamed(
-                                        RouteSetting.settings,
-                                        arguments: 2);
+                                    Navigator.of(context).pushNamed(RouteSetting.settings, arguments: 2);
                                     break;
                                   case FuncBottomType.find:
                                     break;
@@ -748,17 +719,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   case FuncBottomType.translate:
                                     break;
                                   case FuncBottomType.code:
-                                    copyInit(
-                                        "view-source:${getPageNowState()?.webUrl}",
-                                        true);
+                                    copyInit("view-source:${getPageNowState()?.webUrl}", true);
                                     break;
                                   case FuncBottomType.full:
-                                    Hive.box(boolKey).put(
-                                        fullKey,
-                                        !Hive.box(boolKey)
-                                            .get(fullKey, defaultValue: false));
-                                    provider.setFuncBottomTypeOnChange(
-                                        FuncBottomType.full);
+                                    Hive.box(boolKey)
+                                        .put(fullKey, !Hive.box(boolKey).get(fullKey, defaultValue: false));
+                                    provider.setFuncBottomTypeOnChange(FuncBottomType.full);
                                     break;
                                   case FuncBottomType.imageMode:
                                     Navigator.of(context).pop();
@@ -783,8 +749,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                     String? url = await Navigator.push(
                                       context,
                                       MaterialPageRoute<String>(
-                                        builder: (context) =>
-                                            const ScannerPage(),
+                                        builder: (context) => const ScannerPage(),
                                       ),
                                     );
                                     if (url != null) {
