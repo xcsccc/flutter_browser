@@ -114,6 +114,13 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void changeSearchEnginSetting(SearchEnginType type) {
+    selectEngin = type;
+    settingCommonInfo[6].desc = type.enginName;
+    settingCommonInfo[6].edit(6);
+    notifyListeners();
+  }
+
   void updateUserAgent(UserAgentType type) {
     nowType = type;
     userAgent = type.userAgent;
