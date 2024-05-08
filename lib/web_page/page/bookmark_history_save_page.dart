@@ -31,6 +31,7 @@ class BookmarkAndHistoryAndSaveState
     final SearchInfo data =
         ModalRoute.of(context)!.settings.arguments as SearchInfo;
     return Scaffold(
+      backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
           child: DefaultTabController(
@@ -334,12 +335,27 @@ class ItemState extends State<Item> {
                     ? CachedNetworkImage(
                         imageUrl: widget.url.iconUrl() ?? "",
                         errorWidget: (context, url, error) {
-                          return Image.asset(AppImages.icon,
-                              width: 20, height: 20, fit: BoxFit.cover);
+                          return Image.asset(
+                            AppImages.icon,
+                            width: 20,
+                            height: 20,
+                            fit: BoxFit.cover,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? ThemeColors.iconColorDark
+                                    : ThemeColors.iconColorLight,
+                          );
                         },
                       )
-                    : Image.asset(widget.iconPath!,
-                        width: 20, height: 20, fit: BoxFit.cover)),
+                    : Image.asset(
+                        widget.iconPath!,
+                        width: 20,
+                        height: 20,
+                        fit: BoxFit.cover,
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? ThemeColors.iconColorDark
+                            : ThemeColors.iconColorLight,
+                      )),
           ),
         ),
         Expanded(
@@ -377,6 +393,8 @@ class BookmarkState extends State<BookmarkPage> {
   bool isSelect = false;
   late List<TreeNode> preNodes = [];
   late TreeNode clickTreeFolder = provider.treeNodeInfo;
+  List<TreeNode> items = [];
+  List<TreeNode> selectItems = [];
 
   List<TreeNode> getList() {
     if (search.isEmpty) {
@@ -388,9 +406,26 @@ class BookmarkState extends State<BookmarkPage> {
     }
   }
 
+  void click(TreeNode item) {
+    if (item.fileType == FileType.folder) {
+      preNodes.add(clickTreeFolder);
+      setState(() {
+        clickTreeFolder = item;
+      });
+    } else {
+      Navigator.of(context)
+          .pop(UrlOpenType(url: item.info.url, isNowOpen: true));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var items = getList();
+    items = getList();
+    items.sort((a, b) => a.fileType == b.fileType
+        ? 0
+        : a.fileType.index < b.fileType.index
+            ? -1
+            : 1);
     return CommonPage(
         bottomChild: isSelect ? select() : unselect(),
         centerChild: Column(
@@ -403,10 +438,12 @@ class BookmarkState extends State<BookmarkPage> {
                       info: BookmarkInfo(url: "", title: "..."),
                       level: preNodes.last.level + 1),
                   onClick: () {
-                    setState(() {
-                      clickTreeFolder = preNodes.last;
-                      preNodes.remove(preNodes.last);
-                    });
+                    if (!isSelect) {
+                      setState(() {
+                        clickTreeFolder = preNodes.last;
+                        preNodes.remove(preNodes.last);
+                      });
+                    }
                   }),
             items.isNotEmpty
                 ? ListView.builder(
@@ -417,17 +454,7 @@ class BookmarkState extends State<BookmarkPage> {
                       var item = items[index];
                       return BookmarkItem(
                         info: item,
-                        onClick: () {
-                          if (item.fileType == FileType.folder) {
-                            preNodes.add(clickTreeFolder);
-                            setState(() {
-                              clickTreeFolder = item;
-                            });
-                          } else {
-                            Navigator.of(context).pop(UrlOpenType(
-                                url: item.info.url, isNowOpen: true));
-                          }
-                        },
+                        onClick: !isSelect ? () => click(item) : null,
                         onLongClick: (details) {
                           showBookmarkItemMenu(
                               context,
@@ -436,12 +463,23 @@ class BookmarkState extends State<BookmarkPage> {
                               preNodes.isNotEmpty
                                   ? clickTreeFolder
                                   : provider.treeNodeInfo,
-                              item,(parent){
-                                setState(() {
-                                  clickTreeFolder = parent;
-                                });
+                              item, (parent) {
+                            setState(() {
+                              clickTreeFolder = parent;
+                            });
                           });
                         },
+                        switchMode: isSelect,
+                        onSelect: (select) {
+                          setState(() {
+                            if (select) {
+                              selectItems.add(item);
+                            } else {
+                              selectItems.remove(item);
+                            }
+                          });
+                        },
+                        select: selectItems.contains(item),
                       );
                     })
                 : preNodes.isEmpty
@@ -464,21 +502,146 @@ class BookmarkState extends State<BookmarkPage> {
   }
 
   Widget unselect() {
-    return Container();
+    return Row(
+      children: [
+        InkWell(
+            onTap: () {},
+            borderRadius: BorderRadius.circular(5),
+            child: Center(
+                child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Text(S.of(context).more,
+                        style: const TextStyle(fontSize: 13))))),
+        Expanded(child: Container()),
+        InkWell(
+            onTap: () {
+              setState(() {
+                isSelect = true;
+              });
+            },
+            borderRadius: BorderRadius.circular(5),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Text(S.of(context).edit,
+                    style: const TextStyle(fontSize: 13)),
+              ),
+            ))
+      ],
+    );
   }
 
   Widget select() {
-    return Container();
+    return Row(
+      children: [
+        InkWell(
+            onTap: () {
+              setState(() {
+                if (selectItems.length == items.length) {
+                  selectItems.clear();
+                } else {
+                  selectItems.clear();
+                  selectItems.addAll(items);
+                }
+              });
+            },
+            borderRadius: BorderRadius.circular(5),
+            child: Center(
+                child: Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: Text(
+                  selectItems.length == items.length
+                      ? S.of(context).cancelAll
+                      : S.of(context).selectAll,
+                  style: const TextStyle(fontSize: 13)),
+            ))),
+        InkWell(
+            onTap: !selectItems.isNotEmpty ? () {} : null,
+            borderRadius: BorderRadius.circular(5),
+            child: Center(
+                child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Text(
+                      S.of(context).move,
+                      style: TextStyle(
+                          color: selectItems.isNotEmpty
+                              ? Brightness.dark == Theme.of(context).brightness
+                                  ? ThemeColors.iconColorLight
+                                  : ThemeColors.iconColorDark
+                              : ThemeColors.divideColor,
+                          fontSize: 13),
+                    )))),
+        InkWell(
+            onTap: !selectItems.isNotEmpty
+                ? () {
+                    for (var element in selectItems) {
+                      var node = provider.removeTreeNode(
+                          preNodes.isNotEmpty
+                              ? clickTreeFolder
+                              : provider.treeNodeInfo,
+                          element,
+                          provider.treeNodeInfo);
+                      if (element == selectItems[selectItems.length - 1]) {
+                        if (node != null) {
+                          setState(() {
+                            clickTreeFolder = node;
+                            selectItems.clear();
+                            isSelect = false;
+                          });
+                        }
+                      }
+                    }
+                  }
+                : null,
+            borderRadius: BorderRadius.circular(5),
+            child: Center(
+                child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Text(
+                      S.of(context).deleteTwo(selectItems.length),
+                      style: TextStyle(
+                          color: selectItems.isNotEmpty
+                              ? ThemeColors.deleteColor
+                              : ThemeColors.divideColor,
+                          fontSize: 13),
+                    )))),
+        Expanded(child: Container()),
+        InkWell(
+          onTap: () {
+            setState(() {
+              isSelect = false;
+              selectItems.clear();
+            });
+          },
+          borderRadius: BorderRadius.circular(5),
+          child: Center(
+            child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Text(S.of(context).done,
+                    style: const TextStyle(fontSize: 13))),
+          ),
+        )
+      ],
+    );
   }
 }
 
 class BookmarkItem extends StatefulWidget {
   final TreeNode info;
-  final Function onClick;
+  final Function? onClick;
   final Function(TapDownDetails details)? onLongClick;
+  final bool? switchMode;
+  final Function(bool select)? onSelect;
+  final bool? select;
 
   const BookmarkItem(
-      {super.key, required this.info, required this.onClick, this.onLongClick});
+      {super.key,
+      required this.info,
+      required this.onClick,
+      this.onLongClick,
+      this.switchMode,
+      this.onSelect,
+      this.select});
 
   @override
   State<StatefulWidget> createState() => BookmarkItemState();
@@ -494,22 +657,46 @@ class BookmarkItemState extends State<BookmarkItem> {
           this.details = details;
         },
         onTap: () {
-          widget.onClick();
+          if (widget.onClick != null) {
+            widget.onClick!();
+          }
         },
         onLongPress: () {
-          if (details != null && widget.onLongClick != null) {
+          if (details != null &&
+              widget.onLongClick != null &&
+              widget.switchMode != null &&
+              !widget.switchMode!) {
             widget.onLongClick!(details!);
           }
         },
         borderRadius: BorderRadius.circular(0),
-        child: Item(
-          url: widget.info.info.url,
-          title: widget.info.info.title,
-          isShowUrl: false,
-          iconPath: widget.info.fileType == FileType.folder ||
-                  widget.info.fileType == FileType.none
-              ? AppImages.folder
-              : AppImages.bookmark,
+        child: Stack(
+          children: [
+            if (widget.switchMode != null && widget.switchMode!)
+              Row(
+                children: [
+                  Expanded(child: Container()),
+                  Checkbox(
+                      value: widget.select,
+                      onChanged: (check) {
+                        setState(() {
+                          if (widget.onSelect != null) {
+                            widget.onSelect!(check!);
+                          }
+                        });
+                      })
+                ],
+              ),
+            Item(
+              url: widget.info.info.url,
+              title: widget.info.info.title,
+              isShowUrl: false,
+              iconPath: widget.info.fileType == FileType.folder ||
+                      widget.info.fileType == FileType.none
+                  ? AppImages.folder
+                  : AppImages.bookmark,
+            )
+          ],
         ));
   }
 }

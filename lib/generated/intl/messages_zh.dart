@@ -26,14 +26,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(url) => "${url} 的 Cookies";
 
-  static String m3(num) => "过去一小时(${num})";
+  static String m3(deleteNum) =>
+      "${Intl.plural(deleteNum, zero: '删除', one: '删除(${deleteNum})', other: '删除(${deleteNum})')}";
 
-  static String m4(month, day, year, hour, minute) =>
+  static String m4(num) => "过去一小时(${num})";
+
+  static String m5(month, day, year, hour, minute) =>
       "${year}年${month}月${day}日 ${hour}:${minute}";
 
-  static String m5(weekday, month, day) => "${month}月${day}日 ${weekday}";
+  static String m6(weekday, month, day) => "${month}月${day}日 ${weekday}";
 
-  static String m6(num) => "今天和昨天(${num})";
+  static String m7(num) => "今天和昨天(${num})";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -45,6 +48,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bookmark": MessageLookupByLibrary.simpleMessage("书签"),
         "browserFlag": MessageLookupByLibrary.simpleMessage("浏览器标识"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
+        "cancelAll": MessageLookupByLibrary.simpleMessage("取消全选"),
         "certificate": MessageLookupByLibrary.simpleMessage("查看证书"),
         "certificateInfo": MessageLookupByLibrary.simpleMessage("证书信息"),
         "clear": MessageLookupByLibrary.simpleMessage("清除数据"),
@@ -59,8 +63,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "copyLinkText": MessageLookupByLibrary.simpleMessage("复制链接文本"),
         "copyText": MessageLookupByLibrary.simpleMessage("复制文本"),
         "delete": MessageLookupByLibrary.simpleMessage("删除"),
+        "deleteTwo": m3,
         "desktop": MessageLookupByLibrary.simpleMessage("电脑模式"),
         "dialogTitle": MessageLookupByLibrary.simpleMessage("标题:"),
+        "done": MessageLookupByLibrary.simpleMessage("完成"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
         "downloadDialogTitle":
             MessageLookupByLibrary.simpleMessage("你想要下载此文件吗？"),
@@ -87,13 +93,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "issuedTo": MessageLookupByLibrary.simpleMessage("颁发对象"),
         "linkUrl": MessageLookupByLibrary.simpleMessage("选中链接:"),
         "maskFilter": MessageLookupByLibrary.simpleMessage("网页遮罩"),
+        "more": MessageLookupByLibrary.simpleMessage("更多"),
+        "move": MessageLookupByLibrary.simpleMessage("移动"),
         "msgEmpty": MessageLookupByLibrary.simpleMessage("格式不正确!"),
         "network": MessageLookupByLibrary.simpleMessage("网络日志"),
         "newFolder": MessageLookupByLibrary.simpleMessage("新建"),
         "night": MessageLookupByLibrary.simpleMessage("夜间模式"),
         "noNetworkHtml": MessageLookupByLibrary.simpleMessage("离线页面"),
         "ok": MessageLookupByLibrary.simpleMessage("确定"),
-        "oneHour": m3,
+        "oneHour": m4,
         "openBg": MessageLookupByLibrary.simpleMessage("后台打开"),
         "openNew": MessageLookupByLibrary.simpleMessage("新标签打开"),
         "organization": MessageLookupByLibrary.simpleMessage("组织（O）"),
@@ -110,14 +118,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "scan": MessageLookupByLibrary.simpleMessage("扫描二维码"),
         "scanQR": MessageLookupByLibrary.simpleMessage("扫描二维码"),
         "search": MessageLookupByLibrary.simpleMessage("搜索"),
+        "selectAll": MessageLookupByLibrary.simpleMessage("全选"),
         "selectFolder": MessageLookupByLibrary.simpleMessage("选择文件夹"),
         "setting": MessageLookupByLibrary.simpleMessage("设置"),
         "share": MessageLookupByLibrary.simpleMessage("分享"),
         "shareImage": MessageLookupByLibrary.simpleMessage("分享图片"),
-        "timeFormat": m4,
-        "timeFormatInfo": m5,
+        "timeFormat": m5,
+        "timeFormatInfo": m6,
         "title": MessageLookupByLibrary.simpleMessage("标题"),
-        "todayAndYesterday": m6,
+        "todayAndYesterday": m7,
         "tool": MessageLookupByLibrary.simpleMessage("工具箱"),
         "translate": MessageLookupByLibrary.simpleMessage("翻译"),
         "url": MessageLookupByLibrary.simpleMessage("链接"),
