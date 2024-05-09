@@ -10,8 +10,7 @@ const String homeUrl = "assets/home.html";
 ///拓展函数写法
 extension StringExtension on String {
   bool isUrl() {
-    final RegExp urlRegex = RegExp(
-        r'^(?:https?://)?(?:www\.)?[a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+(?:[/?].*)?$');
+    final RegExp urlRegex = RegExp(r'^(?:https?://)?(?:www\.)?[a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+(?:[/?].*)?$');
     return urlRegex.hasMatch(this);
   }
 
@@ -42,12 +41,7 @@ extension StringExtension on String {
       Uri uri = Uri.parse(this);
       String protocol = uri.scheme;
       String domain = uri.host;
-      return [
-        protocol,
-        "://",
-        domain,
-        substring(protocol.length + 3 + domain.length, length)
-      ];
+      return [protocol, "://", domain, substring(protocol.length + 3 + domain.length, length)];
     }
   }
 
@@ -339,7 +333,6 @@ enum UrlFieldContentType {
 
   const UrlFieldContentType(this.urlName);
 }
-
 
 enum SearchEnginType {
   google("https://www.google.com/search?q=", "Google"),

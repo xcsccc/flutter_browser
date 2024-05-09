@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:browser01/web_page/back/back_click.dart';
 import 'package:browser01/web_page/bar/bottom_tool_bar.dart';
 import 'package:browser01/web_page/color/colors.dart';
@@ -14,11 +16,13 @@ import 'package:browser01/web_page/dialog/user_agent_dialog.dart';
 import 'package:browser01/web_page/main_view/progress_bar.dart';
 import 'package:browser01/web_page/main_view/view.dart';
 import 'package:browser01/web_page/model/BookmarkInfo.g.dart';
+import 'package:browser01/web_page/model/ClearDataExitInfo.g.dart';
 import 'package:browser01/web_page/model/FileType.g.dart';
 import 'package:browser01/web_page/model/HistoryInfo.g.dart';
 import 'package:browser01/web_page/model/SearchInfo.dart';
 import 'package:browser01/web_page/model/SettingCommon.g.dart';
 import 'package:browser01/web_page/model/bookmark_info.dart';
+import 'package:browser01/web_page/model/clear_data_exit_info.dart';
 import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/model/setting_common_info.dart';
 import 'package:browser01/web_page/model/tree_node.dart';
@@ -39,14 +43,10 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'generated/l10n.dart';
-import 'package:browser01/web_page/model/ClearDataExitInfo.g.dart';
-import 'package:browser01/web_page/model/clear_data_exit_info.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-
 
 void main() async {
   await Hive.initFlutter();
@@ -82,7 +82,7 @@ class MyApp extends StatefulWidget {
   }
 }
 
-class MyAppState extends State<MyApp> with WidgetsBindingObserver {
+class MyAppState extends State<MyApp> with WidgetsBindingObserver{
   late var provider = Provider.of<GlobalProvider>(context);
 
   @override
@@ -753,13 +753,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                     Share.share(getPageNowState()?.webUrl ?? "");
                                     break;
                                   case FuncBottomType.addBookmark:
-                                    String url = getPageNowState()?.webUrl ??  "";
-                                    if(!url.endsWith(homeUrl) && url.isNotEmpty){
+                                    String url = getPageNowState()?.webUrl ?? "";
+                                    if (!url.endsWith(homeUrl) && url.isNotEmpty) {
                                       Navigator.of(context).pop();
                                       isShowChild = true;
-                                      showAddBookmarkDialog(context, BookmarkInfo(
-                                          title: getPageNowState()?.title ?? "",
-                                          url: url));
+                                      showAddBookmarkDialog(
+                                          context, BookmarkInfo(title: getPageNowState()?.title ?? "", url: url));
                                     }
                                     break;
                                   case FuncBottomType.desktop:
