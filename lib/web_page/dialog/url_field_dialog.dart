@@ -53,7 +53,7 @@ class UrlFieldContentState extends State<UrlFieldContentDialog> {
                       width: double.infinity,
                       child: Padding(
                         padding: EdgeInsets.only(left: 15,bottom: 15),
-                        child: Text("Search Engine", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                        child: Text("Address Bar Content", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                       )),
                   ListView.builder(
                       itemCount: list.length,
