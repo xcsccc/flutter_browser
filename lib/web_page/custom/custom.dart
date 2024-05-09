@@ -120,6 +120,7 @@ const String treeNodeKey = "treeNodeKey";
 const String treeNodeInfoKey = "treeNodeInfoKey";
 const String localeChangeKey = "localeChangeKey";
 const String intKey = "intKey";
+const String clearDataExitInfoKey = "clearDataExitInfoKey";
 
 const String boolKey = "boolKey";
 const String nightModeKey = "nightModeKey";
@@ -132,6 +133,8 @@ const String searchEnginKey = "searchEnginKey";
 const String imageModeKey = "imageModeKey";
 const String forceDarkKey = "forceDarkKey";
 const String maskAlphaKey = "maskAlphaKey";
+const String downloadKey = "downloadKey";
+const String urlFieldKey = "urlFieldKey";
 
 extension LongExt on int {
   String toFileSize() {
@@ -317,6 +320,26 @@ enum UserAgentType {
 
   const UserAgentType(this.userAgent);
 }
+
+enum DownloadManagerType {
+  built("Built in DownLoader"),
+  system("System DownLoad Manager");
+
+  final String dmName;
+
+  const DownloadManagerType(this.dmName);
+}
+
+enum UrlFieldContentType {
+  title("Title"),
+  url("URL"),
+  domain("Domain");
+
+  final String urlName;
+
+  const UrlFieldContentType(this.urlName);
+}
+
 
 enum SearchEnginType {
   google("https://www.google.com/search?q=", "Google"),

@@ -1,11 +1,18 @@
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:browser01/web_page/color/colors.dart';
 import 'package:browser01/web_page/custom/image_path.dart';
 import 'package:browser01/web_page/dialog/clear_data_dialog.dart';
+import 'package:browser01/web_page/dialog/clear_data_exit_dialog.dart';
+import 'package:browser01/web_page/dialog/download_manager_dialog.dart';
 import 'package:browser01/web_page/dialog/long_click_dialog.dart';
+import 'package:browser01/web_page/dialog/url_field_dialog.dart';
 import 'package:browser01/web_page/now_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../generated/l10n.dart';
 import '../custom/custom.dart';
@@ -68,7 +75,7 @@ class SettingCommonState extends State<SettingCommonPage> {
                     customBorder: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    onTap: () {
+                    onTap: () async {
                       switch (index) {
                         case 0:
                           Navigator.of(context).pushNamed(RouteSetting.userAgentSetting, arguments: 6);
@@ -81,6 +88,18 @@ class SettingCommonState extends State<SettingCommonPage> {
                           break;
                         case 6:
                           showSearchEngineDialog(context);
+                          break;
+                        case 8:
+                          showDownLoadManagerDialog(context);
+                          break;
+                        case 9:
+                          showUrlFieldContentDialog(context);
+                          break;
+                        case 10:
+                          showClearExitDialog(context);
+                          break;
+                        case 11:
+                          _launchUrl();
                           break;
                         default:
                           toastMsg(item.title);
@@ -109,5 +128,20 @@ class SettingCommonState extends State<SettingCommonPage> {
             });
       }))
     ], "Common");
+  }
+
+  _launchUrl() async {
+    // var url = Uri.parse("app-settings:$packageName");
+    // if (await canLaunchUrl(url)) {
+    //   await launchUrl(url);
+    // }
+    try {
+      AndroidIntent intent = const AndroidIntent(
+          action: 'android.settings.MANAGE_DEFAULT_APPS_SETTINGS'
+      );
+      intent.launch();
+    } catch (e) {
+      print('Could not launch $e');
+    }
   }
 }

@@ -42,6 +42,11 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'generated/l10n.dart';
+import 'package:browser01/web_page/model/ClearDataExitInfo.g.dart';
+import 'package:browser01/web_page/model/clear_data_exit_info.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+
 
 void main() async {
   await Hive.initFlutter();
@@ -51,6 +56,8 @@ void main() async {
   Hive.registerAdapter(BookmarkInfoAdapter());
   Hive.registerAdapter(TreeNodeAdapter());
   Hive.registerAdapter(FileTypeAdapter());
+  Hive.registerAdapter(ClearDataExitAdapter());
+  await Hive.openBox<ClearDataExitInfo>(clearDataExitInfoKey);
   await Hive.openBox<FuncBottomInfo>(funcBottomKey);
   await Hive.openBox<HistoryInfo>(historyInfoKey);
   await Hive.openBox<TreeNode>(treeNodeKey);
@@ -75,13 +82,62 @@ class MyApp extends StatefulWidget {
   }
 }
 
-class MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late var provider = Provider.of<GlobalProvider>(context);
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
   void dispose() {
-    print("dispose APP");
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.detached) {
+      print(provider.clearDataExitInfo.toString());
+      for (int i = 0; i < provider.clearDataExitInfo.length; i++) {
+        var element = provider.clearDataExitInfo[i];
+        var control = provider.getNowControl();
+        if (element.isSelect) {
+          switch (i) {
+            case 1:
+              control?.clearFormData();
+              break;
+            case 2:
+              HistoryInfo.openBox().clear();
+              control?.clearHistory();
+              break;
+            case 3:
+              InAppWebViewController.clearAllCache();
+              CookieManager.instance().deleteAllCookies();
+              break;
+            case 4:
+              CookieManager.instance().deleteAllCookies();
+              break;
+            case 5:
+              Directory appCacheDir = getTemporaryDirectory() as Directory;
+              String appCachePath = appCacheDir.path;
+              try {
+                Directory(appCachePath).delete(recursive: true);
+                print('App cache cleared.');
+              } catch (e) {
+                print('Failed to clear app cache: $e');
+              }
+              break;
+            default:
+              InAppWebViewController.clearAllCache();
+              break;
+          }
+        }
+      }
+    }
   }
 
   @override

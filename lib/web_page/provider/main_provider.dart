@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hive/hive.dart';
+import 'package:browser01/web_page/model/clear_data_exit_info.dart';
 
 import '../custom/func_bottom_info.dart';
 import '../model/tree_node.dart';
@@ -32,6 +33,9 @@ class GlobalProvider with ChangeNotifier {
   UserAgentType? nowType;
   ImageModeType? modeType;
   late SearchEnginType selectEngin = SearchEnginType.values[Hive.box(intKey).get(searchEnginKey, defaultValue: 0)];
+  late DownloadManagerType dmType = DownloadManagerType.values[Hive.box(intKey).get(downloadKey, defaultValue: 0)];
+  late UrlFieldContentType urlFieldType =
+  UrlFieldContentType.values[Hive.box(intKey).get(urlFieldKey, defaultValue: 0)];
   late InAppWebViewSettings settings = updateSettings();
   late int maskAlpha = Hive.box(intKey).get(maskAlphaKey, defaultValue: 40);
 
@@ -40,6 +44,8 @@ class GlobalProvider with ChangeNotifier {
   InAppWebViewController? getNowControl() => getPageNowState()?.control;
 
   List<HistoryInfo> get historyInfo => HistoryInfo.getAll().reversed.toList();
+
+  List<ClearDataExitInfo> get clearDataExitInfo => ClearDataExitInfo.getAll().toList();
 
   late TreeNode treeNodeInfo = TreeNode.get();
 
@@ -62,6 +68,35 @@ class GlobalProvider with ChangeNotifier {
     var list = FuncBottomInfo.getAll();
     if (list.isEmpty) {
       FuncBottomInfo.openBox().addAll(init);
+      list = init;
+    }
+    return list;
+  }
+
+  void changeDownLoadManagerSetting(DownloadManagerType type) {
+    dmType = type;
+    settingCommonInfo[8].desc = type.dmName;
+    settingCommonInfo[8].edit(8);
+    notifyListeners();
+  }
+
+  void changeUrlFieldContentSetting(UrlFieldContentType type) {
+    urlFieldType = type;
+    settingCommonInfo[9].desc = type.urlName;
+    settingCommonInfo[9].edit(9);
+    notifyListeners();
+  }
+
+  void updateClearDataExit(List<ClearDataExitInfo> list) {
+    for (int i = 0; i < list.length; i++) {
+      list[i].edit(i);
+    }
+  }
+
+  List<ClearDataExitInfo> getClearDataExitInfoList(List<ClearDataExitInfo> init) {
+    var list = ClearDataExitInfo.getAll();
+    if (list.isEmpty) {
+      ClearDataExitInfo.openBox().addAll(init);
       list = init;
     }
     return list;
