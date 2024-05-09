@@ -46,6 +46,7 @@
   "deleteTwo": "{deleteNum,plural, =0{删除}=1{删除({deleteNum})}other{删除({deleteNum})}}",
   "full":"全屏",
   "hide":"隐身",
+  "newFolderTwo":"新建文件夹",
   "history":"历史",
   "imageMode":"有图模式",
   "network":"网络日志",

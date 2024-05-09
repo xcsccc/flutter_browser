@@ -98,6 +98,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "msgEmpty": MessageLookupByLibrary.simpleMessage("格式不正确!"),
         "network": MessageLookupByLibrary.simpleMessage("网络日志"),
         "newFolder": MessageLookupByLibrary.simpleMessage("新建"),
+        "newFolderTwo": MessageLookupByLibrary.simpleMessage("新建文件夹"),
         "night": MessageLookupByLibrary.simpleMessage("夜间模式"),
         "noNetworkHtml": MessageLookupByLibrary.simpleMessage("离线页面"),
         "ok": MessageLookupByLibrary.simpleMessage("确定"),

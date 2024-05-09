@@ -48,6 +48,7 @@ class AddBookmarkState extends State<AddBookmarkDialog> {
   late TreeNode historyNode = provider.treeNodeInfo;
   late TreeNode selectNode = historyNode;
 
+  ///添加页
   Widget onePage() {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -181,6 +182,7 @@ class AddBookmarkState extends State<AddBookmarkDialog> {
     );
   }
 
+  ///选择 or 新建文件夹页
   Widget twoPage() {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -269,23 +271,23 @@ class AddBookmarkState extends State<AddBookmarkDialog> {
               ),
             ],
           ),
-        Folder(
-          node: historyNode,
-          selectNode: selectNode,
-          onClick: (select) {
-            selectNode = select;
-            setState(() {
-              controller3.text = selectNode.info.title;
-              setState(() {
-                controllerNewFolder.text = "";
-                newFolder = false;
-              });
-            });
-            pageController.animateToPage(0,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.fastEaseInToSlowEaseOut);
-          },
-        )
+        Container(
+            constraints: const BoxConstraints(maxHeight: 300),
+            child: Folder(
+              node: historyNode,
+              selectNode: selectNode,
+              onClick: (select) {
+                selectNode = select;
+                setState(() {
+                  controller3.text = selectNode.info.title;
+                  controllerNewFolder.text = "";
+                  newFolder = false;
+                });
+                pageController.animateToPage(0,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.fastEaseInToSlowEaseOut);
+              },
+            ))
       ],
     );
   }
@@ -301,6 +303,7 @@ class AddBookmarkState extends State<AddBookmarkDialog> {
   }
 }
 
+///书签通用文件夹组件
 class Folder extends StatefulWidget {
   final TreeNode node;
   final TreeNode selectNode;
@@ -317,6 +320,7 @@ class Folder extends StatefulWidget {
 }
 
 class FolderState extends State<Folder> {
+  ///递归生成widget，使用文件夹level决定padding值
   Widget? getFolder(TreeNode node) {
     if (node.fileType == FileType.folder) {
       List<Widget> widgets = [];
@@ -337,7 +341,7 @@ class FolderState extends State<Folder> {
             onTap: () {
               widget.onClick(node);
             },
-            borderRadius:  const BorderRadius.all(Radius.circular(15)),
+            borderRadius: const BorderRadius.all(Radius.circular(15)),
             child: Row(
               children: [
                 Padding(
@@ -363,11 +367,9 @@ class FolderState extends State<Folder> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(maxHeight: 300),
-      child: SingleChildScrollView(
-        child: getFolder(widget.node) ?? Container(),
-      ),
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: getFolder(widget.node) ?? Container(),
     );
   }
 }

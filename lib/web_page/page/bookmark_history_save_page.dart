@@ -505,7 +505,12 @@ class BookmarkState extends State<BookmarkPage> {
     return Row(
       children: [
         InkWell(
-            onTap: () {},
+            onTap: () async {
+              await Navigator.of(context).pushNamed(RouteSetting.newFolderPage);
+              setState(() {
+                clickTreeFolder = provider.treeNodeInfo;
+              });
+            },
             borderRadius: BorderRadius.circular(5),
             child: Center(
                 child: Padding(

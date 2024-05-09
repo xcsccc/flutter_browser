@@ -104,6 +104,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "msgEmpty": MessageLookupByLibrary.simpleMessage("Incorrect format!"),
         "network": MessageLookupByLibrary.simpleMessage("Network log"),
         "newFolder": MessageLookupByLibrary.simpleMessage("New"),
+        "newFolderTwo": MessageLookupByLibrary.simpleMessage("New Folder"),
         "night": MessageLookupByLibrary.simpleMessage("Night mode"),
         "noNetworkHtml": MessageLookupByLibrary.simpleMessage("Saved page"),
         "ok": MessageLookupByLibrary.simpleMessage("OK"),

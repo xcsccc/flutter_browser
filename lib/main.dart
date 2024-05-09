@@ -28,6 +28,7 @@ import 'package:browser01/web_page/page/OpenSourcePage.dart';
 import 'package:browser01/web_page/page/SettingCommonPage.dart';
 import 'package:browser01/web_page/page/UserAgentSettingPage.dart';
 import 'package:browser01/web_page/page/bookmark_history_save_page.dart';
+import 'package:browser01/web_page/page/new_folder_page.dart';
 import 'package:browser01/web_page/page/scanner_page.dart';
 import 'package:browser01/web_page/page/SettingPage.dart';
 import 'package:browser01/web_page/provider/main_provider.dart';
@@ -78,6 +79,12 @@ class MyAppState extends State<MyApp> {
   late var provider = Provider.of<GlobalProvider>(context);
 
   @override
+  void dispose() {
+    print("dispose APP");
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: RouteSetting.mainPage,
@@ -91,6 +98,7 @@ class MyAppState extends State<MyApp> {
         RouteSetting.settingsCommon: (context) => const SettingCommonPage(),
         RouteSetting.userAgentSetting: (context) => const UserAgentSettingPage(),
         RouteSetting.darkMode: (context) => const DarkModePage(),
+        RouteSetting.newFolderPage: (context) => const NewFolderPage(),
       },
       title: 'Flutter Demo',
       theme: provider.currentTheme,
@@ -160,10 +168,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   void blackAlphaShow() {
     setState(() {

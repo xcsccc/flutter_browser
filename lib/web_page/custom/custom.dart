@@ -264,6 +264,7 @@ class RouteSetting {
   static const String settingsCommon = '/settingsCommon';
   static const String userAgentSetting = '/userAgentSetting';
   static const String darkMode = '/darkMode';
+  static const String newFolderPage = '/newFolderPage';
 }
 
 enum FuncBottomType {

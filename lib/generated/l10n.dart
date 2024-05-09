@@ -260,6 +260,16 @@ class S {
     );
   }
 
+  /// `New Folder`
+  String get newFolderTwo {
+    return Intl.message(
+      'New Folder',
+      name: 'newFolderTwo',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `QR code not recognized!`
   String get qRNotRecognized {
     return Intl.message(
