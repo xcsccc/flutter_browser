@@ -770,6 +770,69 @@ class S {
     );
   }
 
+  /// `More`
+  String get more {
+    return Intl.message(
+      'More',
+      name: 'more',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select All`
+  String get selectAll {
+    return Intl.message(
+      'Select All',
+      name: 'selectAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel All`
+  String get cancelAll {
+    return Intl.message(
+      'Cancel All',
+      name: 'cancelAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Move`
+  String get move {
+    return Intl.message(
+      'Move',
+      name: 'move',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Done`
+  String get done {
+    return Intl.message(
+      'Done',
+      name: 'done',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{deleteNum,plural, =0{Delete}=1{Delete({deleteNum})}other{Delete({deleteNum})}}`
+  String deleteTwo(num deleteNum) {
+    return Intl.plural(
+      deleteNum,
+      zero: 'Delete',
+      one: 'Delete($deleteNum)',
+      other: 'Delete($deleteNum)',
+      name: 'deleteTwo',
+      desc: '',
+      args: [deleteNum],
+    );
+  }
+
   /// `Last 7 days({num})`
   String allLastSeven(Object num) {
     return Intl.message(

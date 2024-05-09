@@ -26,14 +26,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(url) => "Cookies for ${url}";
 
-  static String m3(num) => "The last hour(${num})";
+  static String m3(deleteNum) =>
+      "${Intl.plural(deleteNum, zero: 'Delete', one: 'Delete(${deleteNum})', other: 'Delete(${deleteNum})')}";
 
-  static String m4(month, day, year, hour, minute) =>
+  static String m4(num) => "The last hour(${num})";
+
+  static String m5(month, day, year, hour, minute) =>
       "${month} ${day},${year} ${hour}:${minute}";
 
-  static String m5(weekday, month, day) => "${weekday},${month} ${day}";
+  static String m6(weekday, month, day) => "${weekday},${month} ${day}";
 
-  static String m6(num) => "Today and yesterday(${num})";
+  static String m7(num) => "Today and yesterday(${num})";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -45,6 +48,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bookmark": MessageLookupByLibrary.simpleMessage("Bookmarks"),
         "browserFlag": MessageLookupByLibrary.simpleMessage("User-agent"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "cancelAll": MessageLookupByLibrary.simpleMessage("Cancel All"),
         "certificate": MessageLookupByLibrary.simpleMessage("Certificate"),
         "certificateInfo":
             MessageLookupByLibrary.simpleMessage("Certificate Info"),
@@ -61,8 +65,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "copyLinkText": MessageLookupByLibrary.simpleMessage("Copy link text"),
         "copyText": MessageLookupByLibrary.simpleMessage("Copy text"),
         "delete": MessageLookupByLibrary.simpleMessage("delete"),
+        "deleteTwo": m3,
         "desktop": MessageLookupByLibrary.simpleMessage("Desktop site"),
         "dialogTitle": MessageLookupByLibrary.simpleMessage("Title:"),
+        "done": MessageLookupByLibrary.simpleMessage("Done"),
         "download": MessageLookupByLibrary.simpleMessage("Downloads"),
         "downloadDialogTitle": MessageLookupByLibrary.simpleMessage(
             "Do you want to download this file?"),
@@ -93,13 +99,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "linkUrl": MessageLookupByLibrary.simpleMessage("Link URL:"),
         "maskFilter":
             MessageLookupByLibrary.simpleMessage("Web Masking Filter"),
+        "more": MessageLookupByLibrary.simpleMessage("More"),
+        "move": MessageLookupByLibrary.simpleMessage("Move"),
         "msgEmpty": MessageLookupByLibrary.simpleMessage("Incorrect format!"),
         "network": MessageLookupByLibrary.simpleMessage("Network log"),
         "newFolder": MessageLookupByLibrary.simpleMessage("New"),
         "night": MessageLookupByLibrary.simpleMessage("Night mode"),
         "noNetworkHtml": MessageLookupByLibrary.simpleMessage("Saved page"),
         "ok": MessageLookupByLibrary.simpleMessage("OK"),
-        "oneHour": m3,
+        "oneHour": m4,
         "openBg": MessageLookupByLibrary.simpleMessage("Open in background"),
         "openNew": MessageLookupByLibrary.simpleMessage("Open in new tab"),
         "organization": MessageLookupByLibrary.simpleMessage("organization(O)"),
@@ -119,14 +127,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "scan": MessageLookupByLibrary.simpleMessage("Scan QR"),
         "scanQR": MessageLookupByLibrary.simpleMessage("Scan QR code"),
         "search": MessageLookupByLibrary.simpleMessage("search"),
+        "selectAll": MessageLookupByLibrary.simpleMessage("Select All"),
         "selectFolder": MessageLookupByLibrary.simpleMessage("Select folder"),
         "setting": MessageLookupByLibrary.simpleMessage("Settings"),
         "share": MessageLookupByLibrary.simpleMessage("Share"),
         "shareImage": MessageLookupByLibrary.simpleMessage("Share image"),
-        "timeFormat": m4,
-        "timeFormatInfo": m5,
+        "timeFormat": m5,
+        "timeFormatInfo": m6,
         "title": MessageLookupByLibrary.simpleMessage("Title"),
-        "todayAndYesterday": m6,
+        "todayAndYesterday": m7,
         "tool": MessageLookupByLibrary.simpleMessage("Tools"),
         "translate": MessageLookupByLibrary.simpleMessage("Translate"),
         "url": MessageLookupByLibrary.simpleMessage("Url"),
