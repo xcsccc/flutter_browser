@@ -10,8 +10,7 @@ const String homeUrl = "assets/home.html";
 ///拓展函数写法
 extension StringExtension on String {
   bool isUrl() {
-    final RegExp urlRegex = RegExp(
-        r'^(?:https?://)?(?:www\.)?[a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+(?:[/?].*)?$');
+    final RegExp urlRegex = RegExp(r'^(?:https?://)?(?:www\.)?[a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+(?:[/?].*)?$');
     return urlRegex.hasMatch(this);
   }
 
@@ -42,12 +41,7 @@ extension StringExtension on String {
       Uri uri = Uri.parse(this);
       String protocol = uri.scheme;
       String domain = uri.host;
-      return [
-        protocol,
-        "://",
-        domain,
-        substring(protocol.length + 3 + domain.length, length)
-      ];
+      return [protocol, "://", domain, substring(protocol.length + 3 + domain.length, length)];
     }
   }
 
@@ -119,6 +113,7 @@ const String bookmarkInfoKey = "bookmarkInfoKey";
 const String treeNodeKey = "treeNodeKey";
 const String treeNodeInfoKey = "treeNodeInfoKey";
 const String localeChangeKey = "localeChangeKey";
+const String clearDataExitInfoKey = "clearDataExitInfoKey";
 const String intKey = "intKey";
 
 const String boolKey = "boolKey";
@@ -132,6 +127,8 @@ const String searchEnginKey = "searchEnginKey";
 const String imageModeKey = "imageModeKey";
 const String forceDarkKey = "forceDarkKey";
 const String maskAlphaKey = "maskAlphaKey";
+const String downloadKey = "downloadKey";
+const String urlFieldKey = "urlFieldKey";
 
 extension LongExt on int {
   String toFileSize() {
@@ -154,9 +151,7 @@ extension LongExt on int {
     if (provider.locale.languageCode == "zh") {
       return S.of(context).timeFormatInfo(_weekZh(weekday), month, day);
     } else {
-      return S
-          .of(context)
-          .timeFormatInfo(_weekEn(weekday), _monthEn(month), day);
+      return S.of(context).timeFormatInfo(_weekEn(weekday), _monthEn(month), day);
     }
   }
 
@@ -301,8 +296,7 @@ enum UserAgentType {
       "Mozilla/5.0 (Linux; Android 10.0.0; Nexus 10 Build/OPR1.170623.027) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.152 Safari/537.36"),
   windowChrome(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"),
-  windowIE(
-      "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko"),
+  windowIE("Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko"),
   macos(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Safari/605.1.15"),
   iphone(
@@ -315,6 +309,25 @@ enum UserAgentType {
   final String userAgent;
 
   const UserAgentType(this.userAgent);
+}
+
+enum DownloadManagerType {
+  built("Built in DownLoader"),
+  system("System DownLoad Manager");
+
+  final String dmName;
+
+  const DownloadManagerType(this.dmName);
+}
+
+enum UrlFieldContentType {
+  title("Title"),
+  url("URL"),
+  domain("Domain");
+
+  final String urlName;
+
+  const UrlFieldContentType(this.urlName);
 }
 
 enum SearchEnginType {

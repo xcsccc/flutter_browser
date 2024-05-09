@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:browser01/web_page/custom/custom.dart';
 import 'package:browser01/web_page/dialog/user_agent_dialog.dart';
+import 'package:browser01/web_page/model/clear_data_exit_info.dart';
 import 'package:browser01/web_page/model/history_info.dart';
 import 'package:browser01/web_page/model/setting_common_info.dart';
 import 'package:connectivity/connectivity.dart';
@@ -32,6 +33,9 @@ class GlobalProvider with ChangeNotifier {
   UserAgentType? nowType;
   ImageModeType? modeType;
   late SearchEnginType selectEngin = SearchEnginType.values[Hive.box(intKey).get(searchEnginKey, defaultValue: 0)];
+  late DownloadManagerType dmType = DownloadManagerType.values[Hive.box(intKey).get(downloadKey, defaultValue: 0)];
+  late UrlFieldContentType urlFieldType =
+      UrlFieldContentType.values[Hive.box(intKey).get(urlFieldKey, defaultValue: 0)];
   late InAppWebViewSettings settings = updateSettings();
   late int maskAlpha = Hive.box(intKey).get(maskAlphaKey, defaultValue: 40);
 
@@ -44,19 +48,21 @@ class GlobalProvider with ChangeNotifier {
   late TreeNode treeNodeInfo = TreeNode.get();
 
   //递归删除
-  TreeNode? removeTreeNode(TreeNode parent,TreeNode removeInfo,TreeNode now){
-    if(now == parent){
+  TreeNode? removeTreeNode(TreeNode parent, TreeNode removeInfo, TreeNode now) {
+    if (now == parent) {
       now.children.remove(removeInfo);
       treeNodeInfo.put();
       return now;
-    }else{
+    } else {
       for (var element in now.children) {
-       return removeTreeNode(parent, removeInfo,element);
+        return removeTreeNode(parent, removeInfo, element);
       }
     }
   }
 
   List<SettingCommonInfo> get settingCommonInfo => SettingCommonInfo.getAll().toList();
+
+  List<ClearDataExitInfo> get clearDataExitInfo => ClearDataExitInfo.getAll().toList();
 
   List<FuncBottomInfo> getFuncBottomInfoList(List<FuncBottomInfo> init) {
     var list = FuncBottomInfo.getAll();
@@ -76,6 +82,15 @@ class GlobalProvider with ChangeNotifier {
     var list = SettingCommonInfo.getAll();
     if (list.isEmpty) {
       SettingCommonInfo.openBox().addAll(init);
+      list = init;
+    }
+    return list;
+  }
+
+  List<ClearDataExitInfo> getClearDataExitInfoList(List<ClearDataExitInfo> init) {
+    var list = ClearDataExitInfo.getAll();
+    if (list.isEmpty) {
+      ClearDataExitInfo.openBox().addAll(init);
       list = init;
     }
     return list;
@@ -119,6 +134,26 @@ class GlobalProvider with ChangeNotifier {
     settingCommonInfo[6].desc = type.enginName;
     settingCommonInfo[6].edit(6);
     notifyListeners();
+  }
+
+  void changeDownLoadManagerSetting(DownloadManagerType type) {
+    dmType = type;
+    settingCommonInfo[8].desc = type.dmName;
+    settingCommonInfo[8].edit(8);
+    notifyListeners();
+  }
+
+  void changeUrlFieldContentSetting(UrlFieldContentType type) {
+    urlFieldType = type;
+    settingCommonInfo[9].desc = type.urlName;
+    settingCommonInfo[9].edit(9);
+    notifyListeners();
+  }
+
+  void updateClearDataExit(List<ClearDataExitInfo> list) {
+    for (int i = 0; i < list.length; i++) {
+        list[i].edit(i);
+    }
   }
 
   void updateUserAgent(UserAgentType type) {
